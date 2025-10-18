@@ -1,3 +1,5 @@
+
+export const functionHistoric = () => {
 const yearsString: string[] = ["2023", "2024", "2025"];
 const degisenString: string[] = [];
 
@@ -16,3 +18,6 @@ Object.keys(yearsString).forEach((key, val) => {
         console.log('Eski değer: ', degisenString[val]);
     }
 });
+
+}
+functionHistoric();
