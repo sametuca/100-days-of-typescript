@@ -1,17 +1,17 @@
 
-export interface Historic {
-    years: string[];
-    changedYears: string[];
-    changeData(): string;
+export interface Historic<T = string, TResult = void> {
+    years: T[];
+    changedYears: T[];
+    changeData(): TResult;
 }
 
 export const functionHistoricWithInterface = () => {
 
-const historicData: Historic = {
+const historicData: Historic<string, void> = {
     years: ["2023", "2024", "2025"],
     changedYears: [],
-    changeData: () => {
-        return historicData.years[0] = "Degisti";
+    changeData: (): void => {
+        historicData.years[0] = "Degisti";
     }
 }
 

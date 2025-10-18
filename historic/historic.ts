@@ -1,21 +1,21 @@
 
 export const functionHistoric = () => {
-const yearsString: string[] = ["2023", "2024", "2025"];
-const degisenString: string[] = [];
+const years: string[] = ["2023", "2024", "2025"];
+const changedYears: string[] = [];
 
-degisenString.push(...yearsString.map(year => year));
+changedYears.push(...years.map(year => year));
 
-function functionOrnekDegistir()
+function changeData()
 {
-    return yearsString[0] = "Degisti";
+    return years[0] = "Degisti";
 }
 
-functionOrnekDegistir();
+changeData();
 
-Object.keys(yearsString).forEach((key, val) => {
-    if(yearsString[val] !== degisenString[val]) {
-        console.log('şu değer değişti: ', yearsString[val]);
-        console.log('Eski değer: ', degisenString[val]);
+Object.keys(years).forEach((key, val) => {
+    if(years[val] !== changedYears[val]) {
+        console.log('şu değer değişti: ', years[val]);
+        console.log('Eski değer: ', changedYears[val]);
     }
 });
 
