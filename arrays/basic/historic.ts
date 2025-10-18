@@ -2,7 +2,6 @@
 export const functionHistoric = () => {
 const years: string[] = ["2023", "2024", "2025"];
 const changedYears: string[] = [];
-
 changedYears.push(...years.map(year => year));
 
 function changeData()
