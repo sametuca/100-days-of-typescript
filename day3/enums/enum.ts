@@ -68,6 +68,20 @@ const handleMouseAction = (action: MouseAction) => {
   }
 };
 
+const enum TimeRange{
+  Today,
+  Week,
+  Month,
+  Year,
+  AllTime
+}
+
+var randomTime = TimeRange.Month;
+
+if(TimeRange.Month === randomTime){
+  console.log("It's a month");
+}
+
 // Transpile edilmiş JavaScript'e bakarsanız, diğer enum'ların
 // nasıl nesne ve fonksiyon olarak var olduğunu görürsünüz,
 // ancak MouseAction orada yoktur.
