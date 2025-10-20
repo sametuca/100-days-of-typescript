@@ -1,34 +1,45 @@
+// Enum'lar, TypeScript'te JavaScript'e eklenen bir özelliktir
+// ve adlandırılmış sabit kümelerini yönetmeyi kolaylaştırır.
 
-// Türkçesi : // TypeScript'te enum'lar, ilişkili sabit değerler kümesini tanımlamanıza olanak tanır.
+// Varsayılan olarak bir enum sayı tabanlıdır, sıfırdan başlar,
+// ve her seçenek birer birer artırılarak atanır. Bu, değerin
+// önemli olmadığı durumlarda kullanışlıdır.
 
-// Varsayılan olarak, enum değerleri 0'dan başlayarak artan sayılar olarak atanır.
 enum CompassDirection {
-  North,
-  East,
-  South,
-  West,
+  North,    // 0
+  East,     // 1
+  South,    // 2
+  West,     // 3
 }
 
-// Ancak, isterseniz enum değerlerini manuel olarak atayabilirsiniz.
+// Bir enum seçeneğine değer atayarak, o değeri belirlersiniz;
+// artışlar o değerden devam eder:
+
 enum StatusCodes {
-  OK = 200,
-  BadRequest = 400,
-  Unauthorized,
-  PaymentRequired,
-  Forbidden,
-  NotFound,
+  OK = 200,              // 200
+  BadRequest = 400,      // 400
+  Unauthorized,          // 401 (400'den devam eder)
+  PaymentRequired,       // 402
+  Forbidden,             // 403
+  NotFound,              // 404
 }
 
-// Enum'ları kullanmak için, enum adını ve ardından nokta operatörünü
-const startingDirection = CompassDirection.East;
-const currentStatus = StatusCodes.OK;
+// Bir enum'a EnumAdı.Değer şeklinde erişirsiniz
 
-// Enum değerlerine erişmenin başka bir yolu da köşeli parantez notasyonudur.
-const okNumber = StatusCodes.OK;
-const okNumberIndex = StatusCodes["OK"];
-const stringBadRequest = StatusCodes[400];
+const startingDirection = CompassDirection.East;  // 1
+const currentStatus = StatusCodes.OK;             // 200
 
-// Ayrıca, enum değerlerini string olarak da atayabilirsiniz.
+// Enum'lar hem anahtardan değere, hem de değerden anahtara
+// çift yönlü veri erişimini destekler.
+
+const okNumber = StatusCodes.OK;           // 200
+const okNumberIndex = StatusCodes["OK"];   // 200
+const stringBadRequest = StatusCodes[400]; // "BadRequest"
+
+// Enum'lar farklı türlerde olabilir, string türü yaygındır.
+// String kullanmak hata ayıklamayı kolaylaştırır, çünkü
+// çalışma zamanındaki değer sayıya bakmanızı gerektirmez.
+
 enum GamePadInput {
   Up = "UP",
   Down = "DOWN",
@@ -36,14 +47,19 @@ enum GamePadInput {
   Right = "RIGHT",
 }
 
-// const moveUp = GamePadInput.Up;
+// JavaScript çalışma zamanınızda nesne sayısını azaltmak
+// isterseniz, const enum oluşturabilirsiniz.
+
+// Bir const enum'un değeri, çalışma zamanında bir nesne
+// üzerinden aranmak yerine, TypeScript tarafından kodunuzun
+// transpile edilmesi sırasında değiştirilerek yerine konur.
+
 const enum MouseAction {
-  MouseDown,
-  MouseUpOutside,
-  MouseUpInside,
+  MouseDown,         // 0
+  MouseUpOutside,    // 1
+  MouseUpInside,     // 2
 }
 
-// MouseAction enum'ını kullanan bir fonksiyon tanımlayın.
 const handleMouseAction = (action: MouseAction) => {
   switch (action) {
     case MouseAction.MouseDown:
@@ -51,3 +67,10 @@ const handleMouseAction = (action: MouseAction) => {
       break;
   }
 };
+
+// Transpile edilmiş JavaScript'e bakarsanız, diğer enum'ların
+// nasıl nesne ve fonksiyon olarak var olduğunu görürsünüz,
+// ancak MouseAction orada yoktur.
+
+// Bu durum, handleMouseAction içindeki switch ifadesinde
+// MouseAction.MouseDown kontrolü için de geçerlidir.
