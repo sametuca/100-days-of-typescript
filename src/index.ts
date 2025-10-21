@@ -8,79 +8,37 @@
 // Request, Response, NextFunction = Middleware'lerde kullanılacak tipler
 import express, { Application, Request, Response, NextFunction } from 'express';
 
-// Az önce oluşturduğumuz routes'ları import et
 import routes from './routes';
 
-// Config dosyasından ayarları import et
 import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 
-// ============================================
-// APP CLASS - UYGULAMA SINIFI
-// ============================================
-// Class = Nesne şablonu (obje oluşturmak için)
 class App {
-  // ==========================================
-  // CLASS PROPERTIES - SINIF ÖZELLİKLERİ
-  // ==========================================
-  
-  // public = Dışarıdan erişilebilir
-  // app: Application = Express uygulaması, tipi Application
   public app: Application;
-  
-  // private = Sadece bu class içinden erişilebilir
-  // port = Sunucunun çalışacağı port (3000 gibi)
-  // number | string = ya sayı ya da string olabilir
   private port: number | string;
 
-  // ==========================================
-  // CONSTRUCTOR - KURUCU METHOD
-  // ==========================================
-  // new App() dediğimizde otomatik çalışır
-  // Uygulama başlatılırken yapılacak işlemler
   constructor() {
-    // express() = Yeni bir Express uygulaması oluştur
     this.app = express();
-    
-    // Port numarasını config'den al
     this.port = SERVER_CONFIG.PORT;
 
-    // Sırayla başlatma methodlarını çağır
-    // 1. Önce middleware'leri başlat
     this.initializeMiddlewares();
-    
-    // 2. Sonra route'ları başlat
     this.initializeRoutes();
-    
-    // 3. En son error handling'i başlat
     this.initializeErrorHandling();
   }
 
-  // ==========================================
-  // INITIALIZE MIDDLEWARES
-  // ==========================================
   // Middleware = İstek geldiğinde çalışan ara katman
   // Request → Middleware 1 → Middleware 2 → Route → Response
   
   private initializeMiddlewares(): void {
     
-    // ------------------------------------------
-    // 1. JSON PARSER MIDDLEWARE
-    // ------------------------------------------
     // express.json() = Gelen request body'sini JSON olarak parse et
     // Örnek: { "name": "Ali" } → JavaScript objesi
     // Kullanım: req.body ile erişebiliriz
     this.app.use(express.json());
     
-    // ------------------------------------------
-    // 2. URL ENCODED PARSER
-    // ------------------------------------------
     // Form data'sını parse et
     // extended: true = Nested objeler desteklenir
     this.app.use(express.urlencoded({ extended: true }));
 
-    // ------------------------------------------
-    // 3. CORS MIDDLEWARE
-    // ------------------------------------------
     // CORS = Cross-Origin Resource Sharing
     // Farklı domain'lerden gelen isteklere izin ver
     
@@ -114,9 +72,6 @@ class App {
       next();
     });
 
-    // ------------------------------------------
-    // 4. LOGGER MIDDLEWARE
-    // ------------------------------------------
     // Her gelen isteği console'a yazdır (loglama)
     
     this.app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -140,9 +95,6 @@ class App {
   
   private initializeRoutes(): void {
     
-    // ------------------------------------------
-    // 1. API ROUTES
-    // ------------------------------------------
     // SERVER_CONFIG.API_PREFIX = '/api/v1'
     // Tüm routes'lar /api/v1 ile başlayacak
     // 
@@ -158,7 +110,6 @@ class App {
     // Yukarıdaki route'lardan hiçbiri eşleşmezse burası çalışır
     
     this.app.use('/', (req: Request, res: Response) => {
-      // 404 = Not Found (Sayfa bulunamadı)
       res.status(404).json({
         success: false,
         message: 'Route not found',
@@ -168,40 +119,24 @@ class App {
     });
   }
 
-  // ==========================================
-  // INITIALIZE ERROR HANDLING
-  // ==========================================
-  // Hata yakalandığında ne yapılacak?
   
   private initializeErrorHandling(): void {
     
-    // 4 parametreli middleware = Error handler
     // err = Yakalanan hata objesi
     // req = İstek bilgisi
     // res = Cevap objesi
     // next = Sonraki middleware (kullanılmıyor ama gerekli)
     this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-      
-      // Hatayı console'a yazdır
-      // err.message = Hatanın açıklaması
       console.error('Error:', err.message);
-      
-      // 500 = Internal Server Error (Sunucu hatası)
       res.status(500).json({
         success: false,
         message: 'Internal server error',
         
-        // Development'taysa hatanın detayını göster
-        // Production'daysa güvenlik için gösterme
-        // ? : = Ternary operator (şart ? doğruysa : yanlışsa)
         error: SERVER_CONFIG.NODE_ENV === 'development' ? err.message : undefined
       });
     });
   }
 
-  // ==========================================
-  // LISTEN - SUNUCUYU BAŞLAT
-  // ==========================================
   // Sunucuyu dinlemeye başla
   
   public listen(): void {
@@ -211,31 +146,22 @@ class App {
     // () => { ... } = Arrow function, sunucu başladığında çalışır
     this.app.listen(this.port, () => {
       
-      // Console'a güzel bir başlangıç mesajı yazdır
       console.log('═══════════════════════════════════════');
       console.log('🚀 DevTracker Server Started!');
       console.log('═══════════════════════════════════════');
       
-      // Çalışma ortamını göster (development/production)
       console.log(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
       
-      // Ana server URL'i
       console.log(`🌐 Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
       
-      // API base URL'i
       console.log(`📡 API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
       
-      // Health check URL'i (sunucu çalışıyor mu?)
       console.log(`💚 Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
       
       console.log('═══════════════════════════════════════');
     });
   }
 }
-
-// ============================================
-// APPLICATION START - UYGULAMAYI BAŞLAT
-// ============================================
 
 // new App() = App class'ından yeni bir obje oluştur
 // Bu satır çalışınca constructor() çalışır
@@ -246,5 +172,4 @@ const app = new App();
 app.listen();
 
 // app objesini dışa aktar
-// Testlerde veya başka dosyalarda kullanabiliriz
 export default app;
