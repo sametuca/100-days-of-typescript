@@ -6,9 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsc && node dist/index.js",
-    "watch": "tsc --watch",
-    "clean": "rmdir /s /q dist"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev:build": "tsc && node dist/index.js"
   },
   "keywords": [
     "typescript",
