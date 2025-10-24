@@ -3,7 +3,6 @@
 // ============================================
 // Bu dosya uygulamanın beyni, her şey buradan başlar
 
-// Express framework'ünü import et
 // Application = Express app'inin tipi
 // Request, Response, NextFunction = Middleware'lerde kullanılacak tipler
 import express, { Application, Request, Response, NextFunction } from 'express';
@@ -45,14 +44,9 @@ class App {
     // Her istek için bu middleware çalışır
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       
-      // Response header'larını ayarla
-      
       // Access-Control-Allow-Origin = Hangi domain'lerden istek kabul edilir
       // '*' = Herkesten (development için, production'da değiştirilmeli)
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
-      
-      // Access-Control-Allow-Methods = Hangi HTTP methodları kabul edilir
-      // GET, POST, PUT, DELETE, OPTIONS
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       
       // Access-Control-Allow-Headers = Hangi header'lar gönderilebilir
@@ -72,18 +66,8 @@ class App {
       next();
     });
 
-    // Her gelen isteği console'a yazdır (loglama)
-    
     this.app.use((req: Request, _res: Response, next: NextFunction) => {
-      // Console'a şunu yazdır:
-      // [2024-01-15T10:30:00.000Z] GET /api/v1/health
-      
-      // new Date().toISOString() = Şu anki tarih-saat
-      // req.method = GET, POST, PUT, DELETE
-      // req.path = /api/v1/health
       console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-      
-      // Bir sonraki middleware'e geç
       next();
     });
   }
@@ -146,10 +130,6 @@ class App {
     // () => { ... } = Arrow function, sunucu başladığında çalışır
     this.app.listen(this.port, () => {
       
-      console.log('═══════════════════════════════════════');
-      console.log('🚀 DevTracker Server Started!');
-      console.log('═══════════════════════════════════════');
-      
       console.log(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
       
       console.log(`🌐 Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
@@ -157,19 +137,9 @@ class App {
       console.log(`📡 API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
       
       console.log(`💚 Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
-      
-      console.log('═══════════════════════════════════════');
     });
   }
 }
-
-// new App() = App class'ından yeni bir obje oluştur
-// Bu satır çalışınca constructor() çalışır
 const app = new App();
-
-// app.listen() = Sunucuyu dinlemeye başla
-// Artık sunucu istekleri kabul ediyor
 app.listen();
-
-// app objesini dışa aktar
 export default app;
