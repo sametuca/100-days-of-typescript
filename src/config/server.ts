@@ -1,11 +1,6 @@
-// ============================================
-// SERVER CONFIGURATION
-// ============================================
-// Bu dosya sunucu ayarlarını tutar
 // Tüm config değerleri tek bir yerden yönetilir
 
 // process.env = Çevre değişkenleri (environment variables)
-// || = VEYA operatörü (eğer yoksa default değeri kullan)
 // as const = Bu obje sabit, değiştirilemez demek
 
 export const SERVER_CONFIG = {
@@ -26,8 +21,6 @@ export const SERVER_CONFIG = {
   API_PREFIX: '/api/v1'
 } as const;
 
-// CORS = Cross-Origin Resource Sharing
-// Farklı domain'lerden gelen isteklere izin verme ayarları
 export const CORS_CONFIG = {
   // origin: Hangi domain'lerden istek kabul edileceği
   // '*' = herkesten kabul et (development için)
