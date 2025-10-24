@@ -1,17 +1,9 @@
-// ============================================
-// TASK CONTROLLER
-// ============================================
 // Controller = HTTP isteklerini yakalar, service'i çağırır, cevap döner
 // Route → Controller → Service → Database
 
-// Express tiplerini import et
 import { Request, Response } from 'express';
-
-// Task service'ini import et
 import { TaskService } from '../services/task.service';
-
-// Task tiplerini import et
-import { CreateTaskDto } from '../models/task.model';
+import { CreateTaskDto, UpdateTaskDto } from '../models/task.model';
 
 export class TaskController {
   
@@ -24,10 +16,6 @@ export class TaskController {
     try {
       
       const tasks = await TaskService.getAllTasks();
-      
-      // Başarılı cevap döndür
-      // 200 = OK (Başarılı)
-      // res.json() = JSON formatında cevap gönder
       res.status(200).json({
         success: true,
         count: tasks.length,
@@ -50,25 +38,17 @@ export class TaskController {
   public static async getTaskById(req: Request, res: Response): Promise<any> {
     try {
       
-      // URL'den ID'yi al
-      // req.params = URL parametreleri (/tasks/:id → :id)
-      // Örnek: /tasks/1 → req.params.id = "1"
       const { id } = req.params;
       
-      // Service'den task'ı al
       const task = await TaskService.getTaskById(id);
       
-      // Task bulunamadıysa (null dönerse)
       if (!task) {
-        // 404 = Not Found (Bulunamadı)
         return res.status(404).json({
           success: false,
           message: `ID ${id} ile task bulunamadı`
         });
       }
       
-      // Task bulunduysa başarılı cevap döndür
-      // 200 = OK
       res.status(200).json({
         success: true,
         data: task
@@ -85,9 +65,6 @@ export class TaskController {
     }
   }
 
-  // ==========================================
-  // CREATE TASK - YENİ TASK OLUŞTUR
-  // ==========================================
   // Endpoint: POST /api/v1/tasks
   // Body: { "title": "Yeni Task", "description": "Açıklama" }
   
@@ -106,22 +83,15 @@ export class TaskController {
       // }
       const taskData: CreateTaskDto = req.body;
       
-      // Basit validation (doğrulama)
-      // title yoksa veya boşsa hata döndür
       if (!taskData.title || taskData.title.trim() === '') {
-        // 400 = Bad Request (Geçersiz istek)
         return res.status(400).json({
           success: false,
           message: 'Task başlığı zorunludur'
         });
       }
       
-      // Service ile yeni task oluştur
       const newTask = await TaskService.createTask(taskData);
       
-      // Başarılı cevap döndür
-      // 201 = Created (Oluşturuldu)
-      // 200 yerine 201 kullanmak REST best practice
       res.status(201).json({
         success: true,
         message: 'Task başarıyla oluşturuldu',
@@ -134,6 +104,81 @@ export class TaskController {
       res.status(500).json({
         success: false,
         message: 'Task oluşturulamadı',
+        error: error instanceof Error ? error.message : 'Bilinmeyen hata'
+      });
+    }
+  }
+
+  // Endpoint: PUT /api/v1/tasks/:id
+  // Body: { "title": "Yeni Başlık", "status": "DONE" }
+  
+  public static async updateTask(req: Request, res: Response): Promise<any> {
+    try {
+      
+      const { id } = req.params;
+      
+      const taskData: UpdateTaskDto = req.body;
+      
+      if (Object.keys(taskData).length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Güncellenecek alan belirtilmedi'
+        });
+      }
+      
+      const updatedTask = await TaskService.updateTask(id, taskData);
+      
+      if (!updatedTask) {
+        return res.status(404).json({
+          success: false,
+          message: `ID ${id} ile task bulunamadı`
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: 'Task başarıyla güncellendi',
+        data: updatedTask
+      });
+      
+    } catch (error) {
+      console.error('Error in updateTask:', error);
+      
+      res.status(500).json({
+        success: false,
+        message: 'Task güncellenemedi',
+        error: error instanceof Error ? error.message : 'Bilinmeyen hata'
+      });
+    }
+  }
+
+  // Endpoint: DELETE /api/v1/tasks/:id
+  
+  public static async deleteTask(req: Request, res: Response): Promise<any> {
+    try {
+      
+      const { id } = req.params;
+      
+      const deleted = await TaskService.deleteTask(id);
+      
+      if (!deleted) {
+        return res.status(404).json({
+          success: false,
+          message: `ID ${id} ile task bulunamadı`
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: 'Task başarıyla silindi'
+      });
+      
+    } catch (error) {
+      console.error('Error in deleteTask:', error);
+      
+      res.status(500).json({
+        success: false,
+        message: 'Task silinemedi',
         error: error instanceof Error ? error.message : 'Bilinmeyen hata'
       });
     }
