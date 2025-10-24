@@ -1,25 +1,7 @@
-// ============================================
-// HEALTH CONTROLLER
-// ============================================
-// Controller = İstek geldiğinde ne yapılacağını belirler
-// Request'leri alır, işler, Response döner
-
-// Express'den gerekli tipleri import et
 import { Request, Response } from 'express';
 
-// Export = Bu class'ı başka dosyalarda kullanabilmek için dışa aktar
 export class HealthController {
   
-  // ==========================================
-  // GET /api/v1/health
-  // ==========================================
-  // Sunucunun sağlıklı çalışıp çalışmadığını kontrol eder
-  
-  // static = Bu method class'ı oluşturmadan çağrılabilir
-  // public = Dışarıdan erişilebilir
-  // req = Request (gelen istek bilgileri)
-  // res = Response (döneceğimiz cevap)
-  // void = Bu function bir şey return etmez
   public static getHealth(_req: Request, res: Response): void {
     
     // healthCheck objesi = Sunucu bilgilerini içeren obje
