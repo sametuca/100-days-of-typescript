@@ -11,11 +11,6 @@ export interface Task {
   userId: string;
 }
 
-// CREATE TASK DTO (Data Transfer Object)
-// ==========================================
-// DTO = İstemciden gelen veri formatı
-// Yeni task oluştururken hangi bilgiler gönderilmeli?
-
 export interface CreateTaskDto {
   title: string;
   description?: string;
@@ -23,14 +18,7 @@ export interface CreateTaskDto {
   priority?: TaskPriority;
 }
 
-// ==========================================
-// UPDATE TASK DTO
-// ==========================================
-// Task güncellerken hangi alanlar değiştirilebilir?
-
 export interface UpdateTaskDto {
-  // Tüm alanlar opsiyonel
-  // Sadece gönderilen alanlar güncellenecek
   title?: string;
   description?: string;
   status?: TaskStatus;
