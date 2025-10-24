@@ -1,17 +1,8 @@
-// ============================================
-// VALIDATION MIDDLEWARE
-// ============================================
 // Input validation (Girdi doğrulama)
 // İstek geldiğinde veriyi kontrol eder
 
 import { Request, Response, NextFunction } from 'express';
 import { TaskStatus, TaskPriority } from '../types';
-
-// ==========================================
-// VALIDATE CREATE TASK
-// ==========================================
-// Yeni task oluştururken validation
-// Body'de gerekli alanlar var mı kontrol et
 
 export const validateCreateTask = (
   req: Request, 
@@ -19,13 +10,8 @@ export const validateCreateTask = (
   next: NextFunction
 ): void => {
   
-  // Body'den title'ı al
   const { title, status, priority } = req.body;
   
-  // ------------------------------------------
-  // 1. TITLE KONTROLÜ (ZORUNLU)
-  // ------------------------------------------
-  // title yoksa veya boşsa hata döndür
   if (!title || typeof title !== 'string' || title.trim() === '') {
     res.status(400).json({
       success: false,
@@ -43,9 +29,6 @@ export const validateCreateTask = (
     return;
   }
   
-  // ------------------------------------------
-  // 2. STATUS KONTROLÜ (OPSİYONEL)
-  // ------------------------------------------
   // status gönderildiyse geçerli bir değer mi kontrol et
   if (status && !Object.values(TaskStatus).includes(status)) {
     // Object.values(TaskStatus) = ['TODO', 'IN_PROGRESS', 'DONE']
@@ -58,9 +41,6 @@ export const validateCreateTask = (
     return;
   }
   
-  // ------------------------------------------
-  // 3. PRIORITY KONTROLÜ (OPSİYONEL)
-  // ------------------------------------------
   // priority gönderildiyse geçerli bir değer mi kontrol et
   if (priority && !Object.values(TaskPriority).includes(priority)) {
     res.status(400).json({
@@ -75,10 +55,6 @@ export const validateCreateTask = (
   next();
 };
 
-// ==========================================
-// VALIDATE UPDATE TASK
-// ==========================================
-// Task güncellerken validation
 
 export const validateUpdateTask = (
   req: Request, 
@@ -88,10 +64,6 @@ export const validateUpdateTask = (
   
   const { title, status, priority, description } = req.body;
   
-  // ------------------------------------------
-  // 1. EN AZ BİR ALAN GÖNDERİLMİŞ Mİ?
-  // ------------------------------------------
-  // Eğer hiçbir alan gönderilmemişse hata
   if (!title && !status && !priority && description === undefined) {
     res.status(400).json({
       success: false,
@@ -100,9 +72,6 @@ export const validateUpdateTask = (
     return;
   }
   
-  // ------------------------------------------
-  // 2. TITLE KONTROLÜ (EĞER GÖNDERİLDİYSE)
-  // ------------------------------------------
   if (title !== undefined) {
     // title gönderildiyse boş olmamalı
     if (typeof title !== 'string' || title.trim() === '') {
@@ -113,7 +82,6 @@ export const validateUpdateTask = (
       return;
     }
     
-    // Minimum 3 karakter
     if (title.trim().length < 3) {
       res.status(400).json({
         success: false,
@@ -123,9 +91,6 @@ export const validateUpdateTask = (
     }
   }
   
-  // ------------------------------------------
-  // 3. STATUS KONTROLÜ
-  // ------------------------------------------
   if (status && !Object.values(TaskStatus).includes(status)) {
     res.status(400).json({
       success: false,
@@ -134,9 +99,6 @@ export const validateUpdateTask = (
     return;
   }
   
-  // ------------------------------------------
-  // 4. PRIORITY KONTROLÜ
-  // ------------------------------------------
   if (priority && !Object.values(TaskPriority).includes(priority)) {
     res.status(400).json({
       success: false,
@@ -145,13 +107,9 @@ export const validateUpdateTask = (
     return;
   }
   
-  // Tüm validation'lar başarılı
   next();
 };
 
-// ==========================================
-// VALIDATE TASK ID
-// ==========================================
 // URL'deki ID geçerli mi kontrol et
 
 export const validateTaskId = (
@@ -160,10 +118,8 @@ export const validateTaskId = (
   next: NextFunction
 ): void => {
   
-  // URL'den ID'yi al
   const { id } = req.params;
   
-  // ID yoksa veya boşsa hata
   if (!id || id.trim() === '') {
     res.status(400).json({
       success: false,
@@ -172,6 +128,5 @@ export const validateTaskId = (
     return;
   }
   
-  // ID geçerli, devam et
   next();
 };
