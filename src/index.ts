@@ -1,10 +1,4 @@
-// ============================================
-// MAIN APPLICATION FILE
-// ============================================
-// Bu dosya uygulamanın beyni, her şey buradan başlar
 
-// Application = Express app'inin tipi
-// Request, Response, NextFunction = Middleware'lerde kullanılacak tipler
 import express, { Application, Request, Response, NextFunction } from 'express';
 
 import routes from './routes';
