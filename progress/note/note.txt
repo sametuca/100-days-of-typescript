@@ -1,0 +1,73 @@
+🔄 Uygulama Nasıl Başlar?
+1. İlk Okunan Dosya: src/index.ts
+npm run dev  # Bu komut çalıştırıldığında
+
+Sıralama:
+
+package.json → "dev": "nodemon --exec ts-node src/index.ts"
+
+src/index.ts dosyası çalışır
+
+App class'ı oluşturulur
+
+Sunucu başlatılır
+
+2. App Class'ı Ne Yapar?
+class App {
+  constructor() {
+    this.initializeMiddlewares();  // 1. Ara katmanları ayarla
+    this.initializeRoutes();       // 2. URL yollarını tanımla
+    this.initializeErrorHandling(); // 3. Hata yönetimini ayarla
+  }
+}
+
+3. Middleware'ler (Ara Katmanlar)
+Her istek geldiğinde sırayla çalışır:
+
+İstek → JSON Parser → CORS → Logger → Route → Cevap
+
+JSON Parser: Gelen veriyi JavaScript objesine çevirir
+
+CORS: Farklı domain'lerden isteklere izin verir
+
+Logger: Her isteği console'a yazdırır
+
+4. Route Sistemi
+/api/v1/              → Ana sayfa
+/api/v1/health        → Sunucu durumu
+/api/v1/tasks         → Görev listesi
+/api/v1/tasks/:id     → Belirli görev
+
+🛠️ Geliştirme Komutları
+npm run dev        # Geliştirme modunda çalıştır
+npm run build      # TypeScript'i JavaScript'e çevir
+npm start          # Üretim modunda çalıştır
+
+📊 Veri Akışı
+1. İstek gelir → index.ts
+2. Middleware'ler çalışır
+3. Route belirlenir → routes/index.ts
+4. Controller çalışır → controllers/
+5. Service çağrılır → services/
+6. Model kullanılır → models/
+7. Cevap döner
+
+🎯 Yeni Başlayanlar İçin İpuçları
+İlk bakacağınız dosyalar:
+
+src/index.ts - Ana dosya
+
+package.json - Proje bilgileri
+
+src/routes/index.ts - URL yolları
+
+Nasıl test ederim?
+
+npm run dev
+# Tarayıcıda: http://localhost:3000/api/v1/health
+
+Yeni özellik nasıl eklerim?
+
+Model oluştur → Controller yaz → Route ekle
+
+Bu yapı MVC (Model-View-Controller) mimarisini takip ediyor ve RESTful API prensiplerine uygun. Temiz, organize ve ölçeklenebilir bir kod yapısı sunuyor.
