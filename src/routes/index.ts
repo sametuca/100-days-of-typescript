@@ -1,41 +1,43 @@
 // ============================================
-// ROUTES - YOL TARİFLERİ
+// MAIN ROUTES
 // ============================================
-// Routes = Hangi URL hangi controller'a gidecek?
-// Örnek: /health URL'i → HealthController.getHealth'e git
+// Tüm route'ları burada birleştiriyoruz
 
-// Router = Express'in yönlendirme sistemi
 import { Router } from 'express';
 
-// HealthController'ı import et (az önce yazdığımız)
+// Controller'ları import et
 import { HealthController } from '../controllers/health.controller';
 
-// router objesi oluştur
-// Bu obje üzerinden tüm route'ları tanımlayacağız
+// Task routes'unu import et
+import taskRoutes from './task.routes';
+
+// Ana router'ı oluştur
 const router = Router();
 
 /**
- * API Routes - API Yolları
+ * API ROUTES
  */
 
 // ==========================================
-// GET /api/v1/
+// ROOT & HEALTH ROUTES
 // ==========================================
-// router.get() = GET isteğini dinle
-// İlk parametre: URL path'i ('/' = ana sayfa)
-// İkinci parametre: Çalışacak function (HealthController.getRoot)
-// 
-// Kullanıcı http://localhost:3000/api/v1/ adresine giderse
-// HealthController.getRoot çalışır
+// GET /api/v1/
 router.get('/', HealthController.getRoot);
 
-// ==========================================
 // GET /api/v1/health
-// ==========================================
-// Kullanıcı http://localhost:3000/api/v1/health adresine giderse
-// HealthController.getHealth çalışır
 router.get('/health', HealthController.getHealth);
 
-// router'ı dışa aktar (export)
-// Böylece src/index.ts dosyasında kullanabiliriz
+// ==========================================
+// TASK ROUTES
+// ==========================================
+// '/tasks' = Tüm task route'ları /tasks ile başlayacak
+// taskRoutes = task.routes.ts'deki tüm route'lar
+// 
+// Sonuç:
+// GET /api/v1/tasks → TaskController.getAllTasks
+// GET /api/v1/tasks/:id → TaskController.getTaskById
+// POST /api/v1/tasks → TaskController.createTask
+router.use('/tasks', taskRoutes);
+
+// Router'ı dışa aktar
 export default router;
