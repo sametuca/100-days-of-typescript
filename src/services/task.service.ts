@@ -5,7 +5,7 @@
 // Veritabanı işlemleri burada yapılır
 
 // Task tiplerini import et
-import { Task, CreateTaskDto } from '../models/task.model';
+import { Task, CreateTaskDto, UpdateTaskDto } from '../models/task.model';
 import { TaskStatus, TaskPriority } from '../types';
 
 export class TaskService {
@@ -93,5 +93,76 @@ export class TaskService {
     this.tasks.push(newTask);
     
     return newTask;
+  }
+
+   public static async updateTask(
+    id: string, 
+    taskData: UpdateTaskDto
+  ): Promise<Task | null> {
+    
+    // Task'ı bul
+    // findIndex = Array içinde index'i bul
+    // (task) => task.id === id = Her task için:
+    //   Eğer ID eşleşirse bu index'i döndür
+    const taskIndex = this.tasks.findIndex((task) => task.id === id);
+    
+    // Task bulunamadıysa
+    // findIndex bulamazsa -1 döner
+    if (taskIndex === -1) {
+      // null döndür (task yok)
+      return null;
+    }
+    
+    // Mevcut task'ı al
+    // this.tasks[taskIndex] = Array'den o index'teki elemanı al
+    const existingTask = this.tasks[taskIndex];
+    
+    // Task'ı güncelle
+    // ... = Spread operator (objeyi aç)
+    // Önce mevcut task'ın tüm alanlarını kopyala
+    // Sonra taskData'daki alanları üzerine yaz (override)
+    const updatedTask: Task = {
+      ...existingTask,          // Eski tüm alanlar
+      ...taskData,              // Yeni gönderilen alanlar (üzerine yazar)
+      updatedAt: new Date()     // updatedAt'i güncelle
+    };
+    
+    // Array'deki task'ı güncelle
+    // this.tasks[taskIndex] = O index'teki elemanı değiştir
+    this.tasks[taskIndex] = updatedTask;
+    
+    // Güncellenmiş task'ı döndür
+    return updatedTask;
+  }
+
+  // ==========================================
+  // DELETE TASK - TASK SİL
+  // ==========================================
+  // id: string = Silinecek task'ın ID'si
+  // Promise<boolean> = Başarılı ise true, değilse false
+  
+  public static async deleteTask(id: string): Promise<boolean> {
+    
+    // Task'ın index'ini bul
+    const taskIndex = this.tasks.findIndex((task) => task.id === id);
+    
+    // Task bulunamadıysa
+    if (taskIndex === -1) {
+      // false döndür (silinemedi, task yok)
+      return false;
+    }
+    
+    // Task'ı array'den sil
+    // splice(index, count) = index'ten başlayarak count kadar eleman sil
+    // splice(taskIndex, 1) = taskIndex'teki 1 elemanı sil
+    // 
+    // Örnek:
+    // tasks = [task1, task2, task3]
+    // splice(1, 1) → task2'yi sil
+    // tasks = [task1, task3]
+    this.tasks.splice(taskIndex, 1);
+    
+    // true döndür (başarıyla silindi)
+    return true;
   }
 }
