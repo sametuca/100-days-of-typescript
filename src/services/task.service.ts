@@ -14,9 +14,6 @@ export class TaskService {
   // IN-MEMORY DATABASE (FAKE DATABASE)
   // ------------------------------------------
   // static = Tüm instance'lar aynı veriyi paylaşır
-  // 
-  // Gerçek projede burası SQLite/PostgreSQL olacak
-  // Şimdilik basit bir array kullanıyoruz
   private static tasks: Task[] = [
     {
       id: '1',
@@ -71,8 +68,6 @@ export class TaskService {
     
     const task = this.tasks.find((task) => task.id === id);
     
-    // task || null = Eğer task varsa task'ı döndür, yoksa null döndür
-    // || = VEYA operatörü
     return task || null;
   }
 
@@ -85,37 +80,18 @@ export class TaskService {
     
     // Yeni task objesi oluştur
     const newTask: Task = {
-      // ID oluştur
-      // this.idCounter++ = Şu anki counter'ı kullan ve 1 artır
-      // String() = Sayıyı string'e çevir (3 → "3")
       id: String(this.idCounter++),
-      
-      // İstemciden gelen başlık
       title: taskData.title,
-      
-      // İstemciden gelen açıklama veya undefined
       description: taskData.description,
-      
-      // İstemciden status geldi mi? Geldiyse onu kullan, gelmediyse TODO
-      // || = VEYA operatörü (sol taraf falsy ise sağ tarafı kullan)
       status: taskData.status || TaskStatus.TODO,
-      
-      // İstemciden priority geldi mi? Geldiyse onu kullan, gelmediyse MEDIUM
       priority: taskData.priority || TaskPriority.MEDIUM,
-      
-      // new Date() = Şu anki tarih-saat
       createdAt: new Date(),
       updatedAt: new Date(),
-      
-      // Şimdilik sabit user ID (ileride JWT'den gelecek)
       userId: 'user1'
     };
 
-    // Yeni task'ı array'e ekle
-    // this.tasks.push() = Array'in sonuna ekle
     this.tasks.push(newTask);
     
-    // Oluşturulan task'ı döndür
     return newTask;
   }
 }
