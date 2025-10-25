@@ -1,8 +1,6 @@
 // ============================================
 // TYPE SYSTEM TEST FILE
 // ============================================
-// TypeScript'in type system'ini test etmek için
-// Bu dosya çalıştırılmayacak, sadece type kontrol için
 
 import { 
   Task, 
@@ -16,39 +14,16 @@ import {
   SafeUser
 } from './types';
 
-// ==========================================
-// 1. BASIC TYPES
-// ==========================================
-
-// string type
 const taskTitle: string = "TypeScript Öğren";
-
-// number type
 const taskId: number = 123;
-
-// boolean type
 const isCompleted: boolean = true;
-
-// Date type
 const createdDate: Date = new Date();
-
-// ==========================================
-// 2. ENUM USAGE
-// ==========================================
 
 // Enum değeri kullan
 const status: TaskStatus = TaskStatus.TODO;
 const priority: TaskPriority = TaskPriority.HIGH;
 const role: UserRole = UserRole.ADMIN;
 
-// ❌ HATA: Geçersiz enum değeri
-// const wrongStatus: TaskStatus = "WRONG"; // TypeScript hata verir
-
-// ==========================================
-// 3. INTERFACE USAGE
-// ==========================================
-
-// Task objesi oluştur
 const task: Task = {
   id: "1",
   title: "TypeScript Öğren",
@@ -61,7 +36,6 @@ const task: Task = {
   updatedAt: new Date()
 };
 
-// User objesi oluştur
 const user: User = {
   id: "user1",
   email: "user@example.com",
@@ -75,15 +49,10 @@ const user: User = {
   updatedAt: new Date()
 };
 
-// ==========================================
-// 4. OPTIONAL PROPERTIES
-// ==========================================
-
-// description opsiyonel, olmayabilir
 const taskWithoutDesc: Task = {
   id: "2",
   title: "Sadece Başlık",
-  // description yok ✅ (optional)
+  // description yok (optional)
   status: TaskStatus.TODO,
   priority: TaskPriority.LOW,
   userId: "user1",
@@ -91,31 +60,21 @@ const taskWithoutDesc: Task = {
   updatedAt: new Date()
 };
 
-// ==========================================
-// 5. GENERIC TYPES
-// ==========================================
-
-// ApiResponse<Task> = Task tipinde response
 const taskResponse: ApiResponse<Task> = {
   success: true,
   data: task
 };
 
-// ApiResponse<User> = User tipinde response
 const userResponse: ApiResponse<User> = {
   success: true,
   data: user
 };
 
-// ApiResponse<string> = String tipinde response
 const messageResponse: ApiResponse<string> = {
   success: true,
   data: "İşlem başarılı"
 };
 
-// ==========================================
-// 6. UTILITY TYPES
-// ==========================================
 
 // Pick - Sadece belirli alanları al
 const taskSummary: TaskSummary = {
@@ -130,7 +89,7 @@ const safeUser: SafeUser = {
   id: user.id,
   email: user.email,
   username: user.username,
-  // passwordHash yok ✅ (Omit ile çıkarıldı)
+  // passwordHash yok (Omit ile çıkarıldı)
   role: user.role,
   isActive: user.isActive,
   createdAt: user.createdAt,
@@ -140,7 +99,7 @@ const safeUser: SafeUser = {
 // Partial - Tüm alanları opsiyonel yap
 const partialTask: Partial<Task> = {
   title: "Sadece başlık"
-  // Diğer alanlar yok ✅ (Partial ile opsiyonel)
+  // Diğer alanlar yok (Partial ile opsiyonel)
 };
 
 // Required - Tüm alanları zorunlu yap
@@ -152,17 +111,14 @@ const partialTask: Partial<Task> = {
 // 7. UNION TYPES
 // ==========================================
 
-// string VEYA number olabilir
 let idOrNumber: string | number;
-idOrNumber = "123";      // ✅
-idOrNumber = 123;        // ✅
-// idOrNumber = true;    // ❌ boolean olamaz
+idOrNumber = "123";     
+idOrNumber = 123;       
 
 // Multiple union
 type Status = 'ACTIVE' | 'INACTIVE' | 'PENDING';
 let projectStatus: Status;
-projectStatus = 'ACTIVE';     // ✅
-// projectStatus = 'WRONG';   // ❌
+projectStatus = 'ACTIVE';   
 
 // ==========================================
 // 8. INTERSECTION TYPES
@@ -179,9 +135,6 @@ const person: Person = {
   // Her iki tip'in de alanları olmalı
 };
 
-// ==========================================
-// 9. TYPE GUARDS
-// ==========================================
 
 // Runtime'da tip kontrolü
 function processEntity(entity: Task | User) {
@@ -195,9 +148,6 @@ function processEntity(entity: Task | User) {
   }
 }
 
-// ==========================================
-// 10. FUNCTION TYPES
-// ==========================================
 
 // Function tip tanımı
 type TaskValidator = (task: Task) => boolean;
@@ -213,9 +163,6 @@ const getTitles = (tasks: Task[]): string[] => {
   return tasks.map(task => task.title);
 };
 
-// ==========================================
-// 11. ARRAY TYPES
-// ==========================================
 
 // Array tanımları
 const numbers: number[] = [1, 2, 3];
@@ -226,20 +173,13 @@ const tasks: Task[] = [task];
 const coordinate: [number, number] = [10, 20];
 const response: [boolean, string] = [true, "Success"];
 
-// ==========================================
-// 12. READONLY
-// ==========================================
 
 // Readonly = Değiştirilemez
 const readonlyTask: Readonly<Task> = task;
-// readonlyTask.title = "Yeni"; // ❌ Değiştirilemez
+// readonlyTask.title = "Yeni"; //
 
 const readonlyArray: ReadonlyArray<number> = [1, 2, 3];
-// readonlyArray.push(4); // ❌ Değiştirilemez
-
-// ==========================================
-// 13. ASYNC/PROMISE TYPES
-// ==========================================
+// readonlyArray.push(4); //
 
 // Promise<T> = Asenkron işlem sonucu T döner
 async function getTask(id: string): Promise<Task | null> {
@@ -252,9 +192,4 @@ async function deleteTask(id: string): Promise<void> {
   // Silme işlemi
 }
 
-// ==========================================
-// TypeScript bu dosyayı kontrol eder
-// Hata varsa compile-time'da gösterir
-// ==========================================
-
-export {}; // Module olarak işaretle
+export {};
