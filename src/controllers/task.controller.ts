@@ -74,13 +74,6 @@ export class TaskController {
       // Request body'den veriyi al
       // req.body = POST ile gönderilen veri (JSON)
       // express.json() middleware'i sayesinde parse edilmiş
-      // 
-      // Örnek req.body:
-      // {
-      //   "title": "TypeScript Öğren",
-      //   "description": "Her gün 2 saat",
-      //   "priority": "HIGH"
-      // }
       const taskData: CreateTaskDto = req.body;
       
       if (!taskData.title || taskData.title.trim() === '') {
