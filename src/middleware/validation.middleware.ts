@@ -1,6 +1,3 @@
-// Input validation (Girdi doğrulama)
-// İstek geldiğinde veriyi kontrol eder
-
 import { Request, Response, NextFunction } from 'express';
 import { TaskStatus, TaskPriority } from '../types';
 
@@ -17,10 +14,9 @@ export const validateCreateTask = (
       success: false,
       message: 'Task başlığı zorunludur ve boş olamaz'
     });
-    return; // Middleware'i sonlandır
+    return;
   }
   
-  // Title çok kısa ise (3 karakterden az)
   if (title.trim().length < 3) {
     res.status(400).json({
       success: false,
@@ -29,7 +25,6 @@ export const validateCreateTask = (
     return;
   }
   
-  // status gönderildiyse geçerli bir değer mi kontrol et
   if (status && !Object.values(TaskStatus).includes(status)) {
     // Object.values(TaskStatus) = ['TODO', 'IN_PROGRESS', 'DONE']
     // includes(status) = status bu array'de var mı?
@@ -41,7 +36,6 @@ export const validateCreateTask = (
     return;
   }
   
-  // priority gönderildiyse geçerli bir değer mi kontrol et
   if (priority && !Object.values(TaskPriority).includes(priority)) {
     res.status(400).json({
       success: false,
@@ -50,8 +44,6 @@ export const validateCreateTask = (
     return;
   }
   
-  // Tüm validation'lar başarılı
-  // next() = Bir sonraki middleware'e veya controller'a geç
   next();
 };
 
@@ -73,7 +65,6 @@ export const validateUpdateTask = (
   }
   
   if (title !== undefined) {
-    // title gönderildiyse boş olmamalı
     if (typeof title !== 'string' || title.trim() === '') {
       res.status(400).json({
         success: false,
@@ -110,7 +101,6 @@ export const validateUpdateTask = (
   next();
 };
 
-// URL'deki ID geçerli mi kontrol et
 
 export const validateTaskId = (
   req: Request, 
@@ -127,6 +117,5 @@ export const validateTaskId = (
     });
     return;
   }
-  
   next();
 };
