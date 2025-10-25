@@ -18,13 +18,11 @@ class App {
     this.initializeErrorHandling();
   }
 
-  // Middleware = İstek geldiğinde çalışan ara katman
   // Request → Middleware 1 → Middleware 2 → Route → Response
   
   private initializeMiddlewares(): void {
     
     // express.json() = Gelen request body'sini JSON olarak parse et
-    // Örnek: { "name": "Ali" } → JavaScript objesi
     // Kullanım: req.body ile erişebiliriz
     this.app.use(express.json());
     
@@ -38,13 +36,8 @@ class App {
     // Her istek için bu middleware çalışır
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       
-      // Access-Control-Allow-Origin = Hangi domain'lerden istek kabul edilir
-      // '*' = Herkesten (development için, production'da değiştirilmeli)
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      
-      // Access-Control-Allow-Headers = Hangi header'lar gönderilebilir
-      // Content-Type = JSON/XML vb., Authorization = Token bilgisi
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
       
       // OPTIONS request = CORS preflight isteği
@@ -55,8 +48,6 @@ class App {
         return;
       }
       
-      // next() = Bir sonraki middleware'e geç
-      // Bunu çağırmazsak istek takılır kalır
       next();
     });
 
@@ -66,11 +57,6 @@ class App {
     });
   }
 
-  // ==========================================
-  // INITIALIZE ROUTES
-  // ==========================================
-  // Route'ları (yol tariflerini) tanımla
-  
   private initializeRoutes(): void {
     
     // SERVER_CONFIG.API_PREFIX = '/api/v1'
@@ -81,12 +67,6 @@ class App {
     // Gerçekte: GET /api/v1/health
     this.app.use(SERVER_CONFIG.API_PREFIX, routes);
 
-    // ------------------------------------------
-    // 2. 404 HANDLER - BULUNAMADI
-    // ------------------------------------------
-    // '*' = Her URL için geçerli (catch-all)
-    // Yukarıdaki route'lardan hiçbiri eşleşmezse burası çalışır
-    
     this.app.use('/', (req: Request, res: Response) => {
       res.status(404).json({
         success: false,
@@ -115,13 +95,9 @@ class App {
     });
   }
 
-  // Sunucuyu dinlemeye başla
   
   public listen(): void {
     
-    // this.app.listen() = Express sunucusunu başlat
-    // this.port = Port numarası (3000)
-    // () => { ... } = Arrow function, sunucu başladığında çalışır
     this.app.listen(this.port, () => {
       
       console.log(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
