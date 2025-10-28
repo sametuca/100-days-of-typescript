@@ -4,7 +4,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import routes from './routes';
 
 import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
-
+import { initializeDatabase } from './database/init';
 class App {
   public app: Application;
   private port: number | string;
@@ -16,6 +16,7 @@ class App {
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
+    this.initializeDatabase();
   }
 
   // Request → Middleware 1 → Middleware 2 → Route → Response
@@ -95,7 +96,10 @@ class App {
     });
   }
 
-  
+  private initializeDatabase(): void {
+    initializeDatabase();
+  }
+
   public listen(): void {
     
     this.app.listen(this.port, () => {
