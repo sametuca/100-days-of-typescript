@@ -72,4 +72,5 @@ Model oluştur → Controller yaz → Route ekle
 
 Bu yapı MVC (Model-View-Controller) mimarisini takip ediyor ve RESTful API prensiplerine uygun. Temiz, organize ve ölçeklenebilir bir kod yapısı sunuyor.
 
+#tamamlanan gün
 #1-2-3-4-5
