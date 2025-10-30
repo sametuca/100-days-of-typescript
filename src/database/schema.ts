@@ -1,21 +1,13 @@
 // Tablo yapılarını tanımlar (CREATE TABLE)
 
-// Database bağlantısını import et
 import db from './connection';
 
-// ==========================================
-// CREATE TABLES FUNCTION
-// ==========================================
 // Tüm tabloları oluşturur
 
 export const createTables = () => {
   
   console.log('📋 Creating database tables...');
   
-  // ------------------------------------------
-  // USERS TABLE
-  // ------------------------------------------
-  // Kullanıcı tablosu
   
   // db.exec() = SQL komutunu çalıştır
   // exec = Cevap döndürmeyen komutlar için

@@ -4,33 +4,22 @@
 import { createTables } from './schema';
 import db from './connection';
 
-// ==========================================
-// INITIALIZE DATABASE
-// ==========================================
-// Database'i hazır hale getirir
-
 export const initializeDatabase = () => {
   console.log('🚀 Initializing database...\n');
   
   try {
-    // Tabloları oluştur
     createTables();
     
-    // Seed data ekle (test verileri)
     seedData();
     
     console.log('\n✅ Database initialization complete!');
     
   } catch (error) {
-    // Hata olursa yakala ve göster
     console.error('❌ Database initialization failed:', error);
     throw error;
   }
 };
 
-// ==========================================
-// SEED DATA
-// ==========================================
 // Test verileri ekler (development için)
 
 const seedData = () => {
@@ -49,10 +38,6 @@ const seedData = () => {
   
   console.log('  📝 Inserting seed data...');
   
-  // ------------------------------------------
-  // INSERT USERS
-  // ------------------------------------------
-  // Test kullanıcıları ekle
   
   // db.prepare() = Query hazırla
   // ? = Placeholder (parametre)
