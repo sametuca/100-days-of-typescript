@@ -1,21 +1,6 @@
-// ============================================
-// LOGGER UTILITY
-// ============================================
-// Winston kullanarak logging sistemi
-
-// Winston'u import et
 import winston from 'winston';
-
-// path = Dosya yolu işlemleri
 import path from 'path';
-
-// fs = File system
 import fs from 'fs';
-
-// ==========================================
-// LOG DIRECTORY
-// ==========================================
-// Log dosyalarının saklanacağı klasör
 
 // __dirname = Bu dosyanın bulunduğu klasör
 // ../../logs = İki üst klasör + logs
@@ -26,9 +11,6 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-// ==========================================
-// LOG FORMATS
-// ==========================================
 // Log mesajlarının formatı
 
 // Custom format = Kendi format'ımızı oluştur
@@ -45,10 +27,6 @@ const customFormat = winston.format.printf(({ level, message, timestamp, ...meta
   return `[${timestamp}] ${level.toUpperCase()}: ${message} ${metaStr}`;
 });
 
-// ==========================================
-// LOGGER INSTANCE
-// ==========================================
-// Winston logger oluştur
 
 const logger = winston.createLogger({
   // level = En düşük log seviyesi
@@ -70,9 +48,6 @@ const logger = winston.createLogger({
   
   // transports = Logları nereye yazsın?
   transports: [
-    // ------------------------------------------
-    // 1. CONSOLE TRANSPORT
-    // ------------------------------------------
     // Console'a yazdır (development için)
     new winston.transports.Console({
       // format = Console için özel format
@@ -83,9 +58,6 @@ const logger = winston.createLogger({
       )
     }),
     
-    // ------------------------------------------
-    // 2. FILE TRANSPORT - COMBINED LOG
-    // ------------------------------------------
     // Tüm logları dosyaya yaz
     new winston.transports.File({
       // filename = Log dosyası yolu
@@ -99,9 +71,6 @@ const logger = winston.createLogger({
       maxFiles: 5
     }),
     
-    // ------------------------------------------
-    // 3. FILE TRANSPORT - ERROR LOG
-    // ------------------------------------------
     // Sadece error logları
     new winston.transports.File({
       // level = Sadece 'error' seviyesi
@@ -117,9 +86,6 @@ const logger = winston.createLogger({
   exitOnError: false
 });
 
-// ==========================================
-// STREAM FOR MORGAN
-// ==========================================
 // Morgan HTTP logger ile entegrasyon için
 
 // stream = Morgan'ın yazacağı stream
@@ -130,9 +96,5 @@ logger.stream = {
     logger.info(message.trim());
   }
 } as any;
-
-// ==========================================
-// EXPORT LOGGER
-// ==========================================
 
 export default logger;

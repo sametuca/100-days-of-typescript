@@ -40,10 +40,6 @@ private initializeMiddlewares(): void {
       return undefined;
     });
 
-    // ============================================
-    // REQUEST LOGGER - GÜNCELLENMIŞ
-    // ============================================
-    // Console.log yerine Winston logger kullan
     this.app.use((req: Request, _res: Response, next: NextFunction) => {
       logger.info(`[${req.method}] ${req.path}`);
       next();
@@ -52,15 +48,7 @@ private initializeMiddlewares(): void {
   }
 
   private initializeRoutes(): void {
-    
-    // SERVER_CONFIG.API_PREFIX = '/api/v1'
-    // Tüm routes'lar /api/v1 ile başlayacak
-    // 
-    // Örnek:
-    // routes'da: router.get('/health', ...)
-    // Gerçekte: GET /api/v1/health
-       this.app.use(SERVER_CONFIG.API_PREFIX, routes);
-
+    this.app.use(SERVER_CONFIG.API_PREFIX, routes);
     this.app.use(notFoundHandler);
 
   }
@@ -68,9 +56,6 @@ private initializeMiddlewares(): void {
   
   private initializeErrorHandling(): void {
     
-    // err = Yakalanan hata objesi
-    // req = İstek bilgisi
-    // res = Cevap objesi
     // next = Sonraki middleware (kullanılmıyor ama gerekli)
     this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
       console.error('Error:', err.message);

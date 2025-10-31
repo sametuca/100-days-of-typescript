@@ -17,21 +17,11 @@ import { Task, TaskStatus, TaskPriority, CreateTaskDto, UpdateTaskDto } from '..
 
 export class TaskRepository extends BaseRepository<Task> {
   
-  // ==========================================
-  // CONSTRUCTOR
-  // ==========================================
-  
   constructor() {
-    // super() = Üst sınıfın (BaseRepository) constructor'ını çağır
     // 'tasks' = Tablo adı
     super('tasks');
   }
   
-  // ==========================================
-  // CREATE
-  // ==========================================
-  // Yeni task oluştur
-  // Promise<Task> = Oluşturulan task'ı döndür
   
   public create(taskData: CreateTaskDto, userId: string): Promise<Task> {
     
@@ -78,28 +68,16 @@ export class TaskRepository extends BaseRepository<Task> {
     return this.findById(id) as Promise<Task>;
   }
   
-  // ==========================================
-  // UPDATE
-  // ==========================================
-  // Task güncelle
-  
   public update(id: string, taskData: UpdateTaskDto): Promise<Task | null> {
     
-    // Önce task var mı kontrol et
     const existingTask = this.db.prepare(`
       SELECT * FROM tasks WHERE id = ?
     `).get(id) as Task | undefined;
     
-    // Task bulunamadıysa null döndür
     if (!existingTask) {
       return Promise.resolve(null);
     }
     
-    // Güncellenecek alanları hazırla
-    // Sadece gönderilen alanları güncelle (Partial Update)
-    
-    // SET clause'ları oluştur
-    // SET title = ?, status = ? şeklinde
     const updateFields: string[] = [];
     const updateValues: any[] = [];
     
@@ -173,11 +151,6 @@ export class TaskRepository extends BaseRepository<Task> {
     return this.findById(id) as Promise<Task>;
   }
   
-  // ==========================================
-  // FIND BY USER ID
-  // ==========================================
-  // Belirli kullanıcının tüm taskları
-  
   public findByUserId(userId: string): Promise<Task[]> {
     const stmt = this.db.prepare(`
       SELECT * FROM tasks WHERE user_id = ?
@@ -185,14 +158,8 @@ export class TaskRepository extends BaseRepository<Task> {
     
     const rows = stmt.all(userId) as Task[];
     
-    // Tags'leri JSON'dan parse et
     return Promise.resolve(this.parseTasks(rows));
   }
-  
-  // ==========================================
-  // FIND BY PROJECT ID
-  // ==========================================
-  // Belirli projenin tüm taskları
   
   public findByProjectId(projectId: string): Promise<Task[]> {
     const stmt = this.db.prepare(`
@@ -204,11 +171,6 @@ export class TaskRepository extends BaseRepository<Task> {
     return Promise.resolve(this.parseTasks(rows));
   }
   
-  // ==========================================
-  // FIND BY STATUS
-  // ==========================================
-  // Belirli status'teki tüm tasklar
-  
   public findByStatus(status: TaskStatus): Promise<Task[]> {
     const stmt = this.db.prepare(`
       SELECT * FROM tasks WHERE status = ?
@@ -219,11 +181,6 @@ export class TaskRepository extends BaseRepository<Task> {
     return Promise.resolve(this.parseTasks(rows));
   }
   
-  // ==========================================
-  // FIND BY PRIORITY
-  // ==========================================
-  // Belirli priority'deki tüm tasklar
-  
   public findByPriority(priority: TaskPriority): Promise<Task[]> {
     const stmt = this.db.prepare(`
       SELECT * FROM tasks WHERE priority = ?
@@ -233,11 +190,6 @@ export class TaskRepository extends BaseRepository<Task> {
     
     return Promise.resolve(this.parseTasks(rows));
   }
-  
-  // ==========================================
-  // SEARCH
-  // ==========================================
-  // Başlık veya açıklamada arama yap
   
   public search(query: string): Promise<Task[]> {
     // LIKE = Benzer olanları bul
@@ -255,11 +207,6 @@ export class TaskRepository extends BaseRepository<Task> {
     
     return Promise.resolve(this.parseTasks(rows));
   }
-  
-  // ==========================================
-  // FIND WITH FILTERS
-  // ==========================================
-  // Çoklu filtrelerle arama
   
   public findWithFilters(filters: {
     userId?: string;
@@ -320,13 +267,6 @@ export class TaskRepository extends BaseRepository<Task> {
     return Promise.resolve(this.parseTasks(rows));
   }
   
-  // ==========================================
-  // PARSE TASKS (HELPER)
-  // ==========================================
-  // Database'den gelen task'ları düzelt
-  // - tags: JSON string → array
-  // - dates: string → Date
-  
   private parseTasks(tasks: any[]): Task[] {
     return tasks.map(task => ({
       ...task,
@@ -356,10 +296,6 @@ export class TaskRepository extends BaseRepository<Task> {
     }));
   }
   
-  // ==========================================
-  // GENERATE ID (HELPER)
-  // ==========================================
-  // Basit ID oluşturucu
   // Gerçek projede: UUID kullanılmalı
   
   private idCounter: number = 1000;

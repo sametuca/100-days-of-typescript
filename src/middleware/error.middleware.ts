@@ -1,30 +1,17 @@
-// Tüm hataları yakalayan global middleware
-
 import { Request, Response, NextFunction } from 'express';
-
-// Custom error class'larını import et
 import { ApiError } from '../utils/errors';
-
-// Logger'ı import et
 import logger from '../utils/logger';
 
-// ==========================================
-// ERROR HANDLER
-// ==========================================
 // Express'in error handling middleware'i
 // 4 parametre = Error handler middleware
 
 export const errorHandler = (
-  // err = Yakalanan hata
   err: Error,
   req: Request,
   res: Response,
   _next: NextFunction
 ): void => {
   
-  // ------------------------------------------
-  // LOG THE ERROR
-  // ------------------------------------------
   // Hatayı logla
   
   // ApiError ise (bizim custom error)
@@ -51,9 +38,6 @@ export const errorHandler = (
     });
   }
   
-  // ------------------------------------------
-  // PREPARE ERROR RESPONSE
-  // ------------------------------------------
   // Hata response'u hazırla
   
   // Default error values
@@ -74,9 +58,6 @@ export const errorHandler = (
     }
   }
   
-  // ------------------------------------------
-  // SEND ERROR RESPONSE
-  // ------------------------------------------
   // Hata cevabını gönder
   
   // Development vs Production
@@ -106,9 +87,6 @@ export const errorHandler = (
   res.status(statusCode).json(errorResponse);
 };
 
-// ==========================================
-// NOT FOUND HANDLER
-// ==========================================
 // 404 - Route bulunamadı
 
 export const notFoundHandler = (
