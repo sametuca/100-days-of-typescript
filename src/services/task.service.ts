@@ -1,134 +1,164 @@
-import { Task, CreateTaskDto, UpdateTaskDto } from '../models/task.model';
-import { TaskStatus, TaskPriority } from '../types';
+// ============================================
+// TASK SERVICE (UPDATED - SQLite Version)
+// ============================================
+// Business logic katmanı
+// Artık in-memory array yerine SQLite kullanıyor
+
+// Repository'i import et
+import { taskRepository } from '../repositories/task.repository';
+
+// Task tiplerini import et
+import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority } from '../types';
+
+// ==========================================
+// TASK SERVICE CLASS
+// ==========================================
 
 export class TaskService {
   
-  // ------------------------------------------
-  // IN-MEMORY DATABASE (FAKE DATABASE)
-  // ------------------------------------------
-  private static tasks: Task[] = [
-    {
-      id: '1',
-      title: 'TypeScript Öğren',
-      description: '100 Days of Code projesi',
-      status: TaskStatus.IN_PROGRESS,
-      priority: TaskPriority.HIGH,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      userId: 'user1'
-    },
-    {
-      id: '2',
-      title: 'Express.js Çalış',
-      description: 'REST API oluşturmayı öğren',
-      status: TaskStatus.TODO,
-      priority: TaskPriority.MEDIUM,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      userId: 'user1'
-    }
-  ];
+  // ==========================================
+  // GET ALL TASKS
+  // ==========================================
+  // Tüm taskları getir
   
-  // Counter = Yeni task için ID oluşturmak için
-  // Her yeni task'ta 1 artacak (3, 4, 5, ...)
-  private static idCounter: number = 3;
-
   public static async getAllTasks(): Promise<Task[]> {
-    return this.tasks;
+    // Repository'den tüm taskları al
+    // Artık database'den geliyor (SQLite)
+    return await taskRepository.findAll();
   }
-
+  
+  // ==========================================
+  // GET TASK BY ID
+  // ==========================================
+  // ID'ye göre tek task getir
+  
   public static async getTaskById(id: string): Promise<Task | null> {
-    
-    // this.tasks.find() = Array içinde arama yap
-    // (task) => task.id === id = Her task için:
-    //   Eğer task'ın id'si aranan id'ye eşitse bunu döndür
-    // 
-    // Örnek:
-    // getTaskById('1') → id'si '1' olan task'ı bulur
-    // getTaskById('999') → Bulamazsa undefined döner
-    
-    const task = this.tasks.find((task) => task.id === id);
-    
-    return task || null;
+    return await taskRepository.findById(id);
   }
-
-  public static async createTask(taskData: CreateTaskDto): Promise<Task> {
-    
-    // Yeni task objesi oluştur
-    const newTask: Task = {
-      id: String(this.idCounter++),
-      title: taskData.title,
-      description: taskData.description,
-      status: taskData.status || TaskStatus.TODO,
-      priority: taskData.priority || TaskPriority.MEDIUM,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      userId: 'user1'
-    };
-
-    this.tasks.push(newTask);
-    
-    return newTask;
+  
+  // ==========================================
+  // CREATE TASK
+  // ==========================================
+  // Yeni task oluştur
+  
+  public static async createTask(
+    taskData: CreateTaskDto,
+    userId: string
+  ): Promise<Task> {
+    // Repository'i kullanarak database'e ekle
+    return await taskRepository.create(taskData, userId);
   }
-
-   public static async updateTask(
-    id: string, 
+  
+  // ==========================================
+  // UPDATE TASK
+  // ==========================================
+  // Task güncelle
+  
+  public static async updateTask(
+    id: string,
     taskData: UpdateTaskDto
   ): Promise<Task | null> {
-    
-    // Task'ı bul
-    // findIndex = Array içinde index'i bul
-    // (task) => task.id === id = Her task için:
-    //   Eğer ID eşleşirse bu index'i döndür
-    const taskIndex = this.tasks.findIndex((task) => task.id === id);
-    
-    // Task bulunamadıysa
-    // findIndex bulamazsa -1 döner
-    if (taskIndex === -1) {
-      // null döndür (task yok)
-      return null;
-    }
-    
-    // Mevcut task'ı al
-    // this.tasks[taskIndex] = Array'den o index'teki elemanı al
-    const existingTask = this.tasks[taskIndex];
-    
-    // Task'ı güncelle
-    // ... = Spread operator (objeyi aç)
-    // Önce mevcut task'ın tüm alanlarını kopyala
-    // Sonra taskData'daki alanları üzerine yaz (override)
-    const updatedTask: Task = {
-      ...existingTask,          // Eski tüm alanlar
-      ...taskData,              // Yeni gönderilen alanlar (üzerine yazar)
-      updatedAt: new Date()     // updatedAt'i güncelle
-    };
-    
-    // Array'deki task'ı güncelle
-    // this.tasks[taskIndex] = O index'teki elemanı değiştir
-    this.tasks[taskIndex] = updatedTask;
-    
-    // Güncellenmiş task'ı döndür
-    return updatedTask;
+    return await taskRepository.update(id, taskData);
   }
-
+  
+  // ==========================================
+  // DELETE TASK
+  // ==========================================
+  // Task sil
+  
   public static async deleteTask(id: string): Promise<boolean> {
+    return await taskRepository.delete(id);
+  }
+  
+  // ==========================================
+  // GET TASKS BY USER
+  // ==========================================
+  // Belirli kullanıcının taskları
+  
+  public static async getTasksByUser(userId: string): Promise<Task[]> {
+    return await taskRepository.findByUserId(userId);
+  }
+  
+  // ==========================================
+  // GET TASKS BY PROJECT
+  // ==========================================
+  // Belirli projenin taskları
+  
+  public static async getTasksByProject(projectId: string): Promise<Task[]> {
+    return await taskRepository.findByProjectId(projectId);
+  }
+  
+  // ==========================================
+  // GET TASKS BY STATUS
+  // ==========================================
+  // Belirli status'teki tasklar
+  
+  public static async getTasksByStatus(status: TaskStatus): Promise<Task[]> {
+    return await taskRepository.findByStatus(status);
+  }
+  
+  // ==========================================
+  // SEARCH TASKS
+  // ==========================================
+  // Başlık/açıklamada arama
+  
+  public static async searchTasks(query: string): Promise<Task[]> {
+    return await taskRepository.search(query);
+  }
+  
+  // ==========================================
+  // GET TASKS WITH FILTERS
+  // ==========================================
+  // Çoklu filtre ile arama
+  
+  public static async getTasksWithFilters(filters: {
+    userId?: string;
+    projectId?: string;
+    status?: TaskStatus;
+    priority?: TaskPriority;
+    search?: string;
+  }): Promise<Task[]> {
+    return await taskRepository.findWithFilters(filters);
+  }
+  
+  // ==========================================
+  // GET TASK STATISTICS
+  // ==========================================
+  // Task istatistikleri
+  
+  public static async getTaskStatistics(userId?: string) {
+    // Kullanıcıya göre filtrele (varsa)
+    const tasks = userId 
+      ? await taskRepository.findByUserId(userId)
+      : await taskRepository.findAll();
     
-    const taskIndex = this.tasks.findIndex((task) => task.id === id);
-    
-    if (taskIndex === -1) {
-      return false;
-    }
-    
-    // Task'ı array'den sil
-    // splice(index, count) = index'ten başlayarak count kadar eleman sil
-    // splice(taskIndex, 1) = taskIndex'teki 1 elemanı sil
-    // 
-    // Örnek:
-    // tasks = [task1, task2, task3]
-    // splice(1, 1) → task2'yi sil
-    // tasks = [task1, task3]
-    this.tasks.splice(taskIndex, 1);
-    
-    return true;
+    // İstatistikleri hesapla
+    return {
+      // Toplam
+      total: tasks.length,
+      
+      // Status'e göre
+      byStatus: {
+        todo: tasks.filter(t => t.status === TaskStatus.TODO).length,
+        inProgress: tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length,
+        done: tasks.filter(t => t.status === TaskStatus.DONE).length,
+        cancelled: tasks.filter(t => t.status === TaskStatus.CANCELLED).length
+      },
+      
+      // Priority'ye göre
+      byPriority: {
+        low: tasks.filter(t => t.priority === TaskPriority.LOW).length,
+        medium: tasks.filter(t => t.priority === TaskPriority.MEDIUM).length,
+        high: tasks.filter(t => t.priority === TaskPriority.HIGH).length,
+        urgent: tasks.filter(t => t.priority === TaskPriority.URGENT).length
+      },
+      
+      // Overdue (süresi geçmiş)
+      overdue: tasks.filter(t => {
+        if (!t.dueDate) return false;
+        if (t.status === TaskStatus.DONE || t.status === TaskStatus.CANCELLED) return false;
+        return new Date(t.dueDate) < new Date();
+      }).length
+    };
   }
 }

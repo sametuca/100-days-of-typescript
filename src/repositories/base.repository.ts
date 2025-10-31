@@ -1,10 +1,20 @@
+// ============================================
+// BASE REPOSITORY
+// ============================================
 // Tüm repository'lerin türeyeceği temel sınıf
 // Ortak CRUD işlemlerini içerir
 
+// Database bağlantısını import et
 import db from '../database/connection';
 
 // BaseEntity = id, createdAt, updatedAt içeren temel tip
 import { BaseEntity } from '../types';
+
+// ==========================================
+// BASE REPOSITORY CLASS
+// ==========================================
+// Generic class = <T> herhangi bir tip olabilir
+// T extends BaseEntity = T, BaseEntity'nin özelliklerini içermeli
 
 export abstract class BaseRepository<T extends BaseEntity> {
   
@@ -15,12 +25,24 @@ export abstract class BaseRepository<T extends BaseEntity> {
   // db = Database bağlantısı
   protected db = db;
   
+  // ==========================================
+  // CONSTRUCTOR
+  // ==========================================
+  // Her repository'de tablo adı belirtilmeli
+  
   constructor(tableName: string) {
     this.tableName = tableName;
   }
   
+  // ==========================================
+  // FIND ALL
+  // ==========================================
+  // Tüm kayıtları getir
+  // Promise<T[]> = T tipinde array döndürecek
   
   public findAll(): Promise<T[]> {
+    // SQL query hazırla
+    // SELECT * FROM ${tableName} = Tüm sütunları getir
     const stmt = this.db.prepare(`SELECT * FROM ${this.tableName}`);
     
     // .all() = Tüm satırları array olarak döndür
@@ -31,6 +53,10 @@ export abstract class BaseRepository<T extends BaseEntity> {
     return Promise.resolve(rows);
   }
   
+  // ==========================================
+  // FIND BY ID
+  // ==========================================
+  // ID'ye göre tek kayıt getir
   
   public findById(id: string): Promise<T | null> {
     // WHERE id = ? = ID'si eşleşen kayıt
@@ -46,6 +72,11 @@ export abstract class BaseRepository<T extends BaseEntity> {
     return Promise.resolve(row || null);
   }
   
+  // ==========================================
+  // DELETE BY ID
+  // ==========================================
+  // ID'ye göre kayıt sil
+  // Promise<boolean> = Başarılı ise true
   
   public delete(id: string): Promise<boolean> {
     // DELETE FROM ${tableName} WHERE id = ?
@@ -61,6 +92,9 @@ export abstract class BaseRepository<T extends BaseEntity> {
     return Promise.resolve(result.changes > 0);
   }
   
+  // ==========================================
+  // COUNT
+  // ==========================================
   // Toplam kayıt sayısı
   
   public count(): Promise<number> {
@@ -75,6 +109,9 @@ export abstract class BaseRepository<T extends BaseEntity> {
     return Promise.resolve(result.count);
   }
   
+  // ==========================================
+  // EXISTS
+  // ==========================================
   // Belirtilen ID var mı kontrol et
   
   public exists(id: string): Promise<boolean> {

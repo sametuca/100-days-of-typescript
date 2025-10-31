@@ -4,6 +4,7 @@
 import { Request, Response } from 'express';
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto, UpdateTaskDto } from '../models/task.model';
+import { TaskStatus, TaskPriority } from '@/types';
 
 export class TaskController {
   
@@ -11,11 +12,50 @@ export class TaskController {
   // 
   // Request → Controller → Service → Database → Service → Controller → Response
   
-  public static async getAllTasks(_req: Request, res: Response): Promise<void> {
-    
+    public static async getAllTasks(req: Request, res: Response): Promise<void> {
     try {
       
-      const tasks = await TaskService.getAllTasks();
+      // ==========================================
+      // QUERY PARAMETERS
+      // ==========================================
+      // URL'den query parametrelerini al
+      // Örnek: /tasks?status=TODO&priority=HIGH
+      
+      const { status, priority, search, userId, projectId } = req.query;
+      
+      // Filtre objesi oluştur
+      const filters: any = {};
+      
+      // status parametresi varsa ekle
+      if (status) {
+        filters.status = status as TaskStatus;
+      }
+      
+      // priority parametresi varsa ekle
+      if (priority) {
+        filters.priority = priority as TaskPriority;
+      }
+      
+      // search parametresi varsa ekle
+      if (search) {
+        filters.search = search as string;
+      }
+      
+      // userId parametresi varsa ekle
+      if (userId) {
+        filters.userId = userId as string;
+      }
+      
+      // projectId parametresi varsa ekle
+      if (projectId) {
+        filters.projectId = projectId as string;
+      }
+      
+      // Filtre varsa filtrelenmiş taskları al, yoksa tümünü al
+      const tasks = Object.keys(filters).length > 0
+        ? await TaskService.getTasksWithFilters(filters)
+        : await TaskService.getAllTasks();
+      
       res.status(200).json({
         success: true,
         count: tasks.length,
@@ -24,6 +64,7 @@ export class TaskController {
       
     } catch (error) {
       console.error('Error in getAllTasks:', error);
+      
       res.status(500).json({
         success: false,
         message: 'Tasklar getirilemedi',
@@ -71,9 +112,6 @@ export class TaskController {
   public static async createTask(req: Request, res: Response): Promise<any> {
     try {
       
-      // Request body'den veriyi al
-      // req.body = POST ile gönderilen veri (JSON)
-      // express.json() middleware'i sayesinde parse edilmiş
       const taskData: CreateTaskDto = req.body;
       
       if (!taskData.title || taskData.title.trim() === '') {
@@ -83,7 +121,10 @@ export class TaskController {
         });
       }
       
-      const newTask = await TaskService.createTask(taskData);
+      // Şimdilik sabit user ID (ileride JWT'den gelecek)
+      const userId = 'user_1';
+      
+      const newTask = await TaskService.createTask(taskData, userId);
       
       res.status(201).json({
         success: true,

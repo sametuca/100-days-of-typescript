@@ -1,7 +1,12 @@
+// ============================================
+// TASK REPOSITORY
+// ============================================
 // Task tablosu ile ilgili tüm database işlemleri
 
+// BaseRepository'den türe
 import { BaseRepository } from './base.repository';
 
+// Task tiplerini import et
 import { Task, TaskStatus, TaskPriority, CreateTaskDto, UpdateTaskDto } from '../types';
 
 // ==========================================
