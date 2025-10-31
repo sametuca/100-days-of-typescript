@@ -2,9 +2,10 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 
 import routes from './routes';
-
+import logger from './utils/logger';
 import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 import { initializeDatabase } from './database/init';
+import { notFoundHandler } from './middleware/error.middleware';
 class App {
   public app: Application;
   private port: number | string;
@@ -21,40 +22,32 @@ class App {
 
   // Request → Middleware 1 → Middleware 2 → Route → Response
   
-  private initializeMiddlewares(): void {
-    
-    // express.json() = Gelen request body'sini JSON olarak parse et
-    // Kullanım: req.body ile erişebiliriz
+private initializeMiddlewares(): void {
     this.app.use(express.json());
-    
-    // Form data'sını parse et
-    // extended: true = Nested objeler desteklenir
     this.app.use(express.urlencoded({ extended: true }));
 
-    // CORS = Cross-Origin Resource Sharing
-    // Farklı domain'lerden gelen isteklere izin ver
-    
-    // Her istek için bu middleware çalışır
+    // CORS
     this.app.use((req: Request, res: Response, next: NextFunction) => {
-      
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
       
-      // OPTIONS request = CORS preflight isteği
-      // Browser önce OPTIONS isteği atar, izin varsa gerçek isteği yapar
       if (req.method === 'OPTIONS') {
-        // 200 kodu döndür ve bitir
-        res.sendStatus(200);
-        return;
+        return res.sendStatus(200);
       }
       
       next();
+      return undefined;
     });
 
+    // ============================================
+    // REQUEST LOGGER - GÜNCELLENMIŞ
+    // ============================================
+    // Console.log yerine Winston logger kullan
     this.app.use((req: Request, _res: Response, next: NextFunction) => {
-      console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+      logger.info(`[${req.method}] ${req.path}`);
       next();
+      return undefined;
     });
   }
 
@@ -66,16 +59,10 @@ class App {
     // Örnek:
     // routes'da: router.get('/health', ...)
     // Gerçekte: GET /api/v1/health
-    this.app.use(SERVER_CONFIG.API_PREFIX, routes);
+       this.app.use(SERVER_CONFIG.API_PREFIX, routes);
 
-    this.app.use('/', (req: Request, res: Response) => {
-      res.status(404).json({
-        success: false,
-        message: 'Route not found',
-        // req.originalUrl = Kullanıcının girdiği tam URL
-        path: req.originalUrl
-      });
-    });
+    this.app.use(notFoundHandler);
+
   }
 
   
@@ -100,17 +87,16 @@ class App {
     initializeDatabase();
   }
 
-  public listen(): void {
-    
+public listen(): void {
     this.app.listen(this.port, () => {
-      
-      console.log(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
-      
-      console.log(`🌐 Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
-      
-      console.log(`📡 API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
-      
-      console.log(`💚 Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
+      logger.info('═══════════════════════════════════════');
+      logger.info('🚀 DevTracker Server Started!');
+      logger.info('═══════════════════════════════════════');
+      logger.info(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
+      logger.info(`🌐 Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
+      logger.info(`📡 API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
+      logger.info(`💚 Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
+      logger.info('═══════════════════════════════════════');
     });
   }
 }
