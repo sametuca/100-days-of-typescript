@@ -1,4 +1,3 @@
-// Controller = HTTP isteklerini yakalar, service'i çağırır, cevap döner
 // Route → Controller → Service → Database
 
 import { Request, Response } from 'express';
@@ -15,43 +14,33 @@ export class TaskController {
     public static async getAllTasks(req: Request, res: Response): Promise<void> {
     try {
       
-      // ==========================================
-      // QUERY PARAMETERS
-      // ==========================================
       // URL'den query parametrelerini al
       // Örnek: /tasks?status=TODO&priority=HIGH
       
       const { status, priority, search, userId, projectId } = req.query;
       
-      // Filtre objesi oluştur
       const filters: any = {};
       
-      // status parametresi varsa ekle
       if (status) {
         filters.status = status as TaskStatus;
       }
       
-      // priority parametresi varsa ekle
       if (priority) {
         filters.priority = priority as TaskPriority;
       }
       
-      // search parametresi varsa ekle
       if (search) {
         filters.search = search as string;
       }
       
-      // userId parametresi varsa ekle
       if (userId) {
         filters.userId = userId as string;
       }
       
-      // projectId parametresi varsa ekle
       if (projectId) {
         filters.projectId = projectId as string;
       }
       
-      // Filtre varsa filtrelenmiş taskları al, yoksa tümünü al
       const tasks = Object.keys(filters).length > 0
         ? await TaskService.getTasksWithFilters(filters)
         : await TaskService.getAllTasks();
@@ -73,8 +62,6 @@ export class TaskController {
     }
   }
 
-  // Endpoint: GET /api/v1/tasks/:id
-  // Örnek: GET /api/v1/tasks/1
 
   public static async getTaskById(req: Request, res: Response): Promise<any> {
     try {
@@ -106,9 +93,6 @@ export class TaskController {
     }
   }
 
-  // Endpoint: POST /api/v1/tasks
-  // Body: { "title": "Yeni Task", "description": "Açıklama" }
-  
   public static async createTask(req: Request, res: Response): Promise<any> {
     try {
       
@@ -121,7 +105,6 @@ export class TaskController {
         });
       }
       
-      // Şimdilik sabit user ID (ileride JWT'den gelecek)
       const userId = 'user_1';
       
       const newTask = await TaskService.createTask(taskData, userId);
@@ -143,9 +126,6 @@ export class TaskController {
     }
   }
 
-  // Endpoint: PUT /api/v1/tasks/:id
-  // Body: { "title": "Yeni Başlık", "status": "DONE" }
-  
   public static async updateTask(req: Request, res: Response): Promise<any> {
     try {
       
@@ -186,8 +166,6 @@ export class TaskController {
     }
   }
 
-  // Endpoint: DELETE /api/v1/tasks/:id
-  
   public static async deleteTask(req: Request, res: Response): Promise<any> {
     try {
       
