@@ -21,8 +21,8 @@ class App {
   }
 
   // Request → Middleware 1 → Middleware 2 → Route → Response
-  
-private initializeMiddlewares(): void {
+
+  private initializeMiddlewares(): void {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
@@ -31,11 +31,11 @@ private initializeMiddlewares(): void {
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      
+
       if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
       }
-      
+
       next();
       return undefined;
     });
@@ -53,16 +53,16 @@ private initializeMiddlewares(): void {
 
   }
 
-  
+
   private initializeErrorHandling(): void {
-    
+
     // next = Sonraki middleware (kullanılmıyor ama gerekli)
     this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
       console.error('Error:', err.message);
       res.status(500).json({
         success: false,
         message: 'Internal server error',
-        
+
         error: SERVER_CONFIG.NODE_ENV === 'development' ? err.message : undefined
       });
     });
@@ -72,7 +72,7 @@ private initializeMiddlewares(): void {
     initializeDatabase();
   }
 
-public listen(): void {
+  public listen(): void {
     this.app.listen(this.port, () => {
       logger.info('═══════════════════════════════════════');
       logger.info('🚀 DevTracker Server Started!');
