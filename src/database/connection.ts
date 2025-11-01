@@ -5,10 +5,11 @@ import path from 'path';
 
 // fs = File system (dosya sistemi)
 import fs from 'fs';
+import { config } from '../config/env';
 
 
 // __dirname = Bu dosyanın bulunduğu klasör
-const DB_PATH = path.join(__dirname, '../../data/devtracker.db');
+const DB_PATH = path.resolve(config.database.path);
 
 
 // path.dirname() = Dosya yolundan klasör yolunu al
@@ -25,7 +26,7 @@ if (!fs.existsSync(dataDir)) {
 // DB_PATH = Database dosyasının yolu
 // Dosya yoksa otomatik oluşturur
 const db = new Database(DB_PATH, {
-  verbose: process.env.NODE_ENV === 'development' ? console.log : undefined
+   verbose: config.database.verbose ? console.log : undefined
 });
 
 // Foreign key kısıtlamalarını aktif et

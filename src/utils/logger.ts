@@ -4,7 +4,7 @@ import fs from 'fs';
 
 // __dirname = Bu dosyanın bulunduğu klasör
 // ../../logs = İki üst klasör + logs
-const logDir = path.join(__dirname, '../../logs');
+const logDir = path.resolve(process.env.LOG_DIR || 'logs');
 
 // logs klasörü yoksa oluştur
 if (!fs.existsSync(logDir)) {
@@ -32,7 +32,7 @@ const logger = winston.createLogger({
   // level = En düşük log seviyesi
   // 'debug' = Tüm logları göster
   // NODE_ENV production ise 'info', değilse 'debug'
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+   level: process.env.LOG_LEVEL || 'debug',
   
   // format = Log formatı
   format: winston.format.combine(

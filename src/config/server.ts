@@ -1,11 +1,21 @@
+// ============================================
+// SERVER CONFIGURATION
+// ============================================
+// Artık .env dosyasından geliyor
+
+// Config'i import et
+import config from './env';
+
+// SERVER_CONFIG = config.server'dan al
 export const SERVER_CONFIG = {
-  PORT: process.env.PORT || 3000,
-  HOST: process.env.HOST || 'localhost',
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  API_PREFIX: '/api/v1'
+  PORT: config.server.port,
+  HOST: config.server.host,
+  NODE_ENV: config.app.env,
+  API_PREFIX: config.server.apiPrefix
 } as const;
 
+// CORS_CONFIG = config.cors'tan al
 export const CORS_CONFIG = {
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true
+  origin: config.cors.origin,
+  credentials: config.cors.credentials
 };

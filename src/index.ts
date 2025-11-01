@@ -6,6 +6,11 @@ import logger from './utils/logger';
 import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 import { initializeDatabase } from './database/init';
 import { notFoundHandler } from './middleware/error.middleware';
+import { validateConfig, printConfig } from './config/env';
+
+validateConfig();
+printConfig();
+
 class App {
   public app: Application;
   private port: number | string;
