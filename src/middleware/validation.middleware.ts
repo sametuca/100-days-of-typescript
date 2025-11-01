@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { TaskStatus, TaskPriority } from '../types';
 
 export const validateCreateTask = (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ): void => {
-  
+
   const { title, status, priority } = req.body;
-  
+
   if (!title || typeof title !== 'string' || title.trim() === '') {
     res.status(400).json({
       success: false,
@@ -16,7 +16,7 @@ export const validateCreateTask = (
     });
     return;
   }
-  
+
   if (title.trim().length < 3) {
     res.status(400).json({
       success: false,
@@ -24,18 +24,18 @@ export const validateCreateTask = (
     });
     return;
   }
-  
+
   if (status && !Object.values(TaskStatus).includes(status)) {
     // Object.values(TaskStatus) = ['TODO', 'IN_PROGRESS', 'DONE']
     // includes(status) = status bu array'de var mı?
-    
+
     res.status(400).json({
       success: false,
       message: `Geçersiz status. Geçerli değerler: ${Object.values(TaskStatus).join(', ')}`
     });
     return;
   }
-  
+
   if (priority && !Object.values(TaskPriority).includes(priority)) {
     res.status(400).json({
       success: false,
@@ -43,19 +43,19 @@ export const validateCreateTask = (
     });
     return;
   }
-  
+
   next();
 };
 
 
 export const validateUpdateTask = (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ): void => {
-  
+
   const { title, status, priority, description } = req.body;
-  
+
   if (!title && !status && !priority && description === undefined) {
     res.status(400).json({
       success: false,
@@ -63,7 +63,7 @@ export const validateUpdateTask = (
     });
     return;
   }
-  
+
   if (title !== undefined) {
     if (typeof title !== 'string' || title.trim() === '') {
       res.status(400).json({
@@ -72,7 +72,7 @@ export const validateUpdateTask = (
       });
       return;
     }
-    
+
     if (title.trim().length < 3) {
       res.status(400).json({
         success: false,
@@ -81,7 +81,7 @@ export const validateUpdateTask = (
       return;
     }
   }
-  
+
   if (status && !Object.values(TaskStatus).includes(status)) {
     res.status(400).json({
       success: false,
@@ -89,7 +89,7 @@ export const validateUpdateTask = (
     });
     return;
   }
-  
+
   if (priority && !Object.values(TaskPriority).includes(priority)) {
     res.status(400).json({
       success: false,
@@ -97,19 +97,19 @@ export const validateUpdateTask = (
     });
     return;
   }
-  
+
   next();
 };
 
 
 export const validateTaskId = (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ): void => {
-  
+
   const { id } = req.params;
-  
+
   if (!id || id.trim() === '') {
     res.status(400).json({
       success: false,
