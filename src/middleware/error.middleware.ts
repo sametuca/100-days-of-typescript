@@ -110,9 +110,6 @@ export const notFoundHandler = (
   });
 };
 
-// ==========================================
-// ASYNC ERROR WRAPPER
-// ==========================================
 // Async function'ları wrap eder, hata olursa yakalar
 
 // AsyncFunction = Async function tipi
