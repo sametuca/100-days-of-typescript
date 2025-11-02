@@ -17,3 +17,16 @@ export class ApiError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
+
+export class ValidationError extends ApiError {
+  public details: any[];
+
+  constructor(
+    message: string,
+    details: any[] = [],
+    errorCode: string = 'VALIDATION_ERROR'
+  ) {
+    super(message, 400, errorCode);
+    this.details = details;
+  }
+}

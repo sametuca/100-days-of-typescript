@@ -98,13 +98,6 @@ export class TaskController {
       
       const taskData: CreateTaskDto = req.body;
       
-      if (!taskData.title || taskData.title.trim() === '') {
-        return res.status(400).json({
-          success: false,
-          message: 'Task başlığı zorunludur'
-        });
-      }
-      
       const userId = 'user_1';
       
       const newTask = await TaskService.createTask(taskData, userId);
