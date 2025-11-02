@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { TaskStatus, TaskPriority } from '../types';
 
-export const taskStatusSchema = z.nativeEnum(TaskStatus);
+export const taskStatusSchema = z.enum(Object.values(TaskStatus) as [string, ...string[]]);
 
-export const taskPrioritySchema = z.nativeEnum(TaskPriority);
+export const taskPrioritySchema = z.enum(Object.values(TaskPriority) as [string, ...string[]]);
 
 export const createTaskSchema = z.object({
   title: z
