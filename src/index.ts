@@ -31,7 +31,6 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
-    // CORS
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -55,9 +54,7 @@ class App {
   private initializeRoutes(): void {
     this.app.use(SERVER_CONFIG.API_PREFIX, routes);
     this.app.use(notFoundHandler);
-
   }
-
 
   private initializeErrorHandling(): void {
 

@@ -1,21 +1,21 @@
 export enum TaskStatus {
-  TODO = 'TODO',                    // Yapılacak
-  IN_PROGRESS = 'IN_PROGRESS',      // Devam ediyor
-  DONE = 'DONE',                    // Tamamlandı
-  CANCELLED = 'CANCELLED'           // İptal edildi (YENİ)
+  TODO = 'TODO',                    
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED'
 }
 
 export enum TaskPriority {
-  LOW = 'LOW',                      // Düşük
-  MEDIUM = 'MEDIUM',                // Orta
-  HIGH = 'HIGH',                    // Yüksek
-  URGENT = 'URGENT'                 // Acil
+  LOW = 'LOW',                     
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT'
 }
 
 export enum UserRole {
-  USER = 'USER',                    // Normal kullanıcı
-  ADMIN = 'ADMIN',                  // Yönetici
-  MODERATOR = 'MODERATOR'           // Moderatör
+  USER = 'USER',                    
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR'
 }
 
 export interface BaseEntity {
@@ -91,7 +91,6 @@ export interface CreateUserDto {
   role?: UserRole;
 }
 
-// User güncellerken gönderilecek veri
 export interface UpdateUserDto {
   firstName?: string;
   lastName?: string;
@@ -100,7 +99,6 @@ export interface UpdateUserDto {
   // password güncelleme ayrı endpoint'te olacak (güvenlik için)
 }
 
-// Project oluştururken gönderilecek veri
 export interface CreateProjectDto {
   name: string;
   description?: string;
@@ -108,7 +106,6 @@ export interface CreateProjectDto {
   memberIds?: string[];
 }
 
-// Project güncellerken gönderilecek veri
 export interface UpdateProjectDto extends Partial<CreateProjectDto> {
   status?: 'ACTIVE' | 'ARCHIVED' | 'COMPLETED';
 }
@@ -121,39 +118,20 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
-// Paginated response (sayfalama için)
-// Çok sayıda veri varsa sayfalara böleriz
 export interface PaginatedResponse<T> {
   success: boolean;
   
-  // data = Mevcut sayfadaki veri
   data: T[];
   
-  // pagination = Sayfalama bilgileri
   pagination: {
-    // page = Hangi sayfa? (1, 2, 3, ...)
     page: number;
-    
-    // limit = Sayfa başına kaç eleman?
     limit: number;
-    
-    // total = Toplam kaç eleman var?
     total: number;
-    
-    // totalPages = Toplam kaç sayfa var?
     totalPages: number;
-    
-    // hasNext = Sonraki sayfa var mı?
     hasNext: boolean;
-    
-    // hasPrev = Önceki sayfa var mı?
     hasPrev: boolean;
   };
 }
-
-// ==========================================
-// UTILITY TYPES - YARDIMCI TİPLER
-// ==========================================
 
 // Task'tan sadece belirli alanları al
 // Pick<Task, 'id' | 'title'> = Sadece id ve title alanları
@@ -171,11 +149,7 @@ export type SafeUser = Omit<User, 'passwordHash'>;
 // Required<T> = T'nin tüm alanlarını zorunlu yap
 export type CompleteTask = Required<Task>;
 
-// ==========================================
-// TYPE GUARDS - TİP KONTROLÜ
-// ==========================================
 // Runtime'da tip kontrolü yapmak için
-
 // Bir değer Task mı kontrol et
 export function isTask(obj: any): obj is Task {
   // obj is Task = Eğer true dönerse obj'nin tipi Task'tır
@@ -202,10 +176,6 @@ export function isUser(obj: any): obj is User {
   );
 }
 
-// ==========================================
-// UNION & INTERSECTION TYPES
-// ==========================================
-
 // Union type (VEYA)
 // EntityType = Task VEYA User VEYA Project olabilir
 export type EntityType = Task | User | Project;
@@ -225,12 +195,7 @@ export type WithTimestamp<T> = T & Timestamped;
 // type TimestampedTask = WithTimestamp<{ title: string }>;
 // Result: { title: string, createdAt: Date, updatedAt: Date }
 
-// ==========================================
-// QUERY PARAMETERS - SORGU PARAMETRELERİ
-// ==========================================
 // URL query string'leri için tipler
-
-// Task listesi için query parametreleri
 export interface TaskQueryParams {
   status?: TaskStatus;
   priority?: TaskPriority;
@@ -244,7 +209,6 @@ export interface TaskQueryParams {
   limit?: number;
 }
 
-// User listesi için query parametreleri
 export interface UserQueryParams {
   role?: UserRole;
   isActive?: boolean;
@@ -260,11 +224,9 @@ export interface AppConfig {
   environment: 'development' | 'production' | 'test';
   apiPrefix: string;
   jwt: {
-    secret: string;              // JWT secret key
-    expiresIn: string;           // Token süresi ('1h', '7d', vb.)
+    secret: string;              
+    expiresIn: string;          
   };
-  
-  // database = Veritabanı ayarları
   database: {
     host: string;
     port: number;
