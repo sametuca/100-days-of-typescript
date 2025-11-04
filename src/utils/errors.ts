@@ -30,3 +30,12 @@ export class ValidationError extends ApiError {
     this.details = details;
   }
 }
+
+export class ConflictError extends ApiError {
+  constructor(
+    message: string,
+    errorCode: string = 'CONFLICT_ERROR'
+  ) {
+    super(message, 409, errorCode);
+  }
+}
