@@ -244,3 +244,5 @@
 [2025-11-04 23:36:37] INFO: [POST] /api/v1/auth/register 
 [2025-11-04 23:36:37] INFO: User registered: user_1000 (test@example.com) 
 [2025-11-04 23:36:37] INFO: Registration successful: test@example.com 
+[2025-11-04 23:37:34] INFO: [POST] /api/v1/auth/register 
+[2025-11-04 23:37:40] INFO: [POST] /api/v1/auth/register 
