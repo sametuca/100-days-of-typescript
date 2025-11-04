@@ -87,8 +87,6 @@ export const errorHandler = (
   res.status(statusCode).json(errorResponse);
 };
 
-// 404 - Route bulunamadı
-
 export const notFoundHandler = (
   req: Request,
   res: Response,
