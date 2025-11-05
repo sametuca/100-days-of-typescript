@@ -39,3 +39,12 @@ export class ConflictError extends ApiError {
     super(message, 409, errorCode);
   }
 }
+
+export class AuthenticationError extends ApiError {
+  constructor(
+    message: string,
+    errorCode: string = 'AUTHENTICATION_ERROR'
+  ) {
+    super(message, 401, errorCode);
+  }
+}

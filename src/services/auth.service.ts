@@ -1,8 +1,9 @@
 import { userRepository } from '../repositories/user.repository';
 import { PasswordUtil } from '../utils/password';
-import { ConflictError, ValidationError } from '../utils/errors';
+import { ConflictError, ValidationError, AuthenticationError } from '../utils/errors';
 import { User } from '../types';
 import logger from '../utils/logger';
+import { JwtUtil } from '@/utils/jwt';
 
 export interface RegisterData {
   email: string;
@@ -50,5 +51,46 @@ export class AuthService {
 
     const { passwordHash: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+
+  public static async login(email: string, password: string): Promise<{
+    user: Omit<User, 'passwordHash'>;
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const user = await userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new AuthenticationError('Email veya şifre hatalı', 'INVALID_CREDENTIALS');
+    }
+
+    if (!user.isActive) {
+      throw new AuthenticationError('Hesabınız aktif değil', 'ACCOUNT_INACTIVE');
+    }
+
+    const isPasswordValid = await PasswordUtil.compare(password, user.passwordHash);
+
+    if (!isPasswordValid) {
+      throw new AuthenticationError('Email veya şifre hatalı', 'INVALID_CREDENTIALS');
+    }
+
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    };
+
+    const accessToken = JwtUtil.generateAccessToken(payload);
+    const refreshToken = JwtUtil.generateRefreshToken(payload);
+
+    logger.info(`User logged in: ${user.id} (${user.email})`);
+
+    const { passwordHash: _, ...userWithoutPassword } = user;
+
+    return {
+      user: userWithoutPassword,
+      accessToken,
+      refreshToken
+    };
   }
 }

@@ -42,3 +42,22 @@ export const registerSchema = z.object({
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
+
+
+export const loginSchema = z.object({
+  email: z
+    .string({
+      message: 'Email zorunludur'
+    })
+    .email('Geçerli bir email adresi giriniz')
+    .toLowerCase()
+    .trim(),
+
+  password: z
+    .string({
+      message: 'Şifre zorunludur'
+    })
+    .min(1, 'Şifre boş olamaz')
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;

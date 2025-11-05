@@ -3,7 +3,8 @@
 import { Request, Response } from 'express';
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto, UpdateTaskDto } from '../models/task.model';
-import { TaskStatus, TaskPriority } from '@/types';
+import { TaskStatus, TaskPriority } from '../types';
+import logger from '../utils/logger';
 
 export class TaskController {
   
@@ -95,19 +96,19 @@ export class TaskController {
 
   public static async createTask(req: Request, res: Response): Promise<any> {
     try {
-      
       const taskData: CreateTaskDto = req.body;
       
-      const userId = 'user_1';
+      const userId = req.user!.userId;
       
       const newTask = await TaskService.createTask(taskData, userId);
+      
+      logger.info(`Task created: ${newTask.id} by user ${userId}`);
       
       res.status(201).json({
         success: true,
         message: 'Task başarıyla oluşturuldu',
         data: newTask
       });
-      
     } catch (error) {
       console.error('Error in createTask:', error);
       
@@ -118,7 +119,6 @@ export class TaskController {
       });
     }
   }
-
   public static async updateTask(req: Request, res: Response): Promise<any> {
     try {
       

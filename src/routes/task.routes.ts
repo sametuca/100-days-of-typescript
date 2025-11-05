@@ -7,8 +7,11 @@ import {
   taskQuerySchema
 } from '../validation/task.validation';
 import { validateBody, validateParams, validateQuery } from '../middleware/validate.middleware';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
+
+router.use(authenticate);
 
 router.get('/', validateQuery(taskQuerySchema), TaskController.getAllTasks);
 router.get('/:id', validateParams(taskIdSchema), TaskController.getTaskById);
