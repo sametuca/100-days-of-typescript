@@ -3,7 +3,7 @@ import { PasswordUtil } from '../utils/password';
 import { ConflictError, ValidationError, AuthenticationError } from '../utils/errors';
 import { User } from '../types';
 import logger from '../utils/logger';
-import { JwtUtil } from '@/utils/jwt';
+import { JwtUtil } from '../utils/jwt';
 
 export interface RegisterData {
   email: string;

@@ -48,3 +48,12 @@ export class AuthenticationError extends ApiError {
     super(message, 401, errorCode);
   }
 }
+
+export class AuthorizationError extends ApiError {
+  constructor(
+    message: string,
+    errorCode: string = 'AUTHORIZATION_ERROR'
+  ) {
+    super(message, 403, errorCode);
+  }
+}
