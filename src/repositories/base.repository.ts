@@ -21,9 +21,6 @@ export abstract class BaseRepository<T extends BaseEntity> {
     this.tableName = tableName;
   }
 
-  // Tüm kayıtları getir
-  // Promise<T[]> = T tipinde array döndürecek
-
   public findAll(): Promise<T[]> {
     // SQL query hazırla
     // SELECT * FROM ${tableName} = Tüm sütunları getir
@@ -36,8 +33,6 @@ export abstract class BaseRepository<T extends BaseEntity> {
     // (async/await uyumluluğu için)
     return Promise.resolve(rows);
   }
-
-  // ID'ye göre tek kayıt getir
 
   public findById(id: string): Promise<T | null> {
     // WHERE id = ? = ID'si eşleşen kayıt
@@ -52,9 +47,6 @@ export abstract class BaseRepository<T extends BaseEntity> {
     // row || null = row varsa döndür, yoksa null
     return Promise.resolve(row || null);
   }
-
-  // ID'ye göre kayıt sil
-  // Promise<boolean> = Başarılı ise true
 
   public delete(id: string): Promise<boolean> {
     // DELETE FROM ${tableName} WHERE id = ?

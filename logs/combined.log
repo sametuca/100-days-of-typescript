@@ -265,3 +265,25 @@
 [2025-11-05 23:51:52] INFO: 📡 API: http://localhost:3000/api/v1 
 [2025-11-05 23:51:52] INFO: 💚 Health: http://localhost:3000/api/v1/health 
 [2025-11-05 23:51:52] INFO: ═══════════════════════════════════════ 
+[2025-11-05 23:53:30] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:53:30] INFO: User logged in: user_1000 (test@example.com) 
+[2025-11-05 23:53:30] INFO: Login successful: test@example.com 
+[2025-11-05 23:53:46] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:54:25] INFO: [POST] /api/v1/tasks 
+[2025-11-05 23:55:18] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:55:18] INFO: User logged in: user_1000 (test@example.com) 
+[2025-11-05 23:55:18] INFO: Login successful: test@example.com 
+[2025-11-05 23:55:24] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:55:24] INFO: User logged in: user_1000 (test@example.com) 
+[2025-11-05 23:55:24] INFO: Login successful: test@example.com 
+[2025-11-05 23:57:20] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:57:20] INFO: User logged in: user_1000 (test@example.com) 
+[2025-11-05 23:57:20] INFO: Login successful: test@example.com 
+[2025-11-05 23:57:47] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:58:03] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:58:11] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:58:22] INFO: [POST] /api/v1/auth/login 
+[2025-11-05 23:58:22] INFO: User logged in: user_1000 (test@example.com) 
+[2025-11-05 23:58:22] INFO: Login successful: test@example.com 
+[2025-11-05 23:59:20] INFO: [POST] /api/v1/tasks 
+[2025-11-05 23:59:20] INFO: Task created: task_1000 by user user_1000 
