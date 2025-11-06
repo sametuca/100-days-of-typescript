@@ -164,6 +164,34 @@ export const createTables = () => {
       updated_at TEXT NOT NULL DEFAULT (DATETIME('now'))
     )
   `);
+
+    // ------------------------------------------
+  // REFRESH_TOKENS TABLE
+  // ------------------------------------------
+  
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token TEXT UNIQUE NOT NULL,
+      expires_at TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
+      revoked INTEGER NOT NULL DEFAULT 0,
+      revoked_at TEXT
+    )
+  `);
+  
+  console.log('  ✅ refresh_tokens table created');
+  
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id 
+    ON refresh_tokens(user_id)
+  `);
+  
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token 
+    ON refresh_tokens(token)
+  `);
   
   console.log('  ✅ tasks table created');
   
@@ -216,6 +244,7 @@ export const dropTables = () => {
   db.exec('DROP TABLE IF EXISTS project_members');
   db.exec('DROP TABLE IF EXISTS projects');
   db.exec('DROP TABLE IF EXISTS users');
+  db.exec('DROP TABLE IF EXISTS refresh_tokens');
   
   console.log('✅ All tables dropped');
 };

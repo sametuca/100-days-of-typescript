@@ -7,6 +7,7 @@ import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 import { initializeDatabase } from './database/init';
 import { notFoundHandler } from './middleware/error.middleware';
 import { validateConfig, printConfig } from './config/env';
+import { CleanupJob } from './jobs/cleanup.job';
 
 validateConfig();
 printConfig();
@@ -23,6 +24,7 @@ class App {
     this.initializeRoutes();
     this.initializeErrorHandling();
     this.initializeDatabase();
+    CleanupJob.start();
   }
 
   // Request → Middleware 1 → Middleware 2 → Route → Response

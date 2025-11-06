@@ -4,6 +4,7 @@ import { ConflictError, ValidationError, AuthenticationError } from '../utils/er
 import { User } from '../types';
 import logger from '../utils/logger';
 import { JwtUtil } from '../utils/jwt';
+import { refreshTokenRepository } from '../repositories/refresh-token.repository';
 
 export interface RegisterData {
   email: string;
@@ -14,7 +15,7 @@ export interface RegisterData {
 }
 
 export class AuthService {
-  
+
   public static async register(data: RegisterData): Promise<Omit<User, 'passwordHash'>> {
     const { email, username, password, firstName, lastName } = data;
 
@@ -82,7 +83,14 @@ export class AuthService {
 
     const accessToken = JwtUtil.generateAccessToken(payload);
     const refreshToken = JwtUtil.generateRefreshToken(payload);
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
 
+    await refreshTokenRepository.create({
+      userId: user.id,
+      token: refreshToken,
+      expiresAt
+    });
     logger.info(`User logged in: ${user.id} (${user.email})`);
 
     const { passwordHash: _, ...userWithoutPassword } = user;
@@ -92,5 +100,79 @@ export class AuthService {
       accessToken,
       refreshToken
     };
+  }
+
+  public static async refreshToken(refreshToken: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const decoded = JwtUtil.verifyRefreshToken(refreshToken);
+
+    const storedToken = await refreshTokenRepository.findByToken(refreshToken);
+
+    if (!storedToken) {
+      throw new AuthenticationError('Refresh token bulunamadı', 'REFRESH_TOKEN_NOT_FOUND');
+    }
+
+    if (storedToken.revoked) {
+      throw new AuthenticationError('Refresh token iptal edilmiş', 'REFRESH_TOKEN_REVOKED');
+    }
+
+    if (new Date() > storedToken.expiresAt) {
+      throw new AuthenticationError('Refresh token süresi dolmuş', 'REFRESH_TOKEN_EXPIRED');
+    }
+
+    const user = await userRepository.findById(decoded.userId);
+
+    if (!user) {
+      throw new AuthenticationError('Kullanıcı bulunamadı', 'USER_NOT_FOUND');
+    }
+
+    if (!user.isActive) {
+      throw new AuthenticationError('Hesap aktif değil', 'ACCOUNT_INACTIVE');
+    }
+
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    };
+
+    const newAccessToken = JwtUtil.generateAccessToken(payload);
+    const newRefreshToken = JwtUtil.generateRefreshToken(payload);
+
+    await refreshTokenRepository.revoke(refreshToken);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
+
+    await refreshTokenRepository.create({
+      userId: user.id,
+      token: newRefreshToken,
+      expiresAt
+    });
+
+    logger.info(`Tokens refreshed for user: ${user.id}`);
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    };
+  }
+
+  public static async logout(refreshToken: string): Promise<void> {
+    const revoked = await refreshTokenRepository.revoke(refreshToken);
+
+    if (!revoked) {
+      throw new AuthenticationError('Refresh token bulunamadı', 'REFRESH_TOKEN_NOT_FOUND');
+    }
+
+    logger.info('User logged out');
+  }
+
+  public static async logoutAll(userId: string): Promise<void> {
+    const count = await refreshTokenRepository.revokeAllForUser(userId);
+
+    logger.info(`All sessions logged out for user: ${userId} (${count} tokens revoked)`);
   }
 }
