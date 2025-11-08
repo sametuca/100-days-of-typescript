@@ -62,6 +62,16 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+export const refreshTokenSchema = z.object({
+  refreshToken: z
+    .string({
+      message: 'Refresh token zorunludur'
+    })
+    .min(1, 'Refresh token boş olamaz')
+});
+
+export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;
+
 
 export const updateProfileSchema = z.object({
   email: z

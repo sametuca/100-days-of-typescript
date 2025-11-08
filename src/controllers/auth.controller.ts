@@ -34,4 +34,44 @@ export class AuthController {
       data: result
     });
   });
+
+  public static refreshToken = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { refreshToken } = req.body;
+
+    const tokens = await AuthService.refreshToken(refreshToken);
+
+    logger.info('Tokens refreshed successfully');
+
+    res.status(200).json({
+      success: true,
+      message: 'Token yenilendi',
+      data: tokens
+    });
+  });
+
+  public static logout = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { refreshToken } = req.body;
+
+    await AuthService.logout(refreshToken);
+
+    logger.info('Logout successful');
+
+    res.status(200).json({
+      success: true,
+      message: 'Çıkış başarılı'
+    });
+  });
+
+  public static logoutAll = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.userId;
+
+    await AuthService.logoutAll(userId);
+
+    logger.info(`All sessions logged out for user: ${userId}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Tüm oturumlardan çıkış yapıldı'
+    });
+  });
 }
