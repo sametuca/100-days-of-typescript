@@ -85,6 +85,58 @@ export class UserRepository extends BaseRepository<User> {
     return Promise.resolve(result.count > 0);
   }
 
+  public update(id: string, data: Partial<CreateUserData>): Promise<User | null> {
+    const updateFields: string[] = [];
+    const updateValues: any[] = [];
+
+    if (data.email !== undefined) {
+      updateFields.push('email = ?');
+      updateValues.push(data.email);
+    }
+
+    if (data.username !== undefined) {
+      updateFields.push('username = ?');
+      updateValues.push(data.username);
+    }
+
+    if (data.firstName !== undefined) {
+      updateFields.push('first_name = ?');
+      updateValues.push(data.firstName);
+    }
+
+    if (data.lastName !== undefined) {
+      updateFields.push('last_name = ?');
+      updateValues.push(data.lastName);
+    }
+
+    updateFields.push('updated_at = ?');
+    updateValues.push(new Date().toISOString());
+
+    if (updateFields.length === 1) {
+      return this.findById(id);
+    }
+
+    const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
+    updateValues.push(id);
+
+    const stmt = this.db.prepare(sql);
+    stmt.run(...updateValues);
+
+    return this.findById(id);
+  }
+
+  public updatePassword(id: string, passwordHash: string): Promise<boolean> {
+    const stmt = this.db.prepare(`
+      UPDATE users 
+      SET password_hash = ?, updated_at = ? 
+      WHERE id = ?
+    `);
+
+    const result = stmt.run(passwordHash, new Date().toISOString(), id);
+
+    return Promise.resolve(result.changes > 0);
+  }
+
   private parseUser(row: any): User {
     return {
       id: row.id,

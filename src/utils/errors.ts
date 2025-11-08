@@ -57,3 +57,12 @@ export class AuthorizationError extends ApiError {
     super(message, 403, errorCode);
   }
 }
+
+export class NotFoundError extends ApiError {
+  constructor(
+    message: string,
+    errorCode: string = 'NOT_FOUND_ERROR'
+  ) {
+    super(message, 404, errorCode);
+  }
+}
