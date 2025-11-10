@@ -5,6 +5,27 @@ import logger from '../utils/logger';
 
 export class UserController {
   
+  public static listUsers = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { role, isActive, search, page, limit } = req.query;
+
+    const filters: any = {};
+
+    if (role) filters.role = role;
+    if (isActive !== undefined) filters.isActive = isActive === 'true';
+    if (search) filters.search = search as string;
+
+    const pageNum = page ? parseInt(page as string, 10) : undefined;
+    const limitNum = limit ? parseInt(limit as string, 10) : undefined;
+
+    const result = await UserService.listUsers(pageNum, limitNum, filters);
+
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: result.pagination
+    });
+  });
+  
   public static getProfile = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const userId = req.user!.userId;
 

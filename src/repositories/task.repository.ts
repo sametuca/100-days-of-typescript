@@ -303,6 +303,72 @@ export class TaskRepository extends BaseRepository<Task> {
   private generateId(): string {
     return `task_${this.idCounter++}`;
   }
+
+   public findAllPaginated(
+    page: number,
+    limit: number,
+    filters?: {
+      userId?: string;
+      projectId?: string;
+      status?: TaskStatus;
+      priority?: TaskPriority;
+      search?: string;
+    }
+  ): Promise<{ tasks: Task[]; total: number }> {
+    const whereClauses: string[] = [];
+    const params: any[] = [];
+
+    if (filters?.userId) {
+      whereClauses.push('user_id = ?');
+      params.push(filters.userId);
+    }
+
+    if (filters?.projectId) {
+      whereClauses.push('project_id = ?');
+      params.push(filters.projectId);
+    }
+
+    if (filters?.status) {
+      whereClauses.push('status = ?');
+      params.push(filters.status);
+    }
+
+    if (filters?.priority) {
+      whereClauses.push('priority = ?');
+      params.push(filters.priority);
+    }
+
+    if (filters?.search) {
+      whereClauses.push('(title LIKE ? OR description LIKE ?)');
+      const searchPattern = `%${filters.search}%`;
+      params.push(searchPattern, searchPattern);
+    }
+
+    let sql = 'SELECT * FROM tasks';
+    let countSql = 'SELECT COUNT(*) as total FROM tasks';
+
+    if (whereClauses.length > 0) {
+      const whereClause = ` WHERE ${whereClauses.join(' AND ')}`;
+      sql += whereClause;
+      countSql += whereClause;
+    }
+
+    sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+
+    const offset = (page - 1) * limit;
+    const queryParams = [...params, limit, offset];
+
+    const countStmt = this.db.prepare(countSql);
+    const countResult = countStmt.get(...params) as { total: number };
+    const total = countResult.total;
+
+    const stmt = this.db.prepare(sql);
+    const rows = stmt.all(...queryParams) as any[];
+
+    const tasks = this.parseTasks(rows);
+
+    return Promise.resolve({ tasks, total });
+  }
 }
 
 // Singleton instance oluştur

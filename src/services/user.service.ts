@@ -1,8 +1,9 @@
 import { userRepository } from '../repositories/user.repository';
 import { PasswordUtil } from '../utils/password';
 import { NotFoundError, ValidationError, ConflictError } from '../utils/errors';
-import { User } from '../types';
+import { User, UserRole } from '../types';
 import logger from '../utils/logger';
+import { PaginatedResult, PaginationUtil } from '@/utils/pagination';
 
 export interface UpdateProfileData {
   firstName?: string;
@@ -124,5 +125,39 @@ export class UserService {
     await userRepository.delete(userId);
 
     logger.info(`User account deleted: ${userId}`);
+  }
+
+  public static async listUsers(
+    page?: number,
+    limit?: number,
+    filters?: {
+      role?: UserRole;
+      isActive?: boolean;
+      search?: string;
+    }
+  ): Promise<PaginatedResult<Omit<User, 'passwordHash'>>> {
+    const validatedParams = PaginationUtil.validateParams({ page, limit });
+
+    const { users, total } = await userRepository.findAllPaginated(
+      validatedParams.page,
+      validatedParams.limit,
+      filters
+    );
+
+    const usersWithoutPassword = users.map(user => {
+      const { passwordHash, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+
+    const paginationMeta = PaginationUtil.createMeta(
+      validatedParams.page,
+      validatedParams.limit,
+      total
+    );
+
+    return {
+      data: usersWithoutPassword,
+      pagination: paginationMeta
+    };
   }
 }

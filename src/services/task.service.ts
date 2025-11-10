@@ -1,10 +1,38 @@
+import { PaginatedResult, PaginationUtil } from '@/utils/pagination';
 import { taskRepository } from '../repositories/task.repository';
 import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority } from '../types';
 
 export class TaskService {
   
-  public static async getAllTasks(): Promise<Task[]> {
-    return await taskRepository.findAll();
+public static async getAllTasks(
+    page?: number,
+    limit?: number,
+    filters?: {
+      userId?: string;
+      projectId?: string;
+      status?: TaskStatus;
+      priority?: TaskPriority;
+      search?: string;
+    }
+  ): Promise<PaginatedResult<Task>> {
+    const validatedParams = PaginationUtil.validateParams({ page, limit });
+
+    const { tasks, total } = await taskRepository.findAllPaginated(
+      validatedParams.page,
+      validatedParams.limit,
+      filters
+    );
+
+    const paginationMeta = PaginationUtil.createMeta(
+      validatedParams.page,
+      validatedParams.limit,
+      total
+    );
+
+    return {
+      data: tasks,
+      pagination: paginationMeta
+    };
   }
   
   public static async getTaskById(id: string): Promise<Task | null> {

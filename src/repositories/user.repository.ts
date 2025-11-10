@@ -158,6 +158,60 @@ export class UserRepository extends BaseRepository<User> {
   private generateId(): string {
     return `user_${this.idCounter++}`;
   }
+
+  public findAllPaginated(
+    page: number,
+    limit: number,
+    filters?: {
+      role?: string;
+      isActive?: boolean;
+      search?: string;
+    }
+  ): Promise<{ users: User[]; total: number }> {
+    const whereClauses: string[] = [];
+    const params: any[] = [];
+
+    if (filters?.role) {
+      whereClauses.push('role = ?');
+      params.push(filters.role);
+    }
+
+    if (filters?.isActive !== undefined) {
+      whereClauses.push('is_active = ?');
+      params.push(filters.isActive ? 1 : 0);
+    }
+
+    if (filters?.search) {
+      whereClauses.push('(email LIKE ? OR username LIKE ? OR first_name LIKE ? OR last_name LIKE ?)');
+      const searchPattern = `%${filters.search}%`;
+      params.push(searchPattern, searchPattern, searchPattern, searchPattern);
+    }
+
+    let sql = 'SELECT * FROM users';
+    let countSql = 'SELECT COUNT(*) as total FROM users';
+
+    if (whereClauses.length > 0) {
+      const whereClause = ` WHERE ${whereClauses.join(' AND ')}`;
+      sql += whereClause;
+      countSql += whereClause;
+    }
+
+    sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+
+    const offset = (page - 1) * limit;
+    const queryParams = [...params, limit, offset];
+
+    const countStmt = this.db.prepare(countSql);
+    const countResult = countStmt.get(...params) as { total: number };
+    const total = countResult.total;
+
+    const stmt = this.db.prepare(sql);
+    const rows = stmt.all(...queryParams) as any[];
+
+    const users = rows.map(row => this.parseUser(row));
+
+    return Promise.resolve({ users, total });
+  }
 }
 
 export const userRepository = new UserRepository();

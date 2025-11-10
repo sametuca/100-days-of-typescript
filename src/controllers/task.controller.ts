@@ -12,57 +12,28 @@ export class TaskController {
   // 
   // Request → Controller → Service → Database → Service → Controller → Response
   
-    public static async getAllTasks(req: Request, res: Response): Promise<void> {
-    try {
-      
-      // URL'den query parametrelerini al
-      // Örnek: /tasks?status=TODO&priority=HIGH
-      
-      const { status, priority, search, userId, projectId } = req.query;
-      
-      const filters: any = {};
-      
-      if (status) {
-        filters.status = status as TaskStatus;
-      }
-      
-      if (priority) {
-        filters.priority = priority as TaskPriority;
-      }
-      
-      if (search) {
-        filters.search = search as string;
-      }
-      
-      if (userId) {
-        filters.userId = userId as string;
-      }
-      
-      if (projectId) {
-        filters.projectId = projectId as string;
-      }
-      
-      const tasks = Object.keys(filters).length > 0
-        ? await TaskService.getTasksWithFilters(filters)
-        : await TaskService.getAllTasks();
-      
-      res.status(200).json({
-        success: true,
-        count: tasks.length,
-        data: tasks
-      });
-      
-    } catch (error) {
-      console.error('Error in getAllTasks:', error);
-      
-      res.status(500).json({
-        success: false,
-        message: 'Tasklar getirilemedi',
-        error: error instanceof Error ? error.message : 'Bilinmeyen hata'
-      });
-    }
-  }
+public static getAllTasks = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { status, priority, search, userId, projectId, page, limit } = req.query;
 
+    const filters: any = {};
+
+    if (status) filters.status = status as TaskStatus;
+    if (priority) filters.priority = priority as TaskPriority;
+    if (search) filters.search = search as string;
+    if (userId) filters.userId = userId as string;
+    if (projectId) filters.projectId = projectId as string;
+
+    const pageNum = page ? parseInt(page as string, 10) : undefined;
+    const limitNum = limit ? parseInt(limit as string, 10) : undefined;
+
+    const result = await TaskService.getAllTasks(pageNum, limitNum, filters);
+
+    res.status(200).json({
+      success: true,
+      data: result.data,
+      pagination: result.pagination
+    });
+  });
 
   public static async getTaskById(req: Request, res: Response): Promise<any> {
     try {
@@ -188,4 +159,8 @@ export class TaskController {
       });
     }
   }
+}
+
+function catchAsync(arg0: (req: Request, res: Response) => Promise<void>) {
+  throw new Error('Function not implemented.');
 }
