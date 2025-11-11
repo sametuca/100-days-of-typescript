@@ -1,6 +1,3 @@
-// Database'i başlatır ve seed data ekler
-
-// Database fonksiyonlarını import et
 import { createTables } from './schema';
 import db from './connection';
 
@@ -12,51 +9,42 @@ export const initializeDatabase = () => {
     
     seedData();
     
-    console.log('\n✅ Database initialization complete!');
+    console.log('Database initialization complete!');
     
   } catch (error) {
-    console.error('❌ Database initialization failed:', error);
+    console.error('Database initialization failed:', error);
     throw error;
   }
 };
 
-// Test verileri ekler (development için)
 
 const seedData = () => {
   console.log('\n🌱 Seeding data...');
   
-  // Zaten veri var mı kontrol et
-  // db.prepare() = SQL query hazırla
-  // .get() = Tek satır döndür
   const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
   
-  // Eğer kullanıcı varsa seed etme
   if (userCount.count > 0) {
-    console.log('  ℹ️  Data already exists, skipping seed');
+    console.log('Data already exists, skipping seed');
     return;
   }
+
+  console.log('Inserting seed data...');
+
   
-  console.log('  📝 Inserting seed data...');
-  
-  
-  // db.prepare() = Query hazırla
-  // ? = Placeholder (parametre)
   const insertUser = db.prepare(`
     INSERT INTO users (id, email, username, password_hash, first_name, last_name, role, is_active)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
   
-  // .run() = Query'yi çalıştır
-  // Parametreleri sırayla ver
   insertUser.run(
     'user_1',
     'admin@devtracker.com',
     'admin',
-    'hashed_password_123', // Gerçekte bcrypt hash olmalı
+    'hashed_password_123', 
     'Admin',
     'User',
     'ADMIN',
-    1 // is_active = true
+    1 
   );
   
   insertUser.run(
@@ -81,11 +69,7 @@ const seedData = () => {
     1
   );
   
-  console.log('  ✅ 3 users inserted');
-  
-  // ------------------------------------------
-  // INSERT PROJECTS
-  // ------------------------------------------
+  console.log('3 users inserted');
   
   const insertProject = db.prepare(`
     INSERT INTO projects (id, name, description, owner_id, status, color)
@@ -96,45 +80,34 @@ const seedData = () => {
     'project_1',
     'DevTracker Development',
     '100 Days of Code project',
-    'user_1', // admin'in projesi
+    'user_1',
     'ACTIVE',
-    '#3B82F6' // Mavi
+    '#3B82F6'
   );
   
   insertProject.run(
     'project_2',
     'Personal Tasks',
     'My personal todo list',
-    'user_2', // john'un projesi
+    'user_2', 
     'ACTIVE',
-    '#10B981' // Yeşil
+    '#10B981'
   );
   
-  console.log('  ✅ 2 projects inserted');
-  
-  // ------------------------------------------
-  // INSERT PROJECT MEMBERS
-  // ------------------------------------------
+  console.log('2 projects inserted');
   
   const insertMember = db.prepare(`
     INSERT INTO project_members (id, project_id, user_id)
     VALUES (?, ?, ?)
   `);
   
-  // admin kendi projesinde
   insertMember.run('member_1', 'project_1', 'user_1');
   
-  // john da admin'in projesinde
   insertMember.run('member_2', 'project_1', 'user_2');
   
-  // john kendi projesinde
   insertMember.run('member_3', 'project_2', 'user_2');
   
-  console.log('  ✅ 3 project members inserted');
-  
-  // ------------------------------------------
-  // INSERT TASKS
-  // ------------------------------------------
+  console.log('3 project members inserted');
   
   const insertTask = db.prepare(`
     INSERT INTO tasks (id, title, description, status, priority, user_id, project_id, tags)
@@ -149,7 +122,7 @@ const seedData = () => {
     'HIGH',
     'user_1',
     'project_1',
-    '["typescript", "setup"]' // JSON string
+    '["typescript", "setup"]' 
   );
   
   insertTask.run(
@@ -196,10 +169,9 @@ const seedData = () => {
     '["personal"]'
   );
   
-  console.log('  ✅ 5 tasks inserted');
-  
-  console.log('✅ Seed data complete');
+  console.log('5 tasks inserted');
+
+  console.log('Seed data complete');
 };
 
-// Export
 export default initializeDatabase;

@@ -32,15 +32,12 @@ export interface Task extends BaseEntity {
   userId: string;
   projectId?: string;
   dueDate?: Date;
-  // Örnek: ['typescript', 'backend', 'urgent']
   tags?: string[];
 }
 
 export interface User extends BaseEntity {
   email: string;
   username: string;
-  // passwordHash = Şifrelenmiş şifre
-  // NOT: Gerçek şifre asla saklanmaz, hash'i saklanır
   passwordHash: string;
   firstName?: string;
   lastName?: string;
@@ -53,13 +50,8 @@ export interface Project extends BaseEntity {
   name: string;
   description?: string;
   ownerId: string;
-  // memberIds = Proje üyeleri (kullanıcı ID'leri)
-  // Array<string> = string array'i
-  // Örnek: ['user1', 'user2', 'user3']
   memberIds: string[];
   status: 'ACTIVE' | 'ARCHIVED' | 'COMPLETED';
-  // | = VEYA (Union type)
-  // Sadece bu 3 değerden biri olabilir
   color?: string;
 }
 
@@ -70,12 +62,10 @@ export interface CreateTaskDto {
   status?: TaskStatus;
   priority?: TaskPriority;
   projectId?: string;
-  dueDate?: string;              // String olarak gelir (JSON), Date'e çevrilecek
+  dueDate?: string;            
   tags?: string[];
 }
 
-// Task güncellerken gönderilecek veri
-// Partial<T> = T'nin tüm alanlarını opsiyonel yap
 // Partial<CreateTaskDto> = CreateTaskDto'nun tüm alanları opsiyonel
 export interface UpdateTaskDto extends Partial<CreateTaskDto> {
   // Partial sayesinde tüm alanlar opsiyonel
@@ -85,7 +75,7 @@ export interface UpdateTaskDto extends Partial<CreateTaskDto> {
 export interface CreateUserDto {
   email: string;
   username: string;
-  password: string;              // Plain text (hash'lenecek)
+  password: string;             
   firstName?: string;
   lastName?: string;
   role?: UserRole;
@@ -96,7 +86,6 @@ export interface UpdateUserDto {
   lastName?: string;
   email?: string;
   username?: string;
-  // password güncelleme ayrı endpoint'te olacak (güvenlik için)
 }
 
 export interface CreateProjectDto {
@@ -205,7 +194,6 @@ export interface TaskQueryParams {
   sort?: 'createdAt' | 'updatedAt' | 'title' | 'priority';
   order?: 'asc' | 'desc';
   page?: number;
-  // limit = Sayfa başına eleman sayısı
   limit?: number;
 }
 

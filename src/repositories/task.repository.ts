@@ -1,19 +1,7 @@
-// ============================================
-// TASK REPOSITORY
-// ============================================
-// Task tablosu ile ilgili tüm database işlemleri
 
-// BaseRepository'den türe
 import { BaseRepository } from './base.repository';
-
-// Task tiplerini import et
 import { Task, TaskStatus, TaskPriority, CreateTaskDto, UpdateTaskDto } from '../types';
 
-// ==========================================
-// TASK REPOSITORY CLASS
-// ==========================================
-// BaseRepository<Task> = Task tipi için repository
-// extends = BaseRepository'nin tüm method'larını miras al
 
 export class TaskRepository extends BaseRepository<Task> {
   
@@ -25,10 +13,8 @@ export class TaskRepository extends BaseRepository<Task> {
   
   public create(taskData: CreateTaskDto, userId: string): Promise<Task> {
     
-    // ID oluştur (basit counter, ileride UUID kullanacağız)
     const id = this.generateId();
     
-    // Şu anki tarih-saat (ISO formatında)
     const now = new Date().toISOString();
     
     // tags'i JSON string'e çevir
@@ -47,8 +33,7 @@ export class TaskRepository extends BaseRepository<Task> {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
-    // Query'yi çalıştır
-    // Parametreleri sırayla ver
+
     stmt.run(
       id,
       taskData.title,
@@ -63,8 +48,7 @@ export class TaskRepository extends BaseRepository<Task> {
       now   // updated_at
     );
     
-    // Oluşturulan task'ı döndür
-    // findById() = Base class'tan miras aldık
+
     return this.findById(id) as Promise<Task>;
   }
   
@@ -192,9 +176,7 @@ export class TaskRepository extends BaseRepository<Task> {
   }
   
   public search(query: string): Promise<Task[]> {
-    // LIKE = Benzer olanları bul
-    // % = Joker karakter (herhangi bir şey)
-    // %query% = query içeren herhangi bir text
+
     const stmt = this.db.prepare(`
       SELECT * FROM tasks 
       WHERE title LIKE ? OR description LIKE ?
@@ -371,6 +353,4 @@ export class TaskRepository extends BaseRepository<Task> {
   }
 }
 
-// Singleton instance oluştur
-// Tüm uygulama boyunca aynı instance kullanılır
 export const taskRepository = new TaskRepository();

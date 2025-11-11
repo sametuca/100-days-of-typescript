@@ -1,5 +1,3 @@
-// Route → Controller → Service → Database
-
 import { Request, Response } from 'express';
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto, UpdateTaskDto } from '../models/task.model';
@@ -8,8 +6,6 @@ import logger from '../utils/logger';
 
 export class TaskController {
   
-  // Endpoint: GET /api/v1/tasks
-  // 
   // Request → Controller → Service → Database → Service → Controller → Response
   
 public static getAllTasks = catchAsync(async (req: Request, res: Response): Promise<void> => {

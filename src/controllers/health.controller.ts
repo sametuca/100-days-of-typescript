@@ -5,7 +5,6 @@ export class HealthController {
   public static getHealth(_req: Request, res: Response): void {
     
     const healthCheck = {
-      // process.uptime() = Sunucu kaç saniyedir çalışıyor
       uptime: process.uptime(),
       message: 'OK',
       timestamp: new Date().toISOString(),
@@ -18,7 +17,6 @@ export class HealthController {
     });
   }
 
-  // API'nin ana sayfası, hoş geldin mesajı gösterir
   
   public static getRoot(_req: Request, res: Response): void {
     
@@ -27,8 +25,8 @@ export class HealthController {
       message: 'Welcome to DevTracker API',
       version: '1.0.0',
       endpoints: {
-        health: '/api/v1/health',  // Sağlık kontrolü
-        docs: '/api/v1/docs'        // Dokümantasyon (henüz yok)
+        health: '/api/v1/health',  
+        docs: '/api/v1/docs'        
       }
     });
   }
