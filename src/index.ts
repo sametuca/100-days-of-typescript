@@ -8,6 +8,10 @@ import { initializeDatabase } from './database/init';
 import { notFoundHandler } from './middleware/error.middleware';
 import { validateConfig, printConfig } from './config/env';
 import { CleanupJob } from './jobs/cleanup.job';
+import helmet from 'helmet';
+import { generalLimiter } from './middleware/rate-limit.middleware';
+import { addSecurityHeaders, sanitizeInput, preventParameterPollution } from './middleware/security.middleware';
+import { requestId } from './middleware/request-id.middleware';
 
 validateConfig();
 printConfig();
@@ -30,6 +34,39 @@ class App {
   // Request → Middleware 1 → Middleware 2 → Route → Response
 
   private initializeMiddlewares(): void {
+    // request id middleware
+    this.app.use(requestId);
+    // Helmet - Security headers
+    this.app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:']
+        }
+      },
+      crossOriginEmbedderPolicy: false
+    }));
+    
+    // Rate limiting - Global
+    this.app.use(generalLimiter);
+    
+    // Security headers
+    this.app.use(addSecurityHeaders);
+    
+    // Sanitize input (NoSQL injection protection)
+    this.app.use(sanitizeInput);
+    
+    // Parameter pollution protection
+    this.app.use(preventParameterPollution);
+    
+    // ============================================
+    // STANDARD MIDDLEWARES
+    // ============================================
+    
+    this.app.use(express.json({ limit: '10mb' }));
+    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 

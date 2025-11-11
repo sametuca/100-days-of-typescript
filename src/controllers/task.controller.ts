@@ -161,6 +161,15 @@ public static getAllTasks = catchAsync(async (req: Request, res: Response): Prom
   }
 }
 
-function catchAsync(arg0: (req: Request, res: Response) => Promise<void>) {
-  throw new Error('Function not implemented.');
+function catchAsync(fn: (req: Request, res: Response) => Promise<void>) {
+  return (req: Request, res: Response) => {
+    fn(req, res).catch((error) => {
+      console.error('Async error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    });
+  };
 }

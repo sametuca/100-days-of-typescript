@@ -7,7 +7,7 @@ import {
 } from '../validation/user.validation';
 import { validateBody } from '../middleware/validate.middleware';
 import { authenticate, authorize } from '../middleware/auth.middleware';
-import { UserRole } from '@/types';
+import { UserRole } from '../types';
 
 const router = Router();
 

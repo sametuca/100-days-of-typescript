@@ -3,7 +3,7 @@ import { PasswordUtil } from '../utils/password';
 import { NotFoundError, ValidationError, ConflictError } from '../utils/errors';
 import { User, UserRole } from '../types';
 import logger from '../utils/logger';
-import { PaginatedResult, PaginationUtil } from '@/utils/pagination';
+import { PaginatedResult, PaginationUtil } from '../utils/pagination';
 
 export interface UpdateProfileData {
   firstName?: string;
