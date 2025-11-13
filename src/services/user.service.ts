@@ -4,6 +4,7 @@ import { NotFoundError, ValidationError, ConflictError } from '../utils/errors';
 import { User, UserRole } from '../types';
 import logger from '../utils/logger';
 import { PaginatedResult, PaginationUtil } from '../utils/pagination';
+import { FileUtil } from '../utils/file-upload';
 
 export interface UpdateProfileData {
   firstName?: string;
@@ -160,4 +161,53 @@ export class UserService {
       pagination: paginationMeta
     };
   }
+
+  public static async uploadAvatar(
+    userId: string,
+    file: Express.Multer.File
+  ): Promise<Omit<User, 'passwordHash'>> {
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundError('Kullanıcı bulunamadı', 'USER_NOT_FOUND');
+    }
+
+    if (user.avatar) {
+      const oldAvatarPath = FileUtil.getFilePath(user.avatar, 'avatar');
+      FileUtil.deleteFile(oldAvatarPath);
+    }
+
+    const updatedUser = await userRepository.update(userId, {
+      avatar: file.filename
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundError('Avatar güncellenemedi', 'UPDATE_FAILED');
+    }
+
+    logger.info(`Avatar uploaded for user: ${userId}`);
+
+    const { passwordHash, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
+  }
+
+  public static async deleteAvatar(userId: string): Promise<void> {
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundError('Kullanıcı bulunamadı', 'USER_NOT_FOUND');
+    }
+
+    if (!user.avatar) {
+      throw new ValidationError('Kullanıcının avatarı yok', undefined, 'NO_AVATAR');
+    }
+
+    const avatarPath = FileUtil.getFilePath(user.avatar, 'avatar');
+    FileUtil.deleteFile(avatarPath);
+
+    await userRepository.update(userId, { avatar: null as any });
+
+    logger.info(`Avatar deleted for user: ${userId}`);
+  }
+
 }

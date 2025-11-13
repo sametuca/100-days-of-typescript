@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { catchAsync } from '../middleware/error.middleware';
 import logger from '../utils/logger';
+import { ValidationError } from '../utils/errors';
+import { FileUtil } from '../utils/file-upload';
 
 export class UserController {
   
@@ -77,6 +79,40 @@ export class UserController {
     res.status(200).json({
       success: true,
       message: 'Hesap silindi'
+    });
+  });
+
+  public static uploadAvatar = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.userId;
+
+    if (!req.file) {
+      throw new ValidationError('Dosya yüklenmedi', undefined, 'NO_FILE');
+    }
+
+    const user = await UserService.uploadAvatar(userId, req.file);
+
+    const avatarUrl = FileUtil.getFileUrl(req, user.avatar!, 'avatar');
+
+    res.status(200).json({
+      success: true,
+      message: 'Avatar yüklendi',
+      data: {
+        user: {
+          ...user,
+          avatarUrl
+        }
+      }
+    });
+  });
+
+  public static deleteAvatar = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.userId;
+
+    await UserService.deleteAvatar(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Avatar silindi'
     });
   });
 }

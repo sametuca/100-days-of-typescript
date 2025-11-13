@@ -85,7 +85,7 @@ export class UserRepository extends BaseRepository<User> {
     return Promise.resolve(result.count > 0);
   }
 
-  public update(id: string, data: Partial<CreateUserData>): Promise<User | null> {
+    public update(id: string, data: Partial<CreateUserData> & { avatar?: string }): Promise<User | null> {
     const updateFields: string[] = [];
     const updateValues: any[] = [];
 
@@ -107,6 +107,11 @@ export class UserRepository extends BaseRepository<User> {
     if (data.lastName !== undefined) {
       updateFields.push('last_name = ?');
       updateValues.push(data.lastName);
+    }
+
+    if (data.avatar !== undefined) {
+      updateFields.push('avatar = ?');
+      updateValues.push(data.avatar);
     }
 
     updateFields.push('updated_at = ?');
@@ -145,6 +150,7 @@ export class UserRepository extends BaseRepository<User> {
       passwordHash: row.password_hash,
       firstName: row.first_name,
       lastName: row.last_name,
+      avatar: row.avatar,
       role: row.role as UserRole,
       isActive: row.is_active === 1,
       lastLoginAt: row.last_login_at ? new Date(row.last_login_at) : undefined,

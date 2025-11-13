@@ -1,6 +1,8 @@
 import { PaginatedResult, PaginationUtil } from '../utils/pagination';
 import { taskRepository } from '../repositories/task.repository';
 import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority } from '../types';
+import { NotFoundError, AuthorizationError } from '@/utils/errors';
+import logger from '../utils/logger';
 
 export class TaskService {
   
@@ -111,5 +113,25 @@ public static async getAllTasks(
         return new Date(t.dueDate) < new Date();
       }).length
     };
+  }
+
+  public static async uploadAttachment(
+    taskId: string,
+    userId: string,
+    _file: Express.Multer.File
+  ): Promise<Task> {
+    const task = await taskRepository.findById(taskId);
+
+    if (!task) {
+      throw new NotFoundError('Task bulunamadı', 'TASK_NOT_FOUND');
+    }
+
+    if (task.userId !== userId) {
+      throw new AuthorizationError('Bu task size ait değil', 'UNAUTHORIZED');
+    }
+
+    logger.info(`Attachment uploaded for task: ${taskId}`);
+
+    return task;
   }
 }

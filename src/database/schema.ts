@@ -7,53 +7,19 @@ import db from './connection';
 export const createTables = () => {
   
   console.log('📋 Creating database tables...');
-  
-  
-  // db.exec() = SQL komutunu çalıştır
-  // exec = Cevap döndürmeyen komutlar için
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
-      -- id = Primary key (benzersiz kimlik)
-      -- TEXT = String veri tipi
-      -- PRIMARY KEY = Bu alan benzersiz olmalı
       id TEXT PRIMARY KEY,
-      
-      -- email = E-posta adresi
-      -- UNIQUE = Bu değer tekil olmalı (aynısından 2 tane olamaz)
-      -- NOT NULL = Boş olamaz
       email TEXT UNIQUE NOT NULL,
-      
-      -- username = Kullanıcı adı
       username TEXT UNIQUE NOT NULL,
-      
-      -- password_hash = Şifrelenmiş şifre
-      -- NOT NULL = Boş olamaz
       password_hash TEXT NOT NULL,
-      
-      -- first_name = Ad (opsiyonel, NULL olabilir)
       first_name TEXT,
-      
-      -- last_name = Soyad (opsiyonel)
       last_name TEXT,
-      
-      -- role = Kullanıcı rolü
-      -- DEFAULT 'USER' = Belirtilmezse 'USER' olsun
+      avatar TEXT,
       role TEXT NOT NULL DEFAULT 'USER',
-      
-      -- is_active = Hesap aktif mi?
-      -- INTEGER = Sayı (SQLite'da boolean yok, 0/1 kullanılır)
-      -- DEFAULT 1 = Varsayılan aktif
       is_active INTEGER NOT NULL DEFAULT 1,
-      
-      -- last_login_at = Son giriş tarihi (opsiyonel)
-      -- TEXT = ISO tarih string'i
       last_login_at TEXT,
-      
-      -- created_at = Oluşturulma tarihi
-      -- DATETIME('now') = Şu anki tarih-saat
       created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
-      
-      -- updated_at = Güncellenme tarihi
       updated_at TEXT NOT NULL DEFAULT (DATETIME('now'))
     )
   `);

@@ -12,6 +12,7 @@ import helmet from 'helmet';
 import { generalLimiter } from './middleware/rate-limit.middleware';
 import { addSecurityHeaders, sanitizeInput, preventParameterPollution } from './middleware/security.middleware';
 import { requestId } from './middleware/request-id.middleware';
+import path from 'path';
 
 validateConfig();
 printConfig();
@@ -64,7 +65,7 @@ class App {
     // ============================================
     // STANDARD MIDDLEWARES
     // ============================================
-    
+     this.app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     this.app.use(express.json());

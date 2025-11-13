@@ -18,6 +18,18 @@ export enum UserRole {
   MODERATOR = 'MODERATOR'
 }
 
+export interface User extends BaseEntity {
+  email: string;
+  username: string;
+  passwordHash: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  role: UserRole;
+  isActive: boolean;
+  lastLoginAt?: Date;
+}
+
 export interface BaseEntity {
   id: string;
   createdAt: Date;
@@ -36,18 +48,6 @@ export interface Task extends BaseEntity {
   tags?: string[];
 }
 
-export interface User extends BaseEntity {
-  email: string;
-  username: string;
-  // passwordHash = Şifrelenmiş şifre
-  // NOT: Gerçek şifre asla saklanmaz, hash'i saklanır
-  passwordHash: string;
-  firstName?: string;
-  lastName?: string;
-  role: UserRole;
-  isActive: boolean;
-  lastLoginAt?: Date;
-}
 
 export interface Project extends BaseEntity {
   name: string;
