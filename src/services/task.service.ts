@@ -1,7 +1,7 @@
 import { PaginatedResult, PaginationUtil } from '../utils/pagination';
 import { taskRepository } from '../repositories/task.repository';
 import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority } from '../types';
-import { NotFoundError, AuthorizationError } from '@/utils/errors';
+import { NotFoundError, AuthorizationError } from '../utils/errors';
 import logger from '../utils/logger';
 
 export class TaskService {

@@ -32,12 +32,9 @@ class App {
     CleanupJob.start();
   }
 
-  // Request → Middleware 1 → Middleware 2 → Route → Response
 
   private initializeMiddlewares(): void {
-    // request id middleware
     this.app.use(requestId);
-    // Helmet - Security headers
     this.app.use(helmet({
       contentSecurityPolicy: {
         directives: {
@@ -50,16 +47,9 @@ class App {
       crossOriginEmbedderPolicy: false
     }));
     
-    // Rate limiting - Global
     this.app.use(generalLimiter);
-    
-    // Security headers
     this.app.use(addSecurityHeaders);
-    
-    // Sanitize input (NoSQL injection protection)
     this.app.use(sanitizeInput);
-    
-    // Parameter pollution protection
     this.app.use(preventParameterPollution);
     
     // ============================================
@@ -70,7 +60,6 @@ class App {
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.header('Access-Control-Allow-Origin', CORS_CONFIG.origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -98,7 +87,6 @@ class App {
 
   private initializeErrorHandling(): void {
 
-    // next = Sonraki middleware (kullanılmıyor ama gerekli)
     this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
       console.error('Error:', err.message);
       res.status(500).json({
@@ -116,14 +104,11 @@ class App {
 
   public listen(): void {
     this.app.listen(this.port, () => {
-      logger.info('═══════════════════════════════════════');
-      logger.info('🚀 DevTracker Server Started!');
-      logger.info('═══════════════════════════════════════');
-      logger.info(`📍 Environment: ${SERVER_CONFIG.NODE_ENV}`);
-      logger.info(`🌐 Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
-      logger.info(`📡 API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
-      logger.info(`💚 Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
-      logger.info('═══════════════════════════════════════');
+      logger.info('DevTracker Server Started!');
+      logger.info(`Environment: ${SERVER_CONFIG.NODE_ENV}`);
+      logger.info(`Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
+      logger.info(`API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
+      logger.info(`Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
     });
   }
 }

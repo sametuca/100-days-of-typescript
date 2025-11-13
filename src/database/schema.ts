@@ -1,12 +1,12 @@
-// Tablo yapılarını tanımlar (CREATE TABLE)
 
 import db from './connection';
 
-// Tüm tabloları oluşturur
 
 export const createTables = () => {
-  
-  console.log('📋 Creating database tables...');
+
+  console.log('Creating database tables...');
+
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -24,12 +24,8 @@ export const createTables = () => {
     )
   `);
   
-  console.log('  ✅ users table created');
+  console.log('Users table created');
   
-  // ------------------------------------------
-  // PROJECTS TABLE
-  // ------------------------------------------
-  // Proje tablosu
   
   db.exec(`
     CREATE TABLE IF NOT EXISTS projects (
@@ -58,14 +54,8 @@ export const createTables = () => {
     )
   `);
   
-  console.log('  ✅ projects table created');
-  
-  // ------------------------------------------
-  // PROJECT_MEMBERS TABLE
-  // ------------------------------------------
-  // Proje üyeleri (many-to-many ilişki için)
-  // Bir projede birden fazla üye olabilir
-  // Bir kullanıcı birden fazla projede olabilir
+  console.log('Projects table created');
+
   
   db.exec(`
     CREATE TABLE IF NOT EXISTS project_members (
@@ -87,12 +77,8 @@ export const createTables = () => {
     )
   `);
   
-  console.log('  ✅ project_members table created');
+  console.log('Project members table created');
   
-  // ------------------------------------------
-  // TASKS TABLE
-  // ------------------------------------------
-  // Task tablosu
   
   db.exec(`
     CREATE TABLE IF NOT EXISTS tasks (
@@ -131,9 +117,6 @@ export const createTables = () => {
     )
   `);
 
-    // ------------------------------------------
-  // REFRESH_TOKENS TABLE
-  // ------------------------------------------
   
   db.exec(`
     CREATE TABLE IF NOT EXISTS refresh_tokens (
@@ -146,9 +129,9 @@ export const createTables = () => {
       revoked_at TEXT
     )
   `);
-  
-  console.log('  ✅ refresh_tokens table created');
-  
+
+  console.log('Refresh tokens table created');
+
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id 
     ON refresh_tokens(user_id)
@@ -159,33 +142,23 @@ export const createTables = () => {
     ON refresh_tokens(token)
   `);
   
-  console.log('  ✅ tasks table created');
+  console.log('Tasks table created');
   
-  // ------------------------------------------
-  // CREATE INDEXES
-  // ------------------------------------------
-  // Index = Query performansını artırır
-  // Sık kullanılan alanlara index oluşturulur
-  
-  // User email'e göre arama hızlı olsun
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_users_email 
     ON users(email)
   `);
   
-  // Task user_id'ye göre arama hızlı olsun
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_tasks_user_id 
     ON tasks(user_id)
   `);
   
-  // Task project_id'ye göre arama hızlı olsun
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_tasks_project_id 
     ON tasks(project_id)
   `);
   
-  // Task status'e göre arama hızlı olsun
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_tasks_status 
     ON tasks(status)
@@ -196,38 +169,26 @@ export const createTables = () => {
   console.log('✅ All tables created successfully');
 };
 
-// ==========================================
-// DROP TABLES FUNCTION (Yeniden başlatma için)
-// ==========================================
-// Tüm tabloları siler (dikkatli kullan!)
 
 export const dropTables = () => {
-  console.log('🗑️  Dropping all tables...');
+  console.log('Dropping all tables...');
   
-  // DROP TABLE = Tabloyu sil
-  // IF EXISTS = Varsa sil (yoksa hata verme)
   db.exec('DROP TABLE IF EXISTS tasks');
   db.exec('DROP TABLE IF EXISTS project_members');
   db.exec('DROP TABLE IF EXISTS projects');
   db.exec('DROP TABLE IF EXISTS users');
   db.exec('DROP TABLE IF EXISTS refresh_tokens');
   
-  console.log('✅ All tables dropped');
+  console.log('All tables dropped');
 };
 
-// ==========================================
-// RESET DATABASE FUNCTION
-// ==========================================
-// Database'i sıfırla (tüm veriyi sil ve tabloları yeniden oluştur)
 
 export const resetDatabase = () => {
-  console.log('🔄 Resetting database...');
+  console.log('Resetting database...');
   
-  // Önce tabloları sil
   dropTables();
   
-  // Sonra yeniden oluştur
   createTables();
-  
-  console.log('✅ Database reset complete');
+
+  console.log('Database reset complete');
 };
