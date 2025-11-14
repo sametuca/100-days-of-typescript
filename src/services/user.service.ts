@@ -5,6 +5,7 @@ import { User, UserRole } from '../types';
 import logger from '../utils/logger';
 import { PaginatedResult, PaginationUtil } from '../utils/pagination';
 import { FileUtil } from '../utils/file-upload';
+import { emailService } from './email.service';
 
 export interface UpdateProfileData {
   firstName?: string;
@@ -19,7 +20,7 @@ export interface ChangePasswordData {
 }
 
 export class UserService {
-  
+
   public static async getProfile(userId: string): Promise<Omit<User, 'passwordHash'>> {
     const user = await userRepository.findById(userId);
 
@@ -108,6 +109,11 @@ export class UserService {
     await userRepository.updatePassword(userId, newPasswordHash);
 
     logger.info(`Password changed for user: ${userId}`);
+
+    emailService.sendPasswordChangedEmail(
+      user.email,
+      user.firstName || user.username
+    ).catch(err => logger.error('Password changed email failed:', err));
   }
 
   public static async deleteAccount(userId: string, password: string): Promise<void> {

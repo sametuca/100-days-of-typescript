@@ -5,6 +5,8 @@ import { User } from '../types';
 import logger from '../utils/logger';
 import { JwtUtil } from '../utils/jwt';
 import { refreshTokenRepository } from '../repositories/refresh-token.repository';
+import { emailService } from './email.service';
+import { ca } from 'zod/v4/locales';
 
 export interface RegisterData {
   email: string;
@@ -51,6 +53,17 @@ export class AuthService {
     logger.info(`User registered: ${user.id} (${user.email})`);
 
     const { passwordHash: _, ...userWithoutPassword } = user;
+
+    try {
+      await emailService.sendWelcomeEmail(
+        user.email,
+        user.firstName || user.username,
+        user.username
+      )
+    }
+    catch (err) {
+      logger.error('Welcome email failed:', err);
+    }
     return userWithoutPassword;
   }
 
