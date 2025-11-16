@@ -7,7 +7,7 @@ import logger from '../utils/logger';
 export class TaskReminderJob {
   
   public static async sendReminders(): Promise<void> {
-    logger.info('📧 Starting task reminder job...');
+    logger.info('Starting task reminder job...');
 
     try {
       const tomorrow = new Date();
@@ -46,15 +46,15 @@ export class TaskReminderJob {
 
         if (sent) {
           sentCount++;
-          logger.info(`📧 Reminder sent to ${user.email} for task: ${task.title}`);
+          logger.info(`Reminder sent to ${user.email} for task: ${task.title}`);
         }
 
         await this.delay(1000);
       }
 
-      logger.info(`✅ Task reminder job completed: ${sentCount}/${upcomingTasks.length} emails sent`);
+      logger.info(`Task reminder job completed: ${sentCount}/${upcomingTasks.length} emails sent`);
     } catch (error) {
-      logger.error('❌ Task reminder job failed:', error);
+      logger.error('Task reminder job failed:', error);
     }
   }
 

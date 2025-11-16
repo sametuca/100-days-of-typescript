@@ -6,19 +6,19 @@ import path from 'path';
 export class CleanupJob {
   
   public static async cleanupExpiredTokens(): Promise<void> {
-    logger.info('🧹 Starting expired tokens cleanup...');
+    logger.info('Starting expired tokens cleanup...');
     
     const deleted = await refreshTokenRepository.deleteExpired();
     
     if (deleted > 0) {
-      logger.info(`✅ Cleaned up ${deleted} expired refresh tokens`);
+      logger.info(`Cleaned up ${deleted} expired refresh tokens`);
     } else {
-      logger.info('✅ No expired tokens to clean');
+      logger.info('No expired tokens to clean');
     }
   }
 
   public static async cleanupOldLogs(): Promise<void> {
-    logger.info('🧹 Starting old logs cleanup...');
+    logger.info('Starting old logs cleanup...');
     
     const logsDir = path.join(__dirname, '../../logs');
     const maxAge = 30 * 24 * 60 * 60 * 1000;
@@ -39,21 +39,21 @@ export class CleanupJob {
       }
 
       if (deletedCount > 0) {
-        logger.info(`✅ Cleaned up ${deletedCount} old log files`);
+        logger.info(`Cleaned up ${deletedCount} old log files`);
       } else {
-        logger.info('✅ No old logs to clean');
+        logger.info('No old logs to clean');
       }
     } catch (error) {
-      logger.error('❌ Log cleanup failed:', error);
+      logger.error('Log cleanup failed:', error);
     }
   }
 
   public static async cleanupTempFiles(): Promise<void> {
-    logger.info('🧹 Starting temp files cleanup...');
+    logger.info('Starting temp files cleanup...');
     
     //const uploadsDir = path.join(__dirname, '../../uploads');
     
-    logger.info('✅ Temp files cleanup completed');
+    logger.info('Temp files cleanup completed');
   }
 
   public static async runAll(): Promise<void> {

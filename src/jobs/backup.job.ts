@@ -5,7 +5,7 @@ import logger from '../utils/logger';
 export class BackupJob {
   
   public static async backupDatabase(): Promise<void> {
-    logger.info('💾 Starting database backup...');
+    logger.info('Starting database backup...');
 
     try {
       const dbPath = path.join(__dirname, '../../data/devtracker.db');
@@ -20,11 +20,11 @@ export class BackupJob {
 
       fs.copyFileSync(dbPath, backupPath);
 
-      logger.info(`✅ Database backup created: ${backupPath}`);
+      logger.info(`Database backup created: ${backupPath}`);
 
       this.cleanupOldBackups(backupDir);
     } catch (error) {
-      logger.error('❌ Database backup failed:', error);
+      logger.error('Database backup failed:', error);
     }
   }
 
@@ -44,7 +44,7 @@ export class BackupJob {
       const toDelete = files.slice(maxBackups);
       toDelete.forEach(file => {
         fs.unlinkSync(file.path);
-        logger.info(`🗑️  Deleted old backup: ${file.name}`);
+        logger.info(`Deleted old backup: ${file.name}`);
       });
     }
   }

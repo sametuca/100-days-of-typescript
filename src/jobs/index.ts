@@ -39,7 +39,7 @@ const jobs: ScheduledJob[] = [
 ];
 
 export function initializeJobs(): void {
-  logger.info('⏰ Initializing scheduled jobs...');
+  logger.info('Initializing scheduled jobs...');
 
   jobs.forEach(job => {
     scheduler.schedule(job);
@@ -47,11 +47,11 @@ export function initializeJobs(): void {
 
   scheduler.start();
 
-  logger.info(`✅ ${jobs.filter(j => j.enabled).length} jobs scheduled`);
+  logger.info(`${jobs.filter(j => j.enabled).length} jobs scheduled`);
 }
 
 export function stopJobs(): void {
-  logger.info('⏸️  Stopping all scheduled jobs...');
+  logger.info('Stopping all scheduled jobs...');
   scheduler.stop();
 }
 

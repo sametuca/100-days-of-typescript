@@ -13,30 +13,30 @@ export class Scheduler {
 
   public schedule(job: ScheduledJob): void {
     if (!job.enabled) {
-      logger.info(`⏸️  Job '${job.name}' is disabled, skipping`);
+      logger.info(`Job '${job.name}' is disabled, skipping`);
       return;
     }
 
     if (!cron.validate(job.schedule)) {
-      logger.error(`❌ Invalid cron schedule for job '${job.name}': ${job.schedule}`);
+      logger.error(`Invalid cron schedule for job '${job.name}': ${job.schedule}`);
       return;
     }
 
     const scheduledTask = cron.schedule(job.schedule, async () => {
-      logger.info(`▶️  Running job: ${job.name}`);
+      logger.info(`Running job: ${job.name}`);
       const startTime = Date.now();
 
       try {
         await job.task();
         const duration = Date.now() - startTime;
-        logger.info(`✅ Job '${job.name}' completed in ${duration}ms`);
+        logger.info(`Job '${job.name}' completed in ${duration}ms`);
       } catch (error) {
-        logger.error(`❌ Job '${job.name}' failed:`, error);
+        logger.error(`Job '${job.name}' failed:`, error);
       }
     });
 
     this.jobs.set(job.name, scheduledTask);
-    logger.info(`⏰ Job '${job.name}' scheduled: ${job.schedule}`);
+    logger.info(`Job '${job.name}' scheduled: ${job.schedule}`);
   }
 
   public start(jobName?: string): void {
@@ -44,12 +44,12 @@ export class Scheduler {
       const job = this.jobs.get(jobName);
       if (job) {
         job.start();
-        logger.info(`▶️  Started job: ${jobName}`);
+        logger.info(`Started job: ${jobName}`);
       }
     } else {
       this.jobs.forEach((job, name) => {
         job.start();
-        logger.info(`▶️  Started job: ${name}`);
+        logger.info(`Started job: ${name}`);
       });
     }
   }
@@ -59,12 +59,12 @@ export class Scheduler {
       const job = this.jobs.get(jobName);
       if (job) {
         job.stop();
-        logger.info(`⏸️  Stopped job: ${jobName}`);
+        logger.info(` Stopped job: ${jobName}`);
       }
     } else {
       this.jobs.forEach((job, name) => {
         job.stop();
-        logger.info(`⏸️  Stopped job: ${name}`);
+        logger.info(` Stopped job: ${name}`);
       });
     }
   }
