@@ -6,7 +6,6 @@ import logger from '../utils/logger';
 import { JwtUtil } from '../utils/jwt';
 import { refreshTokenRepository } from '../repositories/refresh-token.repository';
 import { emailService } from './email.service';
-import { ca } from 'zod/v4/locales';
 
 export interface RegisterData {
   email: string;

@@ -7,12 +7,12 @@ import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 import { initializeDatabase } from './database/init';
 import { notFoundHandler } from './middleware/error.middleware';
 import { validateConfig, printConfig } from './config/env';
-import { CleanupJob } from './jobs/cleanup.job';
 import helmet from 'helmet';
 import { generalLimiter } from './middleware/rate-limit.middleware';
 import { addSecurityHeaders, sanitizeInput, preventParameterPollution } from './middleware/security.middleware';
 import { requestId } from './middleware/request-id.middleware';
 import path from 'path';
+import { initializeJobs } from './jobs';
 
 validateConfig();
 printConfig();
@@ -29,7 +29,7 @@ class App {
     this.initializeRoutes();
     this.initializeErrorHandling();
     this.initializeDatabase();
-    CleanupJob.start();
+    initializeJobs();
   }
 
 
