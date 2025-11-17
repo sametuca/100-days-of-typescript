@@ -4,9 +4,9 @@ import taskRoutes from './task.routes';
 import authRoutes from './auth.routes';
 import userRoutes from './user.routes';
 import { apiLimiter } from '../middleware/rate-limit.middleware';
-import { AdminController } from '@/controllers/admin.controller';
-import { authenticate, authorize } from '@/middleware/auth.middleware';
-import { UserRole } from '@/types';
+import { AdminController } from '../controllers/admin.controller';
+import { authenticate, authorize } from '../middleware/auth.middleware';
+import { UserRole } from '../types';
 
 const router = Router();
 

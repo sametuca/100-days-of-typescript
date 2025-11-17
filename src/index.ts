@@ -6,13 +6,15 @@ import logger from './utils/logger';
 import { SERVER_CONFIG, CORS_CONFIG } from './config/server';
 import { initializeDatabase } from './database/init';
 import { notFoundHandler } from './middleware/error.middleware';
-import { validateConfig, printConfig } from './config/env';
+import config, { validateConfig, printConfig } from './config/env';
 import helmet from 'helmet';
 import { generalLimiter } from './middleware/rate-limit.middleware';
 import { addSecurityHeaders, sanitizeInput, preventParameterPollution } from './middleware/security.middleware';
 import { requestId } from './middleware/request-id.middleware';
 import path from 'path';
 import { initializeJobs } from './jobs';
+import { swaggerSpec } from './config/swagger';
+import swaggerUi from 'swagger-ui-express';
 
 validateConfig();
 printConfig();
@@ -82,6 +84,28 @@ class App {
 
   private initializeRoutes(): void {
     this.app.use(SERVER_CONFIG.API_PREFIX, routes);
+        // ============================================
+    // SWAGGER DOCUMENTATION - YENİ
+    // ============================================
+    if (config.features.enableSwagger) {
+      this.app.use(
+        '/api-docs',
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerSpec, {
+          customCss: '.swagger-ui .topbar { display: none }',
+          customSiteTitle: 'DevTracker API Documentation'
+        })
+      );
+      
+      // Swagger JSON
+      this.app.get('/api-docs.json', (_req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(swaggerSpec);
+      });
+      
+      logger.info('📚 Swagger documentation available at /api-docs');
+    }
+
     this.app.use(notFoundHandler);
   }
 

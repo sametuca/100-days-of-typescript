@@ -4,7 +4,7 @@ import { scheduler } from '../jobs';
 
 export class AdminController {
   
-  public static getJobsStatus = catchAsync(async (req: Request, res: Response): Promise<void> => {
+  public static getJobsStatus = catchAsync(async (_req: Request, res: Response): Promise<void> => {
     const status = scheduler.getStatus();
 
     res.status(200).json({
