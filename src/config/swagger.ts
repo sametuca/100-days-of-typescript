@@ -40,6 +40,10 @@ const swaggerDefinition = {
       description: 'Task management endpoints'
     },
     {
+      name: 'Projects',
+      description: 'Project/Workspace management endpoints'
+    },
+    {
       name: 'Health',
       description: 'System health check'
     }
@@ -169,7 +173,6 @@ const swaggerDefinition = {
             items: {
               type: 'string'
             },
-            example: ['documentation', 'api']
           },
           createdAt: {
             type: 'string',
@@ -178,6 +181,126 @@ const swaggerDefinition = {
           updatedAt: {
             type: 'string',
             format: 'date-time'
+          }
+        }
+      },
+      Project: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            example: 'project_1'
+          },
+          name: {
+            type: 'string',
+            example: 'DevTracker Project'
+          },
+          description: {
+            type: 'string',
+            example: 'Main project for task management'
+          },
+          ownerId: {
+            type: 'string',
+            example: 'user_1000'
+          },
+          memberIds: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: ['user_1000', 'user_1001']
+          },
+          status: {
+            type: 'string',
+            enum: ['ACTIVE', 'ARCHIVED', 'COMPLETED'],
+            example: 'ACTIVE'
+          },
+          color: {
+            type: 'string',
+            example: '#3498db'
+          },
+          createdAt: {
+            type: 'string',
+            format: 'date-time'
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time'
+          }
+        }
+      },
+      SafeUser: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            example: 'user_1000'
+          },
+          email: {
+            type: 'string',
+            format: 'email',
+            example: 'user@example.com'
+          },
+          username: {
+            type: 'string',
+            example: 'johndoe'
+          },
+          firstName: {
+            type: 'string',
+            example: 'John'
+          },
+          lastName: {
+            type: 'string',
+            example: 'Doe'
+          },
+          avatar: {
+            type: 'string',
+            example: '/uploads/avatars/user_1000.jpg'
+          },
+          role: {
+            type: 'string',
+            enum: ['USER', 'ADMIN', 'MODERATOR'],
+            example: 'USER'
+          },
+          createdAt: {
+            type: 'string',
+            format: 'date-time'
+          }
+        }
+      }
+    },
+    responses: {
+      UnauthorizedError: {
+        description: 'Authentication required',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Error'
+            },
+            example: {
+              success: false,
+              error: {
+                message: 'Authentication required',
+                code: 'UNAUTHORIZED'
+              }
+            }
+          }
+        }
+      },
+      ValidationError: {
+        description: 'Validation error',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Error'
+            },
+            example: {
+              success: false,
+              error: {
+                message: 'Validation failed',
+                code: 'VALIDATION_ERROR'
+              }
+            }
           }
         }
       }

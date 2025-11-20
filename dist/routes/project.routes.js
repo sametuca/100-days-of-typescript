@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const project_controller_1 = require("../controllers/project.controller");
+const project_validation_1 = require("../validation/project.validation");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const router = (0, express_1.Router)();
+const projectController = new project_controller_1.ProjectController();
+router.use(auth_middleware_1.authenticate);
+router.get('/', (0, validate_middleware_1.validateQuery)(project_validation_1.projectQuerySchema), projectController.getProjects);
+router.post('/', (0, validate_middleware_1.validateBody)(project_validation_1.createProjectSchema), projectController.createProject);
+router.get('/:id', projectController.getProjectById);
+router.put('/:id', (0, validate_middleware_1.validateBody)(project_validation_1.updateProjectSchema), projectController.updateProject);
+router.delete('/:id', projectController.deleteProject);
+router.get('/:id/members', projectController.getProjectMembers);
+router.post('/:id/members', (0, validate_middleware_1.validateBody)(project_validation_1.addMemberSchema), projectController.addMember);
+router.delete('/:id/members/:memberId', projectController.removeMember);
+router.post('/:id/leave', projectController.leaveProject);
+router.get('/:id/stats', projectController.getProjectStats);
+exports.default = router;
+//# sourceMappingURL=project.routes.js.map

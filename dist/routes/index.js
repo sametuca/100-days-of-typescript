@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const health_controller_1 = require("../controllers/health.controller");
+const task_routes_1 = __importDefault(require("./task.routes"));
+const auth_routes_1 = __importDefault(require("./auth.routes"));
+const user_routes_1 = __importDefault(require("./user.routes"));
+const project_routes_1 = __importDefault(require("./project.routes"));
+const rate_limit_middleware_1 = require("../middleware/rate-limit.middleware");
+const admin_controller_1 = require("../controllers/admin.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const types_1 = require("../types");
+const router = (0, express_1.Router)();
+router.get('/', health_controller_1.HealthController.getRoot);
+router.get('/health', health_controller_1.HealthController.getHealth);
+router.get('/admin/jobs', auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)(types_1.UserRole.ADMIN), admin_controller_1.AdminController.getJobsStatus);
+router.use(rate_limit_middleware_1.apiLimiter);
+router.use('/tasks', task_routes_1.default);
+router.use('/auth', auth_routes_1.default);
+router.use('/users', user_routes_1.default);
+router.use('/projects', project_routes_1.default);
+exports.default = router;
+//# sourceMappingURL=index.js.map

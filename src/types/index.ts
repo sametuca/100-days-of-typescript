@@ -1,3 +1,17 @@
+import { Request } from 'express';
+
+// JWT token'dan gelen kullanıcı bilgileri
+export interface JwtPayload {
+  userId: string;
+  email: string;
+  role: string;
+}
+
+// Auth middleware'den sonra request'e eklenen user bilgisi
+export interface AuthRequest extends Request {
+  user?: JwtPayload;
+}
+
 export enum TaskStatus {
   TODO = 'TODO',                    
   IN_PROGRESS = 'IN_PROGRESS',

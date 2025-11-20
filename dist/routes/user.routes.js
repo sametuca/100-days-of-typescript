@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const user_controller_1 = require("../controllers/user.controller");
+const user_validation_1 = require("../validation/user.validation");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const types_1 = require("../types");
+const file_upload_1 = require("../utils/file-upload");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authenticate);
+router.get('/', (0, auth_middleware_1.authorize)(types_1.UserRole.ADMIN), user_controller_1.UserController.listUsers);
+router.get('/profile', user_controller_1.UserController.getProfile);
+router.put('/profile', (0, validate_middleware_1.validateBody)(user_validation_1.updateProfileSchema), user_controller_1.UserController.updateProfile);
+router.put('/password', (0, validate_middleware_1.validateBody)(user_validation_1.changePasswordSchema), user_controller_1.UserController.changePassword);
+router.delete('/account', (0, validate_middleware_1.validateBody)(user_validation_1.deleteAccountSchema), user_controller_1.UserController.deleteAccount);
+router.post('/avatar', file_upload_1.uploadAvatar, user_controller_1.UserController.uploadAvatar);
+router.delete('/avatar', user_controller_1.UserController.deleteAvatar);
+exports.default = router;
+//# sourceMappingURL=user.routes.js.map
