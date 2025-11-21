@@ -32,6 +32,52 @@ export enum UserRole {
   MODERATOR = 'MODERATOR'
 }
 
+// Task filtering ve arama için tiplar - Day 23
+export interface TaskFilter {
+  status?: TaskStatus[];
+  priority?: TaskPriority[];
+  userId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  search?: string;
+}
+
+export interface PaginationOptions {
+  page?: number;
+  limit?: number;
+  sortBy?: 'createdAt' | 'updatedAt' | 'title' | 'priority';
+  sortOrder?: 'asc' | 'desc';
+}
+
+// Dashboard analytics tipleri
+export interface TaskStats {
+  total: number;
+  completed: number;
+  inProgress: number;
+  todo: number;
+  cancelled: number;
+  completionRate: number;
+}
+
+export interface PriorityStats {
+  low: number;
+  medium: number;
+  high: number;
+  urgent: number;
+}
+
+export interface DashboardAnalytics {
+  taskStats: TaskStats;
+  priorityStats: PriorityStats;
+  recentTasks: Task[];
+  productivity: {
+    tasksCompletedToday: number;
+    tasksCompletedThisWeek: number;
+    tasksCompletedThisMonth: number;
+    averageCompletionTime?: number;
+  };
+}
+
 export interface User extends BaseEntity {
   email: string;
   username: string;
@@ -210,17 +256,15 @@ export type WithTimestamp<T> = T & Timestamped;
 // type TimestampedTask = WithTimestamp<{ title: string }>;
 // Result: { title: string, createdAt: Date, updatedAt: Date }
 
-// URL query string'leri için tipler
-export interface TaskQueryParams {
-  status?: TaskStatus;
-  priority?: TaskPriority;
+// URL query string'leri için tipler - Day 23 Update
+export interface TaskQueryParams extends PaginationOptions {
+  status?: TaskStatus | TaskStatus[]; // Tek veya çoklu status
+  priority?: TaskPriority | TaskPriority[]; // Tek veya çoklu priority
   userId?: string;
   projectId?: string;
+  startDate?: string; // ISO string format
+  endDate?: string;   // ISO string format
   search?: string;
-  sort?: 'createdAt' | 'updatedAt' | 'title' | 'priority';
-  order?: 'asc' | 'desc';
-  page?: number;
-  limit?: number;
 }
 
 export interface UserQueryParams {

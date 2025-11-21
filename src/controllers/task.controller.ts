@@ -1,33 +1,59 @@
 import { Request, Response } from 'express';
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto, UpdateTaskDto } from '../models/task.model';
-import { TaskStatus, TaskPriority } from '../types';
+import { TaskStatus, TaskPriority, TaskQueryParams } from '../types';
+import { catchAsync } from '../middleware/error.middleware';
 import logger from '../utils/logger';
 
 export class TaskController {
   
-  // Request → Controller → Service → Database → Service → Controller → Response
-  
-public static getAllTasks = catchAsync(async (req: Request, res: Response): Promise<void> => {
-    const { status, priority, search, userId, projectId, page, limit } = req.query;
+  // Day 23: Gelişmiş task filtreleme ve arama
+  public static getAllTasks = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    // Query parametrelerini parse et
+    const queryParams: TaskQueryParams = {
+      // Status array parsing
+      status: req.query.status ? 
+        (Array.isArray(req.query.status) ? 
+          req.query.status as TaskStatus[] : 
+          [req.query.status as TaskStatus]) : 
+        undefined,
+      
+      // Priority array parsing  
+      priority: req.query.priority ? 
+        (Array.isArray(req.query.priority) ? 
+          req.query.priority as TaskPriority[] : 
+          [req.query.priority as TaskPriority]) : 
+        undefined,
+      
+      search: req.query.search as string,
+      userId: req.query.userId as string,
+      projectId: req.query.projectId as string,
+      startDate: req.query.startDate as string,
+      endDate: req.query.endDate as string,
+      
+      // Pagination
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+      
+      // Sorting
+      sortBy: req.query.sortBy as 'createdAt' | 'updatedAt' | 'title' | 'priority',
+      sortOrder: req.query.sortOrder as 'asc' | 'desc'
+    };
 
-    const filters: any = {};
+    logger.info('Task query received', { queryParams });
 
-    if (status) filters.status = status as TaskStatus;
-    if (priority) filters.priority = priority as TaskPriority;
-    if (search) filters.search = search as string;
-    if (userId) filters.userId = userId as string;
-    if (projectId) filters.projectId = projectId as string;
-
-    const pageNum = page ? parseInt(page as string, 10) : undefined;
-    const limitNum = limit ? parseInt(limit as string, 10) : undefined;
-
-    const result = await TaskService.getAllTasks(pageNum, limitNum, filters);
+    const result = await TaskService.getAllTasks(queryParams);
 
     res.status(200).json({
       success: true,
       data: result.data,
-      pagination: result.pagination
+      pagination: result.pagination,
+      filters: {
+        applied: Object.keys(queryParams).filter(key => 
+          queryParams[key as keyof TaskQueryParams] !== undefined
+        ),
+        totalResults: result.data.length
+      }
     });
   });
 
@@ -155,20 +181,21 @@ public static getAllTasks = catchAsync(async (req: Request, res: Response): Prom
       });
     }
   }
-}
 
-function catchAsync(fn: (req: Request, res: Response) => Promise<void>) {
-  return (req: Request, res: Response) => {
-    fn(req, res).catch((error) => {
-      console.error('Async error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
+  // Day 23: Dashboard Analytics Endpoint
+  public static getDashboard = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.query;
+
+    logger.info('Dashboard analytics requested', { userId });
+
+    const analytics = await TaskService.getDashboardAnalytics(userId as string);
+
+    res.status(200).json({
+      success: true,
+      message: 'Dashboard analytics retrieved successfully',
+      data: analytics
     });
-  };
-  
+  });
 }
 
 

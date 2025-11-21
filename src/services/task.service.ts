@@ -1,28 +1,38 @@
 import { PaginatedResult, PaginationUtil } from '../utils/pagination';
 import { taskRepository } from '../repositories/task.repository';
-import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority } from '../types';
+import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority, TaskQueryParams, TaskFilter, DashboardAnalytics } from '../types';
 import { NotFoundError, AuthorizationError } from '../utils/errors';
 import logger from '../utils/logger';
 
 export class TaskService {
   
-public static async getAllTasks(
-    page?: number,
-    limit?: number,
-    filters?: {
-      userId?: string;
-      projectId?: string;
-      status?: TaskStatus;
-      priority?: TaskPriority;
-      search?: string;
-    }
-  ): Promise<PaginatedResult<Task>> {
-    const validatedParams = PaginationUtil.validateParams({ page, limit });
+  // Day 23: Gelişmiş filtering ve arama
+  public static async getAllTasks(queryParams: TaskQueryParams): Promise<PaginatedResult<Task>> {
+    const validatedParams = PaginationUtil.validateParams({ 
+      page: queryParams.page, 
+      limit: queryParams.limit 
+    });
+
+    // Query parametrelerini filter nesnesine dönüştür
+    const filters: TaskFilter = {
+      userId: queryParams.userId,
+      search: queryParams.search,
+      startDate: queryParams.startDate ? new Date(queryParams.startDate) : undefined,
+      endDate: queryParams.endDate ? new Date(queryParams.endDate) : undefined,
+      status: Array.isArray(queryParams.status) ? queryParams.status : 
+              queryParams.status ? [queryParams.status] : undefined,
+      priority: Array.isArray(queryParams.priority) ? queryParams.priority : 
+                queryParams.priority ? [queryParams.priority] : undefined,
+    };
 
     const { tasks, total } = await taskRepository.findAllPaginated(
       validatedParams.page,
       validatedParams.limit,
-      filters
+      filters,
+      {
+        sortBy: queryParams.sortBy || 'createdAt',
+        sortOrder: queryParams.sortOrder || 'desc'
+      }
     );
 
     const paginationMeta = PaginationUtil.createMeta(
@@ -30,6 +40,8 @@ public static async getAllTasks(
       validatedParams.limit,
       total
     );
+
+    logger.info(`Retrieved ${tasks.length} tasks with filters`, { filters, total });
 
     return {
       data: tasks,
@@ -133,5 +145,78 @@ public static async getAllTasks(
     logger.info(`Attachment uploaded for task: ${taskId}`);
 
     return task;
+  }
+
+  // Day 23: Dashboard Analytics
+  public static async getDashboardAnalytics(userId?: string): Promise<DashboardAnalytics> {
+    // Tüm taskları al (kullanıcıya göre filtrelenebilir)
+    const allTasksQuery: TaskQueryParams = {
+      userId: userId,
+      page: 1,
+      limit: 1000 // Yeterli büyük sayı
+    };
+    
+    const { data: allTasks } = await this.getAllTasks(allTasksQuery);
+    
+    // Task istatistikleri hesapla
+    const taskStats = {
+      total: allTasks.length,
+      completed: allTasks.filter(t => t.status === TaskStatus.DONE).length,
+      inProgress: allTasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length,
+      todo: allTasks.filter(t => t.status === TaskStatus.TODO).length,
+      cancelled: allTasks.filter(t => t.status === TaskStatus.CANCELLED).length,
+      completionRate: 0
+    };
+    
+    taskStats.completionRate = taskStats.total > 0 
+      ? Math.round((taskStats.completed / taskStats.total) * 100) 
+      : 0;
+
+    // Priority istatistikleri
+    const priorityStats = {
+      low: allTasks.filter(t => t.priority === TaskPriority.LOW).length,
+      medium: allTasks.filter(t => t.priority === TaskPriority.MEDIUM).length,
+      high: allTasks.filter(t => t.priority === TaskPriority.HIGH).length,
+      urgent: allTasks.filter(t => t.priority === TaskPriority.URGENT).length,
+    };
+
+    // Son tasklar (en yeni 5)
+    const recentTasks = allTasks
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    // Productivity metrikleri
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const completedTasks = allTasks.filter(t => t.status === TaskStatus.DONE);
+    
+    const productivity = {
+      tasksCompletedToday: completedTasks.filter(t => 
+        new Date(t.updatedAt) >= todayStart
+      ).length,
+      tasksCompletedThisWeek: completedTasks.filter(t => 
+        new Date(t.updatedAt) >= weekStart
+      ).length,
+      tasksCompletedThisMonth: completedTasks.filter(t => 
+        new Date(t.updatedAt) >= monthStart
+      ).length,
+      averageCompletionTime: undefined // TODO: Bu hesaplama için created->completed süresini takip etmek gerek
+    };
+
+    logger.info('Dashboard analytics generated', {
+      userId,
+      totalTasks: taskStats.total,
+      completionRate: taskStats.completionRate
+    });
+
+    return {
+      taskStats,
+      priorityStats,
+      recentTasks,
+      productivity
+    };
   }
 }

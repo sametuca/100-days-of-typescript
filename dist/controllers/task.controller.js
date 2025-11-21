@@ -6,6 +6,7 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskController = void 0;
 const task_service_1 = require("../services/task.service");
+const error_middleware_1 = require("../middleware/error.middleware");
 const logger_1 = __importDefault(require("../utils/logger"));
 class TaskController {
     static async getTaskById(req, res) {
@@ -112,38 +113,48 @@ class TaskController {
 }
 exports.TaskController = TaskController;
 _a = TaskController;
-TaskController.getAllTasks = catchAsync(async (req, res) => {
-    const { status, priority, search, userId, projectId, page, limit } = req.query;
-    const filters = {};
-    if (status)
-        filters.status = status;
-    if (priority)
-        filters.priority = priority;
-    if (search)
-        filters.search = search;
-    if (userId)
-        filters.userId = userId;
-    if (projectId)
-        filters.projectId = projectId;
-    const pageNum = page ? parseInt(page, 10) : undefined;
-    const limitNum = limit ? parseInt(limit, 10) : undefined;
-    const result = await task_service_1.TaskService.getAllTasks(pageNum, limitNum, filters);
+TaskController.getAllTasks = (0, error_middleware_1.catchAsync)(async (req, res) => {
+    const queryParams = {
+        status: req.query.status ?
+            (Array.isArray(req.query.status) ?
+                req.query.status :
+                [req.query.status]) :
+            undefined,
+        priority: req.query.priority ?
+            (Array.isArray(req.query.priority) ?
+                req.query.priority :
+                [req.query.priority]) :
+            undefined,
+        search: req.query.search,
+        userId: req.query.userId,
+        projectId: req.query.projectId,
+        startDate: req.query.startDate,
+        endDate: req.query.endDate,
+        page: req.query.page ? parseInt(req.query.page, 10) : undefined,
+        limit: req.query.limit ? parseInt(req.query.limit, 10) : undefined,
+        sortBy: req.query.sortBy,
+        sortOrder: req.query.sortOrder
+    };
+    logger_1.default.info('Task query received', { queryParams });
+    const result = await task_service_1.TaskService.getAllTasks(queryParams);
     res.status(200).json({
         success: true,
         data: result.data,
-        pagination: result.pagination
+        pagination: result.pagination,
+        filters: {
+            applied: Object.keys(queryParams).filter(key => queryParams[key] !== undefined),
+            totalResults: result.data.length
+        }
     });
 });
-function catchAsync(fn) {
-    return (req, res) => {
-        fn(req, res).catch((error) => {
-            console.error('Async error:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Internal server error',
-                error: error instanceof Error ? error.message : 'Unknown error'
-            });
-        });
-    };
-}
+TaskController.getDashboard = (0, error_middleware_1.catchAsync)(async (req, res) => {
+    const { userId } = req.query;
+    logger_1.default.info('Dashboard analytics requested', { userId });
+    const analytics = await task_service_1.TaskService.getDashboardAnalytics(userId);
+    res.status(200).json({
+        success: true,
+        message: 'Dashboard analytics retrieved successfully',
+        data: analytics
+    });
+});
 //# sourceMappingURL=task.controller.js.map

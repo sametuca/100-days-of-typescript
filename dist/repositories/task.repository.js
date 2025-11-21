@@ -163,24 +163,30 @@ class TaskRepository extends base_repository_1.BaseRepository {
     generateId() {
         return `task_${this.idCounter++}`;
     }
-    findAllPaginated(page, limit, filters) {
+    findAllPaginated(page, limit, filters, sortOptions) {
         const whereClauses = [];
         const params = [];
         if (filters?.userId) {
             whereClauses.push('user_id = ?');
             params.push(filters.userId);
         }
-        if (filters?.projectId) {
-            whereClauses.push('project_id = ?');
-            params.push(filters.projectId);
+        if (filters?.status && filters.status.length > 0) {
+            const statusPlaceholders = filters.status.map(() => '?').join(',');
+            whereClauses.push(`status IN (${statusPlaceholders})`);
+            params.push(...filters.status);
         }
-        if (filters?.status) {
-            whereClauses.push('status = ?');
-            params.push(filters.status);
+        if (filters?.priority && filters.priority.length > 0) {
+            const priorityPlaceholders = filters.priority.map(() => '?').join(',');
+            whereClauses.push(`priority IN (${priorityPlaceholders})`);
+            params.push(...filters.priority);
         }
-        if (filters?.priority) {
-            whereClauses.push('priority = ?');
-            params.push(filters.priority);
+        if (filters?.startDate) {
+            whereClauses.push('created_at >= ?');
+            params.push(filters.startDate.toISOString());
+        }
+        if (filters?.endDate) {
+            whereClauses.push('created_at <= ?');
+            params.push(filters.endDate.toISOString());
         }
         if (filters?.search) {
             whereClauses.push('(title LIKE ? OR description LIKE ?)');
@@ -194,7 +200,9 @@ class TaskRepository extends base_repository_1.BaseRepository {
             sql += whereClause;
             countSql += whereClause;
         }
-        sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+        const sortBy = sortOptions?.sortBy || 'created_at';
+        const sortOrder = sortOptions?.sortOrder || 'desc';
+        sql += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()} LIMIT ? OFFSET ?`;
         const offset = (page - 1) * limit;
         const queryParams = [...params, limit, offset];
         const countStmt = this.db.prepare(countSql);

@@ -1,6 +1,6 @@
 
 import { BaseRepository } from './base.repository';
-import { Task, TaskStatus, TaskPriority, CreateTaskDto, UpdateTaskDto } from '../types';
+import { Task, TaskStatus, TaskPriority, CreateTaskDto, UpdateTaskDto, TaskFilter } from '../types';
 
 
 export class TaskRepository extends BaseRepository<Task> {
@@ -286,16 +286,12 @@ export class TaskRepository extends BaseRepository<Task> {
     return `task_${this.idCounter++}`;
   }
 
-   public findAllPaginated(
+  // Day 23: Gelişmiş filtering ve arama
+  public findAllPaginated(
     page: number,
     limit: number,
-    filters?: {
-      userId?: string;
-      projectId?: string;
-      status?: TaskStatus;
-      priority?: TaskPriority;
-      search?: string;
-    }
+    filters?: TaskFilter,
+    sortOptions?: { sortBy?: string; sortOrder?: 'asc' | 'desc' }
   ): Promise<{ tasks: Task[]; total: number }> {
     const whereClauses: string[] = [];
     const params: any[] = [];
@@ -305,21 +301,32 @@ export class TaskRepository extends BaseRepository<Task> {
       params.push(filters.userId);
     }
 
-    if (filters?.projectId) {
-      whereClauses.push('project_id = ?');
-      params.push(filters.projectId);
+    // Multiple status filtering
+    if (filters?.status && filters.status.length > 0) {
+      const statusPlaceholders = filters.status.map(() => '?').join(',');
+      whereClauses.push(`status IN (${statusPlaceholders})`);
+      params.push(...filters.status);
     }
 
-    if (filters?.status) {
-      whereClauses.push('status = ?');
-      params.push(filters.status);
+    // Multiple priority filtering
+    if (filters?.priority && filters.priority.length > 0) {
+      const priorityPlaceholders = filters.priority.map(() => '?').join(',');
+      whereClauses.push(`priority IN (${priorityPlaceholders})`);
+      params.push(...filters.priority);
     }
 
-    if (filters?.priority) {
-      whereClauses.push('priority = ?');
-      params.push(filters.priority);
+    // Date range filtering
+    if (filters?.startDate) {
+      whereClauses.push('created_at >= ?');
+      params.push(filters.startDate.toISOString());
     }
 
+    if (filters?.endDate) {
+      whereClauses.push('created_at <= ?');
+      params.push(filters.endDate.toISOString());
+    }
+
+    // Text search in title and description
     if (filters?.search) {
       whereClauses.push('(title LIKE ? OR description LIKE ?)');
       const searchPattern = `%${filters.search}%`;
@@ -335,7 +342,10 @@ export class TaskRepository extends BaseRepository<Task> {
       countSql += whereClause;
     }
 
-    sql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    // Dynamic sorting
+    const sortBy = sortOptions?.sortBy || 'created_at';
+    const sortOrder = sortOptions?.sortOrder || 'desc';
+    sql += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()} LIMIT ? OFFSET ?`;
 
     const offset = (page - 1) * limit;
     const queryParams = [...params, limit, offset];

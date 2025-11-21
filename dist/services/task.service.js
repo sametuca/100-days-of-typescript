@@ -10,10 +10,27 @@ const types_1 = require("../types");
 const errors_1 = require("../utils/errors");
 const logger_1 = __importDefault(require("../utils/logger"));
 class TaskService {
-    static async getAllTasks(page, limit, filters) {
-        const validatedParams = pagination_1.PaginationUtil.validateParams({ page, limit });
-        const { tasks, total } = await task_repository_1.taskRepository.findAllPaginated(validatedParams.page, validatedParams.limit, filters);
+    static async getAllTasks(queryParams) {
+        const validatedParams = pagination_1.PaginationUtil.validateParams({
+            page: queryParams.page,
+            limit: queryParams.limit
+        });
+        const filters = {
+            userId: queryParams.userId,
+            search: queryParams.search,
+            startDate: queryParams.startDate ? new Date(queryParams.startDate) : undefined,
+            endDate: queryParams.endDate ? new Date(queryParams.endDate) : undefined,
+            status: Array.isArray(queryParams.status) ? queryParams.status :
+                queryParams.status ? [queryParams.status] : undefined,
+            priority: Array.isArray(queryParams.priority) ? queryParams.priority :
+                queryParams.priority ? [queryParams.priority] : undefined,
+        };
+        const { tasks, total } = await task_repository_1.taskRepository.findAllPaginated(validatedParams.page, validatedParams.limit, filters, {
+            sortBy: queryParams.sortBy || 'createdAt',
+            sortOrder: queryParams.sortOrder || 'desc'
+        });
         const paginationMeta = pagination_1.PaginationUtil.createMeta(validatedParams.page, validatedParams.limit, total);
+        logger_1.default.info(`Retrieved ${tasks.length} tasks with filters`, { filters, total });
         return {
             data: tasks,
             pagination: paginationMeta
@@ -83,6 +100,56 @@ class TaskService {
         }
         logger_1.default.info(`Attachment uploaded for task: ${taskId}`);
         return task;
+    }
+    static async getDashboardAnalytics(userId) {
+        const allTasksQuery = {
+            userId: userId,
+            page: 1,
+            limit: 1000
+        };
+        const { data: allTasks } = await this.getAllTasks(allTasksQuery);
+        const taskStats = {
+            total: allTasks.length,
+            completed: allTasks.filter(t => t.status === types_1.TaskStatus.DONE).length,
+            inProgress: allTasks.filter(t => t.status === types_1.TaskStatus.IN_PROGRESS).length,
+            todo: allTasks.filter(t => t.status === types_1.TaskStatus.TODO).length,
+            cancelled: allTasks.filter(t => t.status === types_1.TaskStatus.CANCELLED).length,
+            completionRate: 0
+        };
+        taskStats.completionRate = taskStats.total > 0
+            ? Math.round((taskStats.completed / taskStats.total) * 100)
+            : 0;
+        const priorityStats = {
+            low: allTasks.filter(t => t.priority === types_1.TaskPriority.LOW).length,
+            medium: allTasks.filter(t => t.priority === types_1.TaskPriority.MEDIUM).length,
+            high: allTasks.filter(t => t.priority === types_1.TaskPriority.HIGH).length,
+            urgent: allTasks.filter(t => t.priority === types_1.TaskPriority.URGENT).length,
+        };
+        const recentTasks = allTasks
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5);
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const completedTasks = allTasks.filter(t => t.status === types_1.TaskStatus.DONE);
+        const productivity = {
+            tasksCompletedToday: completedTasks.filter(t => new Date(t.updatedAt) >= todayStart).length,
+            tasksCompletedThisWeek: completedTasks.filter(t => new Date(t.updatedAt) >= weekStart).length,
+            tasksCompletedThisMonth: completedTasks.filter(t => new Date(t.updatedAt) >= monthStart).length,
+            averageCompletionTime: undefined
+        };
+        logger_1.default.info('Dashboard analytics generated', {
+            userId,
+            totalTasks: taskStats.total,
+            completionRate: taskStats.completionRate
+        });
+        return {
+            taskStats,
+            priorityStats,
+            recentTasks,
+            productivity
+        };
     }
 }
 exports.TaskService = TaskService;

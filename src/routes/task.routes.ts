@@ -181,6 +181,9 @@ const router = Router();
 
 router.use(authenticate);
 
+// Day 23: Dashboard analytics endpoint
+router.get('/dashboard', TaskController.getDashboard);
+
 router.get('/', validateQuery(taskQuerySchema), TaskController.getAllTasks);
 router.get('/:id', validateParams(taskIdSchema), TaskController.getTaskById);
 router.post('/', createTaskLimiter, validateBody(createTaskSchema), TaskController.createTask);
