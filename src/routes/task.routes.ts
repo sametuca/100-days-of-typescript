@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { TaskController } from '../controllers/task.controller';
+import { CommentController } from '../controllers/comment.controller';
+import { ActivityController } from '../controllers/activity.controller';
 import {
   createTaskSchema,
   updateTaskSchema,
@@ -9,6 +11,7 @@ import {
 import { validateBody, validateParams, validateQuery } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
 import { createTaskLimiter } from '../middleware/rate-limit.middleware';
+
 /**
  * @swagger
  * /tasks:
@@ -189,4 +192,10 @@ router.get('/:id', validateParams(taskIdSchema), TaskController.getTaskById);
 router.post('/', createTaskLimiter, validateBody(createTaskSchema), TaskController.createTask);
 router.put('/:id', validateParams(taskIdSchema), validateBody(updateTaskSchema), TaskController.updateTask);
 router.delete('/:id', validateParams(taskIdSchema), TaskController.deleteTask);
+
+// Day 24: Collaboration & Activity Logs
+router.post('/:taskId/comments', CommentController.createComment);
+router.get('/:taskId/comments', CommentController.getTaskComments);
+router.get('/:taskId/activity-logs', ActivityController.getTaskHistory);
+
 export default router;
