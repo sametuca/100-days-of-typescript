@@ -1,10 +1,9 @@
-export interface Comment {
-    id: string;
+import { BaseEntity } from './index';
+
+export interface Comment extends BaseEntity {
     task_id: string;
     user_id: string;
     content: string;
-    created_at: string;
-    updated_at: string;
 }
 
 export interface CreateCommentDTO {

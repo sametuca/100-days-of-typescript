@@ -2,10 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const task_controller_1 = require("../controllers/task.controller");
+const comment_controller_1 = require("../controllers/comment.controller");
+const activity_controller_1 = require("../controllers/activity.controller");
 const task_validation_1 = require("../validation/task.validation");
 const validate_middleware_1 = require("../middleware/validate.middleware");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const rate_limit_middleware_1 = require("../middleware/rate-limit.middleware");
+const upload_middleware_1 = require("../middleware/upload.middleware");
 const router = (0, express_1.Router)();
 router.use(auth_middleware_1.authenticate);
 router.get('/dashboard', task_controller_1.TaskController.getDashboard);
@@ -14,5 +17,9 @@ router.get('/:id', (0, validate_middleware_1.validateParams)(task_validation_1.t
 router.post('/', rate_limit_middleware_1.createTaskLimiter, (0, validate_middleware_1.validateBody)(task_validation_1.createTaskSchema), task_controller_1.TaskController.createTask);
 router.put('/:id', (0, validate_middleware_1.validateParams)(task_validation_1.taskIdSchema), (0, validate_middleware_1.validateBody)(task_validation_1.updateTaskSchema), task_controller_1.TaskController.updateTask);
 router.delete('/:id', (0, validate_middleware_1.validateParams)(task_validation_1.taskIdSchema), task_controller_1.TaskController.deleteTask);
+router.post('/:taskId/comments', comment_controller_1.CommentController.createComment);
+router.get('/:taskId/comments', comment_controller_1.CommentController.getTaskComments);
+router.get('/:taskId/activity-logs', activity_controller_1.ActivityController.getTaskHistory);
+router.post('/:id/attachments', (0, validate_middleware_1.validateParams)(task_validation_1.taskIdSchema), upload_middleware_1.upload.single('file'), task_controller_1.TaskController.uploadAttachment);
 exports.default = router;
 //# sourceMappingURL=task.routes.js.map

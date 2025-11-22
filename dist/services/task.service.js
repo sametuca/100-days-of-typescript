@@ -9,6 +9,7 @@ const task_repository_1 = require("../repositories/task.repository");
 const types_1 = require("../types");
 const errors_1 = require("../utils/errors");
 const logger_1 = __importDefault(require("../utils/logger"));
+const activity_service_1 = require("./activity.service");
 class TaskService {
     static async getAllTasks(queryParams) {
         const validatedParams = pagination_1.PaginationUtil.validateParams({
@@ -42,8 +43,30 @@ class TaskService {
     static async createTask(taskData, userId) {
         return await task_repository_1.taskRepository.create(taskData, userId);
     }
-    static async updateTask(id, taskData) {
-        return await task_repository_1.taskRepository.update(id, taskData);
+    static async updateTask(id, taskData, userId) {
+        const oldTask = await task_repository_1.taskRepository.findById(id);
+        if (!oldTask)
+            return null;
+        const updatedTask = await task_repository_1.taskRepository.update(id, taskData);
+        if (updatedTask && userId) {
+            if (oldTask.status !== updatedTask.status) {
+                await activity_service_1.activityService.logActivity({
+                    task_id: id,
+                    user_id: userId,
+                    action_type: 'STATUS_CHANGE',
+                    details: { from: oldTask.status, to: updatedTask.status }
+                });
+            }
+            if (oldTask.priority !== updatedTask.priority) {
+                await activity_service_1.activityService.logActivity({
+                    task_id: id,
+                    user_id: userId,
+                    action_type: 'PRIORITY_CHANGE',
+                    details: { from: oldTask.priority, to: updatedTask.priority }
+                });
+            }
+        }
+        return updatedTask;
     }
     static async deleteTask(id) {
         return await task_repository_1.taskRepository.delete(id);
@@ -99,7 +122,18 @@ class TaskService {
             throw new errors_1.AuthorizationError('Bu task size ait değil', 'UNAUTHORIZED');
         }
         logger_1.default.info(`Attachment uploaded for task: ${taskId}`);
-        return task;
+        const attachment = {
+            filename: _file.filename,
+            path: _file.path,
+            mimetype: _file.mimetype,
+            size: _file.size,
+            uploadedAt: new Date()
+        };
+        const updatedTask = await task_repository_1.taskRepository.addAttachment(taskId, attachment);
+        if (!updatedTask) {
+            throw new Error('Attachment could not be added');
+        }
+        return updatedTask;
     }
     static async getDashboardAnalytics(userId) {
         const allTasksQuery = {

@@ -172,7 +172,20 @@ export class TaskService {
 
     logger.info(`Attachment uploaded for task: ${taskId}`);
 
-    return task;
+    const attachment = {
+      filename: _file.filename,
+      path: _file.path,
+      mimetype: _file.mimetype,
+      size: _file.size,
+      uploadedAt: new Date()
+    };
+
+    const updatedTask = await taskRepository.addAttachment(taskId, attachment);
+    if (!updatedTask) {
+      throw new Error('Attachment could not be added');
+    }
+
+    return updatedTask;
   }
 
   public static async getDashboardAnalytics(userId?: string): Promise<DashboardAnalytics> {

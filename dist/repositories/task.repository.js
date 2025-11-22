@@ -75,6 +75,16 @@ class TaskRepository extends base_repository_1.BaseRepository {
         stmt.run(...updateValues);
         return this.findById(id);
     }
+    addAttachment(id, attachment) {
+        const task = this.db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+        if (!task)
+            return Promise.resolve(null);
+        const attachments = task.attachments ? JSON.parse(task.attachments) : [];
+        attachments.push(attachment);
+        const stmt = this.db.prepare('UPDATE tasks SET attachments = ?, updated_at = ? WHERE id = ?');
+        stmt.run(JSON.stringify(attachments), new Date().toISOString(), id);
+        return this.findById(id);
+    }
     findByUserId(userId) {
         const stmt = this.db.prepare(`
       SELECT * FROM tasks WHERE user_id = ?
@@ -148,6 +158,7 @@ class TaskRepository extends base_repository_1.BaseRepository {
         return tasks.map(task => ({
             ...task,
             tags: task.tags ? JSON.parse(task.tags) : [],
+            attachments: task.attachments ? JSON.parse(task.attachments) : [],
             dueDate: task.due_date ? new Date(task.due_date) : undefined,
             createdAt: new Date(task.created_at),
             updatedAt: new Date(task.updated_at),

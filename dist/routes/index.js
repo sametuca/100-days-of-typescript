@@ -9,6 +9,7 @@ const task_routes_1 = __importDefault(require("./task.routes"));
 const auth_routes_1 = __importDefault(require("./auth.routes"));
 const user_routes_1 = __importDefault(require("./user.routes"));
 const project_routes_1 = __importDefault(require("./project.routes"));
+const comment_routes_1 = __importDefault(require("./comment.routes"));
 const rate_limit_middleware_1 = require("../middleware/rate-limit.middleware");
 const admin_controller_1 = require("../controllers/admin.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
@@ -22,5 +23,6 @@ router.use('/tasks', task_routes_1.default);
 router.use('/auth', auth_routes_1.default);
 router.use('/users', user_routes_1.default);
 router.use('/projects', project_routes_1.default);
+router.use('/comments', comment_routes_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

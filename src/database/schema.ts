@@ -111,6 +111,10 @@ export const createTables = () => {
       -- Örnek: '["typescript", "backend"]'
       tags TEXT,
       
+      -- attachments = Dosya ekleri (JSON string)
+      -- Örnek: '[{"filename": "...", "path": "...", "mimetype": "..."}]'
+      attachments TEXT,
+      
       -- created_at, updated_at
       created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
       updated_at TEXT NOT NULL DEFAULT (DATETIME('now'))

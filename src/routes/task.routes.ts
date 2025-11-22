@@ -11,6 +11,7 @@ import {
 import { validateBody, validateParams, validateQuery } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
 import { createTaskLimiter } from '../middleware/rate-limit.middleware';
+import { upload } from '../middleware/upload.middleware';
 
 /**
  * @swagger
@@ -197,5 +198,8 @@ router.delete('/:id', validateParams(taskIdSchema), TaskController.deleteTask);
 router.post('/:taskId/comments', CommentController.createComment);
 router.get('/:taskId/comments', CommentController.getTaskComments);
 router.get('/:taskId/activity-logs', ActivityController.getTaskHistory);
+
+// Day 24: File Attachments
+router.post('/:id/attachments', validateParams(taskIdSchema), upload.single('file'), TaskController.uploadAttachment);
 
 export default router;

@@ -183,6 +183,28 @@ export class TaskController {
     }
   }
 
+  public static uploadAttachment = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const userId = req.user!.userId;
+    const file = req.file;
+
+    if (!file) {
+      res.status(400).json({
+        success: false,
+        message: 'Dosya yüklenmedi'
+      });
+      return;
+    }
+
+    const task = await TaskService.uploadAttachment(id, userId, file);
+
+    res.status(200).json({
+      success: true,
+      message: 'Dosya başarıyla yüklendi',
+      data: task
+    });
+  });
+
   // Day 23: Dashboard Analytics Endpoint
   public static getDashboard = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const { userId } = req.query;

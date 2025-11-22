@@ -13,21 +13,21 @@ export interface AuthRequest extends Request {
 }
 
 export enum TaskStatus {
-  TODO = 'TODO',                    
+  TODO = 'TODO',
   IN_PROGRESS = 'IN_PROGRESS',
   DONE = 'DONE',
   CANCELLED = 'CANCELLED'
 }
 
 export enum TaskPriority {
-  LOW = 'LOW',                     
+  LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
   URGENT = 'URGENT'
 }
 
 export enum UserRole {
-  USER = 'USER',                    
+  USER = 'USER',
   ADMIN = 'ADMIN',
   MODERATOR = 'MODERATOR'
 }
@@ -78,6 +78,12 @@ export interface DashboardAnalytics {
   };
 }
 
+export interface BaseEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface User extends BaseEntity {
   email: string;
   username: string;
@@ -90,12 +96,6 @@ export interface User extends BaseEntity {
   lastLoginAt?: Date;
 }
 
-export interface BaseEntity {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface Task extends BaseEntity {
   title: string;
   description?: string;
@@ -105,17 +105,13 @@ export interface Task extends BaseEntity {
   projectId?: string;
   dueDate?: Date;
   tags?: string[];
-}
-
-export interface User extends BaseEntity {
-  email: string;
-  username: string;
-  passwordHash: string;
-  firstName?: string;
-  lastName?: string;
-  role: UserRole;
-  isActive: boolean;
-  lastLoginAt?: Date;
+  attachments?: {
+    filename: string;
+    path: string;
+    mimetype: string;
+    size: number;
+    uploadedAt: Date;
+  }[];
 }
 
 export interface Project extends BaseEntity {
@@ -134,7 +130,7 @@ export interface CreateTaskDto {
   status?: TaskStatus;
   priority?: TaskPriority;
   projectId?: string;
-  dueDate?: string;            
+  dueDate?: string;
   tags?: string[];
 }
 
@@ -147,7 +143,7 @@ export interface UpdateTaskDto extends Partial<CreateTaskDto> {
 export interface CreateUserDto {
   email: string;
   username: string;
-  password: string;             
+  password: string;
   firstName?: string;
   lastName?: string;
   role?: UserRole;
@@ -181,9 +177,9 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   success: boolean;
-  
+
   data: T[];
-  
+
   pagination: {
     page: number;
     limit: number;
@@ -214,7 +210,7 @@ export type CompleteTask = Required<Task>;
 // Bir değer Task mı kontrol et
 export function isTask(obj: any): obj is Task {
   // obj is Task = Eğer true dönerse obj'nin tipi Task'tır
-  
+
   return (
     // typeof obj === 'object' = Obje mi?
     typeof obj === 'object' &&
@@ -282,8 +278,8 @@ export interface AppConfig {
   environment: 'development' | 'production' | 'test';
   apiPrefix: string;
   jwt: {
-    secret: string;              
-    expiresIn: string;          
+    secret: string;
+    expiresIn: string;
   };
   database: {
     host: string;

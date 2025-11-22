@@ -64,7 +64,8 @@ class TaskController {
                     message: 'Güncellenecek alan belirtilmedi'
                 });
             }
-            const updatedTask = await task_service_1.TaskService.updateTask(id, taskData);
+            const userId = req.user.userId;
+            const updatedTask = await task_service_1.TaskService.updateTask(id, taskData, userId);
             if (!updatedTask) {
                 return res.status(404).json({
                     success: false,
@@ -145,6 +146,24 @@ TaskController.getAllTasks = (0, error_middleware_1.catchAsync)(async (req, res)
             applied: Object.keys(queryParams).filter(key => queryParams[key] !== undefined),
             totalResults: result.data.length
         }
+    });
+});
+TaskController.uploadAttachment = (0, error_middleware_1.catchAsync)(async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const file = req.file;
+    if (!file) {
+        res.status(400).json({
+            success: false,
+            message: 'Dosya yüklenmedi'
+        });
+        return;
+    }
+    const task = await task_service_1.TaskService.uploadAttachment(id, userId, file);
+    res.status(200).json({
+        success: true,
+        message: 'Dosya başarıyla yüklendi',
+        data: task
     });
 });
 TaskController.getDashboard = (0, error_middleware_1.catchAsync)(async (req, res) => {

@@ -102,6 +102,10 @@ const createTables = () => {
       -- Örnek: '["typescript", "backend"]'
       tags TEXT,
       
+      -- attachments = Dosya ekleri (JSON string)
+      -- Örnek: '[{"filename": "...", "path": "...", "mimetype": "..."}]'
+      attachments TEXT,
+      
       -- created_at, updated_at
       created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
       updated_at TEXT NOT NULL DEFAULT (DATETIME('now'))
@@ -129,6 +133,36 @@ const createTables = () => {
   `);
     console.log('Tasks table created');
     connection_1.default.exec(`
+    CREATE TABLE IF NOT EXISTS comments (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      content TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
+      updated_at TEXT NOT NULL DEFAULT (DATETIME('now'))
+    )
+  `);
+    console.log('Comments table created');
+    connection_1.default.exec(`
+    CREATE TABLE IF NOT EXISTS activity_logs (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      action_type TEXT NOT NULL, -- 'STATUS_CHANGE', 'COMMENT_ADDED', 'ASSIGNED', etc.
+      details TEXT, -- JSON string or simple text
+      created_at TEXT NOT NULL DEFAULT (DATETIME('now'))
+    )
+  `);
+    console.log('Activity logs table created');
+    connection_1.default.exec(`
+    CREATE INDEX IF NOT EXISTS idx_comments_task_id 
+    ON comments(task_id)
+  `);
+    connection_1.default.exec(`
+    CREATE INDEX IF NOT EXISTS idx_activity_logs_task_id 
+    ON activity_logs(task_id)
+  `);
+    connection_1.default.exec(`
     CREATE INDEX IF NOT EXISTS idx_users_email 
     ON users(email)
   `);
@@ -150,6 +184,8 @@ const createTables = () => {
 exports.createTables = createTables;
 const dropTables = () => {
     console.log('Dropping all tables...');
+    connection_1.default.exec('DROP TABLE IF EXISTS activity_logs');
+    connection_1.default.exec('DROP TABLE IF EXISTS comments');
     connection_1.default.exec('DROP TABLE IF EXISTS tasks');
     connection_1.default.exec('DROP TABLE IF EXISTS project_members');
     connection_1.default.exec('DROP TABLE IF EXISTS projects');
