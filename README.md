@@ -1,5 +1,6 @@
-- 5 - 6 - 7 - 8
-- 9 - 10 - 11 - 12
-- 13 - 14 - 15 - 16
-- 17 - 18 - 19 - 20
-- 21 - 22 - 23 - **24** ← Current
+- [1](./docs/day1-README.md) - [2](./docs/day2-README.md) - [3](./docs/day3-README.md) - [4](./docs/day4-README.md)
+- [5](./docs/day5-README.md) - [6](./docs/day6-README.md) - [7](./docs/day7-README.md) - [8](./docs/day8-README.md)
+- [9](./docs/day9-README.md) - [10](./docs/day10-README.md) - [11](./docs/day11-README.md) - [12](./docs/day12-README.md)
+- [13](./docs/day13-README.md) - [14](./docs/day14-README.md) - [15](./docs/day15-README.md) - [16](./docs/day16-README.md)
+- [17](./docs/day17-README.md) - [18](./docs/day18-README.md) - [19](./docs/day19-README.md) - [20](./docs/day20-README.md)
+- [21](./docs/day21-README.md) - [22](./docs/day22-README.md) - [23](./docs/day23-README.md) - [24](./docs/day24-README.md) - [25](./docs/day25-README.md) ← Current

@@ -287,3 +287,7 @@ export interface AppConfig {
     name: string;
   };
 }
+
+export * from './comment.types';
+export * from './activity.types';
+export * from './subtask.types';
