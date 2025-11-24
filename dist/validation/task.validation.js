@@ -47,11 +47,15 @@ exports.taskIdSchema = zod_1.z.object({
     id: zod_1.z.string().min(1, 'Task ID boş olamaz')
 });
 exports.taskQuerySchema = zod_1.z.object({
-    status: exports.taskStatusSchema.optional(),
-    priority: exports.taskPrioritySchema.optional(),
+    status: zod_1.z.union([exports.taskStatusSchema, zod_1.z.array(exports.taskStatusSchema)]).optional(),
+    priority: zod_1.z.union([exports.taskPrioritySchema, zod_1.z.array(exports.taskPrioritySchema)]).optional(),
     search: zod_1.z.string().min(1).max(100).optional(),
     userId: zod_1.z.string().optional(),
     projectId: zod_1.z.string().optional(),
+    startDate: zod_1.z.string().datetime().optional(),
+    endDate: zod_1.z.string().datetime().optional(),
+    sortBy: zod_1.z.enum(['createdAt', 'updatedAt', 'title', 'priority', 'dueDate']).optional(),
+    sortOrder: zod_1.z.enum(['asc', 'desc']).optional(),
     page: zod_1.z.coerce.number().int().positive().optional(),
     limit: zod_1.z.coerce.number().int().positive().max(100).optional()
 });
