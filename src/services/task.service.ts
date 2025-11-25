@@ -4,6 +4,7 @@ import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus, TaskPriority, TaskQuery
 import { NotFoundError, AuthorizationError } from '../utils/errors';
 import logger from '../utils/logger';
 import { activityService } from './activity.service';
+import { webSocketService } from './websocket.service';
 
 export class TaskService {
 
@@ -56,7 +57,18 @@ export class TaskService {
     taskData: CreateTaskDto,
     userId: string
   ): Promise<Task> {
-    return await taskRepository.create(taskData, userId);
+    const task = await taskRepository.create(taskData, userId);
+    
+    // Day 27: Real-time notification
+    if (webSocketService) {
+      webSocketService.notifyUser(userId, 'task_created', {
+        taskId: task.id,
+        title: task.title,
+        message: 'Yeni görev oluşturuldu'
+      });
+    }
+    
+    return task;
   }
 
   public static async updateTask(
@@ -90,6 +102,16 @@ export class TaskService {
           details: { from: oldTask.priority, to: updatedTask.priority }
         });
       }
+    }
+
+    // Day 27: Real-time notification for task updates
+    if (updatedTask && userId && webSocketService) {
+      webSocketService.notifyUser(userId, 'task_updated', {
+        taskId: id,
+        title: updatedTask.title,
+        status: updatedTask.status,
+        message: 'Görev güncellendi'
+      });
     }
 
     return updatedTask;

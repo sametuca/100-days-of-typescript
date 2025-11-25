@@ -15,12 +15,15 @@ import path from 'path';
 import { initializeJobs } from './jobs';
 import { swaggerSpec } from './config/swagger';
 import swaggerUi from 'swagger-ui-express';
+import { createServer } from 'http';
+import { WebSocketService, webSocketService as ws } from './services/websocket.service';
 
 validateConfig();
 printConfig();
 
 class App {
   public app: Application;
+  private server: any;
   private port: number | string;
 
   constructor() {
@@ -127,12 +130,19 @@ class App {
   }
 
   public listen(): void {
-    this.app.listen(this.port, () => {
+    this.server = createServer(this.app);
+    
+    // Day 27: Initialize WebSocket
+    const webSocketService = new WebSocketService(this.server);
+    (global as any).webSocketService = webSocketService;
+    
+    this.server.listen(this.port, () => {
       logger.info('DevTracker Server Started!');
       logger.info(`Environment: ${SERVER_CONFIG.NODE_ENV}`);
       logger.info(`Server: http://${SERVER_CONFIG.HOST}:${this.port}`);
       logger.info(`API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
       logger.info(`Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
+      logger.info('🔌 WebSocket server initialized');
     });
   }
 }
