@@ -3,4 +3,5 @@
 - [9](./docs/day9-README.md) - [10](./docs/day10-README.md) - [11](./docs/day11-README.md) - [12](./docs/day12-README.md)
 - [13](./docs/day13-README.md) - [14](./docs/day14-README.md) - [15](./docs/day15-README.md) - [16](./docs/day16-README.md)
 - [17](./docs/day17-README.md) - [18](./docs/day18-README.md) - [19](./docs/day19-README.md) - [20](./docs/day20-README.md)
-- [21](./docs/day21-README.md) - [22](./docs/day22-README.md) - [23](./docs/day23-README.md) - [24](./docs/day24-README.md) - [25](./docs/day25-README.md) ← Current
+- [21](./docs/day21-README.md) - [22](./docs/day22-README.md) - [23](./docs/day23-README.md) - [24](./docs/day24-README.md) - [25](./docs/day25-README.md)
+- [26](./docs/day26-README.md) - [27](./docs/day27-README.md) ← Current
