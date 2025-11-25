@@ -4,6 +4,8 @@ import { registerSchema, loginSchema, refreshTokenSchema } from '../validation/u
 import { validateBody } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
 import { authLimiter } from '../middleware/rate-limit.middleware';
+import { authLimiter as advancedAuthLimiter } from '../middleware/advanced-rate-limit.middleware';
+import { ipSecurityMiddleware } from '../middleware/ip-security.middleware';
 /**
  * @swagger
  * /auth/register:
@@ -133,8 +135,11 @@ import { authLimiter } from '../middleware/rate-limit.middleware';
  */
 const router = Router();
 
-router.post('/register', authLimiter, validateBody(registerSchema), AuthController.register);
-router.post('/login', authLimiter, validateBody(loginSchema), AuthController.login);
+// Day 29: Enhanced security
+router.use(ipSecurityMiddleware);
+
+router.post('/register', advancedAuthLimiter, validateBody(registerSchema), AuthController.register);
+router.post('/login', advancedAuthLimiter, validateBody(loginSchema), AuthController.login);
 router.post('/refresh', validateBody(refreshTokenSchema), AuthController.refreshToken);
 router.post('/logout', validateBody(refreshTokenSchema), AuthController.logout);
 router.post('/logout-all', authenticate, AuthController.logoutAll);

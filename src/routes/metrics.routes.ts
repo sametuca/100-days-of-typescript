@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import { metricsController } from '../controllers/metrics.controller';
 import { CacheController } from '../controllers/cache.controller';
+import { SecurityController } from '../controllers/security.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -16,5 +17,9 @@ router.get('/health', metricsController.getHealthMetrics);
 router.get('/cache/stats', authMiddleware, CacheController.getStats);
 router.delete('/cache/clear', authMiddleware, CacheController.clearAll);
 router.delete('/cache/clear/:pattern', authMiddleware, CacheController.clearPattern);
+
+// Day 29: Security management routes
+router.get('/security/stats', authMiddleware, SecurityController.getStats);
+router.delete('/security/unblock/:ip', authMiddleware, SecurityController.unblockIP);
 
 export default router;
