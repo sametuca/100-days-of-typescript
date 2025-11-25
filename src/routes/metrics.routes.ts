@@ -8,18 +8,15 @@ import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Admin only routes for metrics
-router.get('/metrics', authMiddleware, metricsController.getMetrics);
-router.get('/metrics/:name', authMiddleware, metricsController.getMetricSummary);
+router.get('/metrics', authMiddleware.authenticate, metricsController.getMetrics);
+router.get('/metrics/:name', authMiddleware.authenticate, metricsController.getMetricSummary);
 router.get('/health', metricsController.getHealthMetrics);
 
-// Day 28: Cache management routes
-router.get('/cache/stats', authMiddleware, CacheController.getStats);
-router.delete('/cache/clear', authMiddleware, CacheController.clearAll);
-router.delete('/cache/clear/:pattern', authMiddleware, CacheController.clearPattern);
+router.get('/cache/stats', authMiddleware.authenticate, CacheController.getStats);
+router.delete('/cache/clear', authMiddleware.authenticate, CacheController.clearAll);
+router.delete('/cache/clear/:pattern', authMiddleware.authenticate, CacheController.clearPattern);
 
-// Day 29: Security management routes
-router.get('/security/stats', authMiddleware, SecurityController.getStats);
-router.delete('/security/unblock/:ip', authMiddleware, SecurityController.unblockIP);
+router.get('/security/stats', authMiddleware.authenticate, SecurityController.getStats);
+router.delete('/security/unblock/:ip', authMiddleware.authenticate, SecurityController.unblockIP);
 
 export default router;
