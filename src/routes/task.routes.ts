@@ -12,6 +12,7 @@ import { validateBody, validateParams, validateQuery } from '../middleware/valid
 import { authenticate } from '../middleware/auth.middleware';
 import { createTaskLimiter } from '../middleware/rate-limit.middleware';
 import { upload } from '../middleware/upload.middleware';
+import { cacheMiddleware, invalidateCache } from '../middleware/cache.middleware';
 
 /**
  * @swagger
@@ -186,13 +187,13 @@ const router = Router();
 router.use(authenticate);
 
 // Day 23: Dashboard analytics endpoint
-router.get('/dashboard', TaskController.getDashboard);
+router.get('/dashboard', cacheMiddleware(60), TaskController.getDashboard);
 
-router.get('/', validateQuery(taskQuerySchema), TaskController.getAllTasks);
-router.get('/:id', validateParams(taskIdSchema), TaskController.getTaskById);
-router.post('/', createTaskLimiter, validateBody(createTaskSchema), TaskController.createTask);
-router.put('/:id', validateParams(taskIdSchema), validateBody(updateTaskSchema), TaskController.updateTask);
-router.delete('/:id', validateParams(taskIdSchema), TaskController.deleteTask);
+router.get('/', cacheMiddleware(120), validateQuery(taskQuerySchema), TaskController.getAllTasks);
+router.get('/:id', cacheMiddleware(300), validateParams(taskIdSchema), TaskController.getTaskById);
+router.post('/', invalidateCache(['/api/v1/tasks*']), createTaskLimiter, validateBody(createTaskSchema), TaskController.createTask);
+router.put('/:id', invalidateCache(['/api/v1/tasks*']), validateParams(taskIdSchema), validateBody(updateTaskSchema), TaskController.updateTask);
+router.delete('/:id', invalidateCache(['/api/v1/tasks*']), validateParams(taskIdSchema), TaskController.deleteTask);
 
 // Day 24: Collaboration & Activity Logs
 router.post('/:taskId/comments', CommentController.createComment);
