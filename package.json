@@ -12,7 +12,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
-    "demo:analysis": "ts-node scripts/demo-analysis.ts"
+    "demo:analysis": "ts-node scripts/demo-analysis.ts",
+    "demo:testing": "ts-node src/demo-testing.ts"
   },
   "keywords": [
     "typescript",
