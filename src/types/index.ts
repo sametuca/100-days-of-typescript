@@ -291,3 +291,4 @@ export interface AppConfig {
 export * from './comment.types';
 export * from './activity.types';
 export * from './subtask.types';
+export * from './analysis.types';

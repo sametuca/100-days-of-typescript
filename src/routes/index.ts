@@ -8,6 +8,7 @@ import commentRoutes from './comment.routes';
 import subtaskRoutes from './subtask.routes';
 import metricsRoutes from './metrics.routes';
 import searchRoutes from './search.routes';
+import analysisRoutes from './analysis.routes';
 import { apiLimiter } from '../middleware/rate-limit.middleware';
 import { AdminController } from '../controllers/admin.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
@@ -27,6 +28,7 @@ router.use('/projects', projectRoutes);
 router.use('/comments', commentRoutes);
 router.use('/subtasks', subtaskRoutes);
 router.use('/search', searchRoutes);
+router.use('/analysis', analysisRoutes);
 router.use('/', metricsRoutes);
 
 export default router;

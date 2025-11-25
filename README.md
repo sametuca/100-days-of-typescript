@@ -4,26 +4,27 @@
 - [13](./docs/day13-README.md) - [14](./docs/day14-README.md) - [15](./docs/day15-README.md) - [16](./docs/day16-README.md)
 - [17](./docs/day17-README.md) - [18](./docs/day18-README.md) - [19](./docs/day19-README.md) - [20](./docs/day20-README.md)
 - [21](./docs/day21-README.md) - [22](./docs/day22-README.md) - [23](./docs/day23-README.md) - [24](./docs/day24-README.md) - [25](./docs/day25-README.md)
-- [26](./docs/day26-README.md) - [27](./docs/day27-README.md) - [28](./src/day28-README.md) - **[29](./src/day29-README.md)** ← Current
+- [26](./docs/day26-README.md) - [27](./docs/day27-README.md) - [28](./docs/day28-README.md) - [29](./docs/day29-README.md) - [30](./docs/day30-README.md)
+- **[31](./docs/day31-README.md)** ← Current
 
 ---
 
-## 🔔 Day 29 Highlights: WebSocket & Real-Time Notifications
+## 🤖 Day 31 Highlights: AI-Powered Code Analysis & Suggestions
 
-**Major Achievement**: DevTracker artık real-time collaboration platform! Kullanıcılar anlık bildirimler alıyor ve canlı işbirliği yapabiliyor!
+**Major Achievement**: DevTracker artık AI destekli kod analizi yapabiliyor! Geliştiriciler akıllı öneriler alıyor ve kod kalitesi otomatik olarak değerlendiriliyor!
 
-### ⚡ Real-Time Features:
-- **WebSocket Integration**: Socket.IO ile robust real-time communication
-- **Live Notifications**: Instant task updates, assignments & comments
-- **User Presence**: Online status tracking ve typing indicators
-- **Live Dashboard**: Real-time analytics ve activity feed
+### 🧠 AI Features:
+- **Smart Code Analysis**: Cyclomatic complexity, maintainability index hesaplama
+- **Security Detection**: Güvenlik açıkları ve vulnerability tespiti
+- **Performance Optimization**: Performans sorunları ve optimizasyon önerileri
+- **Refactoring Suggestions**: AI destekli kod iyileştirme önerileri
 
-### 🛠️ Technical Achievements:
-- **1000+ Concurrent Connections**: Scalable WebSocket architecture
-- **<15ms Latency**: Ultra-fast message delivery
-- **99.8% Success Rate**: Reliable real-time communication
-- **Smart Notifications**: Intelligent notification filtering & delivery
+### 📊 Quality Metrics:
+- **Quality Scoring**: A-F arası kod kalite puanlama
+- **Technical Debt**: Teknik borç hesaplama ve takibi
+- **Trend Analysis**: Kod kalitesi trend analizi
+- **Best Practices**: Otomatik best practice önerileri
 
-**Collaboration Impact**: 60% faster team task completion! 🚀
+**Development Impact**: %40 daha hızlı kod inceleme, %60 daha az bug! 🚀
 
-Detaylı dokümantasyon: **[Day 29 README](./src/day29-README.md)**
+Detaylı dokümantasyon: **[Day 31 README](./docs/day31-README.md)**
