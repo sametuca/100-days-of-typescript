@@ -1,24 +1,21 @@
-// Day 26: Performance Tracking Middleware
-
 import { Request, Response, NextFunction } from 'express';
-import { metricsService } from '../services/metrics.service';
+import { PerformanceMonitorService } from '../services/performance-monitor.service';
 
-export const performanceMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const performanceMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const startTime = Date.now();
   
-  // Track request count
-  metricsService.incrementRequestCount(req.method, req.route?.path || req.path);
-  
-  // Track memory usage periodically
-  if (Math.random() < 0.1) { // 10% sampling
-    metricsService.recordMemoryUsage();
-  }
-
-  // Track response time when request completes
   res.on('finish', () => {
-    const duration = Date.now() - startTime;
-    metricsService.recordResponseTime(req.route?.path || req.path, duration);
+    const responseTime = Date.now() - startTime;
+    
+    PerformanceMonitorService.recordAPIPerformance({
+      endpoint: req.path,
+      method: req.method,
+      responseTime,
+      statusCode: res.statusCode,
+      timestamp: new Date(),
+      userId: (req as any).user?.userId
+    });
   });
-
+  
   next();
 };

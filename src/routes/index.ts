@@ -10,6 +10,7 @@ import metricsRoutes from './metrics.routes';
 import searchRoutes from './search.routes';
 import analysisRoutes from './analysis.routes';
 import testingRoutes from './testing.routes';
+import performanceRoutes from './performance.routes';
 import { apiLimiter } from '../middleware/rate-limit.middleware';
 import { AdminController } from '../controllers/admin.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
@@ -31,6 +32,7 @@ router.use('/subtasks', subtaskRoutes);
 router.use('/search', searchRoutes);
 router.use('/analysis', analysisRoutes);
 router.use('/testing', testingRoutes);
+router.use('/performance', performanceRoutes);
 router.use('/', metricsRoutes);
 
 export default router;

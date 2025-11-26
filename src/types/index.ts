@@ -293,3 +293,4 @@ export * from './activity.types';
 export * from './subtask.types';
 export * from './analysis.types';
 export * from './testing.types';
+export * from './performance.types';
