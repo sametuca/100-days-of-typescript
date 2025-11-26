@@ -294,3 +294,4 @@ export * from './subtask.types';
 export * from './analysis.types';
 export * from './testing.types';
 export * from './performance.types';
+export * from './security.types';
