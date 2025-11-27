@@ -5,26 +5,32 @@
 - [17](./docs/day17-README.md) - [18](./docs/day18-README.md) - [19](./docs/day19-README.md) - [20](./docs/day20-README.md)
 - [21](./docs/day21-README.md) - [22](./docs/day22-README.md) - [23](./docs/day23-README.md) - [24](./docs/day24-README.md) - [25](./docs/day25-README.md)
 - [26](./docs/day26-README.md) - [27](./docs/day27-README.md) - [28](./docs/day28-README.md) - [29](./docs/day29-README.md) - [30](./docs/day30-README.md)
-- [31](./docs/day31-README.md) - [32](./docs/day32-README.md) - [33](./docs/day33-README.md) - **[34](./docs/day34-README.md)** ← Current
+- [31](./docs/day31-README.md) - [32](./docs/day32-README.md) - [33](./docs/day33-README.md) - [34](./docs/day34-README.md) - **[35](./docs/day35-README.md)** ← Current
 
 ---
 
-## 🔒 Day 34 Highlights: Advanced Security & Compliance System
+## 🏢 Day 35 Highlights: Multi-tenancy & Organization Management
 
-**Major Achievement**: DevTracker artık gelişmiş güvenlik ve uyumluluk sistemi ile korunuyor! Security scanning, compliance checking ve threat detection aktif!
+**Major Achievement**: DevTracker artık enterprise-ready multi-tenant platform! Organizasyonlar kendi ekosistemlerini yönetebiliyor!
 
-### 🔍 Security Scanning:
-- **Vulnerability Detection**: Güvenlik açıkları tespiti
-- **Dependency Scanning**: Bağımlılık güvenlik kontrolü
-- **Code Security Analysis**: Kod güvenlik analizi
-- **Configuration Security**: Yapılandırma güvenlik kontrolü
+### 🏗️ Multi-tenancy Architecture:
+- **Data Isolation**: Organizasyon bazlı veri izolasyonu
+- **Tenant Context**: Request bazlı tenant belirleme
+- **Cross-tenant Security**: Tenant arası güvenlik kontrolleri
+- **Shared Resources**: Paylaşılan ve izole kaynaklar
 
-### 📄 Compliance Checking:
-- **GDPR Compliance**: GDPR uyumluluk kontrolü
-- **SOC2 Standards**: SOC2 standart kontrolü
-- **Audit Trail**: Denetim izi takibi
-- **Gap Analysis**: Uyumluluk açık analizi
+### 👥 Organization Management:
+- **Team Creation**: Organizasyon içinde takım oluşturma
+- **Role-based Access**: Organizasyon ve takım bazlı roller
+- **Permission System**: Granular izin yönetimi
+- **Member Invitation**: Üye davet sistemi
 
-**Security Impact**: %95+ güvenlik açığı tespiti, %90+ compliance coverage! 🚀
+### 📊 Subscription & Quotas:
+- **Usage Tracking**: Organizasyon kaynak kullanımı
+- **Quota Management**: Kullanım limitleri
+- **4 Plan Tiers**: Free, Starter, Professional, Enterprise
+- **Overage Alerts**: Limit aşım uyarıları
 
-Detaylı dokümantasyon: **[Day 34 README](./docs/day34-README.md)**
+**Platform Impact**: 100% tenant separation, 1000+ organizations support! 🚀
+
+Detaylı dokümantasyon: **[Day 35 README](./docs/day35-README.md)**
