@@ -16,7 +16,7 @@ import { apiLimiter } from '../middleware/rate-limit.middleware';
 import { AdminController } from '../controllers/admin.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { UserRole } from '../types';
-
+import workflowRuleRoutes from './workflow-rule.routes';
 const router = Router();
 
 router.get('/', HealthController.getRoot);
@@ -25,6 +25,7 @@ router.get('/admin/jobs', authenticate, authorize(UserRole.ADMIN), AdminControll
 router.use(apiLimiter);
 
 router.use('/tasks', taskRoutes);
+router.use('/workflow/rules', workflowRuleRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/projects', projectRoutes);
