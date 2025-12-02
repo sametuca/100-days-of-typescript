@@ -25,7 +25,7 @@ export function setupSwagger(app: Express): void {
   );
 
   // OpenAPI JSON endpoint
-  app.get('/api-docs/openapi.json', (req, res) => {
+  app.get('/api-docs/openapi.json', (_req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
   });

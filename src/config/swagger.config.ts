@@ -1,5 +1,4 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import { OpenAPIV3 } from 'openapi-types';
 
 const options: swaggerJsdoc.Options = {
   definition: {
