@@ -49,7 +49,7 @@ export class TenantMiddleware {
 
             // 3. Try to get from user's organizations
             if (!organization && req.user) {
-                const userOrgs = await OrganizationService.getUserOrganizations(req.user.id);
+                const userOrgs = await OrganizationService.getUserOrganizations(req.user.userId);
                 if (userOrgs.length > 0) {
                     organization = userOrgs[0]; // Use first organization as default
                 }
@@ -65,7 +65,7 @@ export class TenantMiddleware {
             // Verify user has access to this organization
             if (req.user) {
                 const membership = await MembershipService.getMembershipByUserAndOrg(
-                    req.user.id,
+                    req.user.userId,
                     organization.id
                 );
 

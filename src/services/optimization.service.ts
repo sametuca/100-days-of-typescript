@@ -120,7 +120,7 @@ export class OptimizationService {
     return 'stable';
   }
 
-  private static calculateThroughputTrend(apiPerf: any[]): 'increasing' | 'decreasing' | 'stable' {
+  private static calculateThroughputTrend(_apiPerf: any[]): 'increasing' | 'decreasing' | 'stable' {
     // Mock implementation
     return Math.random() > 0.5 ? 'increasing' : 'stable';
   }

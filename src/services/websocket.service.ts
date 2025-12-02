@@ -3,7 +3,7 @@
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { JwtPayload } from '../types';
-import { verifyToken } from '../utils/jwt';
+import { JwtUtil } from '../utils/jwt';
 
 interface SocketUser extends JwtPayload {
   socketId: string;
@@ -24,7 +24,7 @@ export class WebSocketService {
     this.io.on('connection', (socket) => {
       socket.on('authenticate', async (token: string) => {
         try {
-          const user = verifyToken(token) as JwtPayload;
+          const user = JwtUtil.verifyAccessToken(token);
           this.connectedUsers.set(socket.id, { ...user, socketId: socket.id });
           socket.join(`user_${user.userId}`);
           socket.emit('authenticated', { success: true });

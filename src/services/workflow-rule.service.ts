@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import pool from '../config/database';
+import db from '../database/connection';
 import {
   WorkflowRule,
   CreateWorkflowRuleDto,
@@ -7,7 +7,6 @@ import {
   WorkflowActionConfig,
   WorkflowCondition,
 } from '../types/workflow.types';
-import { RowDataPacket } from 'mysql2';
 
 export class WorkflowRuleService {
   private mapRowToRule(row: any): WorkflowRule {
@@ -39,8 +38,7 @@ export class WorkflowRuleService {
     const conditions: WorkflowCondition[] | null =
       data.conditions && data.conditions.length > 0 ? data.conditions : null;
 
-    await pool.query(
-      `
+    db.prepare(`
       INSERT INTO workflow_rules (
         id,
         organization_id,
@@ -50,16 +48,14 @@ export class WorkflowRuleService {
         actions,
         is_active
       ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `,
-      [
-        id,
-        organizationId,
-        data.name,
-        data.event,
-        conditions ? JSON.stringify(conditions) : null,
-        JSON.stringify(data.actions),
-        data.isActive ?? true,
-      ],
+    `).run(
+      id,
+      organizationId,
+      data.name,
+      data.event,
+      conditions ? JSON.stringify(conditions) : null,
+      JSON.stringify(data.actions),
+      data.isActive ?? true,
     );
 
     return this.getRuleById(organizationId, id);
@@ -69,14 +65,11 @@ export class WorkflowRuleService {
     organizationId: string,
     id: string,
   ): Promise<WorkflowRule> {
-    const [rows] = await pool.query<RowDataPacket[]>(
-      `
+    const rows = db.prepare(`
       SELECT *
       FROM workflow_rules
       WHERE id = ? AND organization_id = ?
-    `,
-      [id, organizationId],
-    );
+    `).all(id, organizationId) as any[];
 
     if (rows.length === 0) {
       throw new Error('Workflow rule not found');
@@ -86,15 +79,12 @@ export class WorkflowRuleService {
   }
 
   async getRules(organizationId: string): Promise<WorkflowRule[]> {
-    const [rows] = await pool.query<RowDataPacket[]>(
-      `
+    const rows = db.prepare(`
       SELECT *
       FROM workflow_rules
       WHERE organization_id = ?
       ORDER BY created_at DESC
-    `,
-      [organizationId],
-    );
+    `).all(organizationId) as any[];
 
     return rows.map((row) => this.mapRowToRule(row));
   }
@@ -143,26 +133,20 @@ export class WorkflowRuleService {
     updates.push('updated_at = NOW()');
     values.push(id, organizationId);
 
-    await pool.query(
-      `
+    db.prepare(`
       UPDATE workflow_rules
       SET ${updates.join(', ')}
       WHERE id = ? AND organization_id = ?
-    `,
-      values,
-    );
+    `).run(...values);
 
     return this.getRuleById(organizationId, id);
   }
 
   async deleteRule(organizationId: string, id: string): Promise<void> {
-    await pool.query(
-      `
+    db.prepare(`
       DELETE FROM workflow_rules
       WHERE id = ? AND organization_id = ?
-    `,
-      [id, organizationId],
-    );
+    `).run(id, organizationId);
   }
 }
 

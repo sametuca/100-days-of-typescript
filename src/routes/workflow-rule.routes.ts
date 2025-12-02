@@ -6,7 +6,7 @@ import PermissionMiddleware from '../middleware/permission.middleware';
 
 const router = Router();
 
-router.use(authMiddleware);
+router.use(authMiddleware.authenticate);
 
 // Tüm workflow rule işlemleri için tenant ve admin/owner gereksin
 router.use(TenantMiddleware.requireTenant());

@@ -16,7 +16,7 @@ router.get('/cache/stats', authMiddleware.authenticate, CacheController.getStats
 router.delete('/cache/clear', authMiddleware.authenticate, CacheController.clearAll);
 router.delete('/cache/clear/:pattern', authMiddleware.authenticate, CacheController.clearPattern);
 
-router.get('/security/stats', authMiddleware.authenticate, SecurityController.getStats);
-router.delete('/security/unblock/:ip', authMiddleware.authenticate, SecurityController.unblockIP);
+router.get('/security/dashboard', authMiddleware.authenticate, SecurityController.getSecurityDashboard);
+router.get('/security/threats', authMiddleware.authenticate, SecurityController.getThreats);
 
 export default router;

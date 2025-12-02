@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { TestingController } from '../controllers/testing.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { rateLimitMiddleware } from '../middleware/rate-limit.middleware';
+import rateLimit from 'express-rate-limit';
 
 const router = Router();
 
-router.use(authMiddleware);
+router.use(authMiddleware.authenticate);
 
-const testingRateLimit = rateLimitMiddleware({
+const testingRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
   message: 'Too many testing requests, please try again later'

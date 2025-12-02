@@ -16,7 +16,7 @@ import { initializeJobs } from './jobs';
 import { swaggerSpec } from './config/swagger';
 import swaggerUi from 'swagger-ui-express';
 import { createServer } from 'http';
-import { WebSocketService, webSocketService as ws } from './services/websocket.service';
+import { WebSocketService} from './services/websocket.service';
 
 validateConfig();
 printConfig();

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { SecurityScannerService } from '../services/security-scanner.service';
 import { ComplianceCheckerService } from '../services/compliance-checker.service';
 import { ThreatDetectorService } from '../services/threat-detector.service';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export class SecurityController {
   static async scanCode(req: Request, res: Response): Promise<void> {
@@ -38,7 +38,7 @@ export class SecurityController {
     }
   }
 
-  static async scanDependencies(req: Request, res: Response): Promise<void> {
+  static async scanDependencies(_req: Request, res: Response): Promise<void> {
     try {
       const result = await SecurityScannerService.scanDependencies();
       
@@ -118,7 +118,7 @@ export class SecurityController {
     }
   }
 
-  static async getSecurityDashboard(req: Request, res: Response): Promise<void> {
+  static async getSecurityDashboard(_req: Request, res: Response): Promise<void> {
     try {
       const scanHistory = SecurityScannerService.getScanHistory();
       const complianceReports = ComplianceCheckerService.getComplianceReports();

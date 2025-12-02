@@ -5,7 +5,7 @@ import { SearchQuery } from '../types/search.types';
 export class SearchController {
   async search(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
       const searchQuery: SearchQuery = {
         query: req.query.q as string || '',
         filters: {
@@ -46,7 +46,7 @@ export class SearchController {
 
   async getSuggestions(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
       const query = req.query.q as string;
 
       if (!query || query.length < 2) {
@@ -71,7 +71,7 @@ export class SearchController {
 
   async saveSearch(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
       const { name, query } = req.body;
 
       const savedSearch = await searchService.saveSearch(userId, name, query);
@@ -91,7 +91,7 @@ export class SearchController {
 
   async getSavedSearches(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
       const searches = await searchService.getSavedSearches(userId);
 
       res.json({
@@ -109,7 +109,7 @@ export class SearchController {
 
   async deleteSavedSearch(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
       const { id } = req.params;
 
       await searchService.deleteSavedSearch(id, userId);

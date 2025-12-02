@@ -1,5 +1,5 @@
 import { Database } from 'better-sqlite3';
-import { db } from '../database/connection';
+import db from '../database/connection';
 import { SearchQuery, SearchResult, SearchFacets, SearchSuggestion, SavedSearch } from '../types/search.types';
 import { Task } from '../models/task.model';
 
@@ -100,7 +100,7 @@ export class SearchService {
     };
   }
 
-  private async getFacets(userId: string, searchText?: string, filters?: any): Promise<SearchFacets> {
+  private async getFacets(userId: string, searchText?: string, _filters?: any): Promise<SearchFacets> {
     let baseSql = `
       SELECT t.* FROM tasks t
       LEFT JOIN projects p ON t.project_id = p.id

@@ -3,7 +3,7 @@ import { TestGeneratorService } from '../services/test-generator.service';
 import { CoverageAnalyzerService } from '../services/coverage-analyzer.service';
 import { QualityGateService } from '../services/quality-gate.service';
 import { TestGenerationRequest } from '../types/testing.types';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export class TestingController {
   static async generateTests(req: Request, res: Response): Promise<void> {
@@ -214,7 +214,7 @@ export class TestingController {
     }
   }
 
-  static async getDefaultQualityGate(req: Request, res: Response): Promise<void> {
+  static async getDefaultQualityGate(_req: Request, res: Response): Promise<void> {
     try {
       const gate = QualityGateService.getDefaultQualityGate();
 

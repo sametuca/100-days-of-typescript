@@ -3,7 +3,6 @@ import { AuthController } from '../controllers/auth.controller';
 import { registerSchema, loginSchema, refreshTokenSchema } from '../validation/user.validation';
 import { validateBody } from '../middleware/validate.middleware';
 import { authenticate } from '../middleware/auth.middleware';
-import { authLimiter } from '../middleware/rate-limit.middleware';
 import { authLimiter as advancedAuthLimiter } from '../middleware/advanced-rate-limit.middleware';
 import { ipSecurityMiddleware } from '../middleware/ip-security.middleware';
 /**

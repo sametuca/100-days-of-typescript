@@ -4,11 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class TestGeneratorService {
   static async generateTests(request: TestGenerationRequest): Promise<GeneratedTest> {
-    const { code, language, fileName, testType, framework = 'jest' } = request;
+    const { code, fileName, framework = 'jest' } = request;
     
     // Extract functions from code
     const functions = TestUtils.extractFunctionSignature(code);
-    const testableUnits = TestUtils.identifyTestableUnits(code);
     
     // Generate test cases for each function
     const allTestCases: TestCase[] = [];

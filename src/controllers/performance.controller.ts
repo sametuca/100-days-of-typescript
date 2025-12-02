@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { PerformanceMonitorService } from '../services/performance-monitor.service';
 import { BottleneckDetectorService } from '../services/bottleneck-detector.service';
 import { OptimizationService } from '../services/optimization.service';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export class PerformanceController {
   static async getMetrics(req: Request, res: Response): Promise<void> {
@@ -45,7 +45,7 @@ export class PerformanceController {
     }
   }
 
-  static async detectBottlenecks(req: Request, res: Response): Promise<void> {
+  static async detectBottlenecks(_req: Request, res: Response): Promise<void> {
     try {
       const bottlenecks = BottleneckDetectorService.detectBottlenecks();
       
@@ -65,7 +65,7 @@ export class PerformanceController {
     }
   }
 
-  static async getActiveAlerts(req: Request, res: Response): Promise<void> {
+  static async getActiveAlerts(_req: Request, res: Response): Promise<void> {
     try {
       const alerts = BottleneckDetectorService.getActiveAlerts();
       
@@ -83,7 +83,7 @@ export class PerformanceController {
     }
   }
 
-  static async generateOptimizations(req: Request, res: Response): Promise<void> {
+  static async generateOptimizations(_req: Request, res: Response): Promise<void> {
     try {
       const suggestions = OptimizationService.generateSuggestions();
       

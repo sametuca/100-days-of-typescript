@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import { AnalysisController } from '../controllers/analysis.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { rateLimitMiddleware } from '../middleware/rate-limit.middleware';
+import rateLimit from 'express-rate-limit';
 
 const router = Router();
 
 // Apply authentication to all routes
-router.use(authMiddleware);
+router.use(authMiddleware.authenticate);
 
 // Apply rate limiting for analysis endpoints
-const analysisRateLimit = rateLimitMiddleware({
+const analysisRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 50, // 50 requests per window
   message: 'Too many analysis requests, please try again later'

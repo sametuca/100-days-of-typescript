@@ -104,7 +104,6 @@ export class AIAnalysisService {
     const insights: AIInsight[] = [];
     
     const avgComplexity = results.reduce((sum, r) => sum + r.metrics.complexity, 0) / results.length;
-    const avgScore = results.reduce((sum, r) => sum + r.overallScore, 0) / results.length;
     
     // Complexity insight
     if (avgComplexity > 15) {

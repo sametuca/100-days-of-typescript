@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AIAnalysisService } from '../services/ai-analysis.service';
 import { CodeQualityService } from '../services/code-quality.service';
 import { CodeAnalysisRequest } from '../types/analysis.types';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';  // Default import
 
 export class AnalysisController {
   static async analyzeCode(req: Request, res: Response): Promise<void> {
@@ -64,7 +64,7 @@ export class AnalysisController {
     }
   }
 
-  static async getQualityMetrics(req: Request, res: Response): Promise<void> {
+  static async getQualityMetrics(_req: Request, res: Response): Promise<void> {
     try {
       const metrics = CodeQualityService.getQualityMetrics();
 

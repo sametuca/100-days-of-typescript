@@ -169,8 +169,8 @@ export class CodeQualityService {
     const complexityDiff = secondComplexityAvg - firstComplexityAvg;
 
     return {
-      qualityTrend: qualityDiff > 5 ? 'improving' : qualityDiff < -5 ? 'declining' : 'stable',
-      complexityTrend: complexityDiff > 2 ? 'increasing' : complexityDiff < -2 ? 'decreasing' : 'stable'
+      qualityTrend: qualityDiff > 5 ? 'improving' as const : qualityDiff < -5 ? 'declining' as const : 'stable' as const,
+      complexityTrend: complexityDiff > 2 ? 'increasing' as const : complexityDiff < -2 ? 'decreasing' as const : 'stable' as const
     };
   }
 

@@ -5,7 +5,7 @@ import { metricsService } from '../services/metrics.service';
 
 export class MetricsController {
   // Get all metrics
-  getMetrics = (req: Request, res: Response): void => {
+  getMetrics = (_req: Request, res: Response): void => {
     const metrics = metricsService.getMetrics();
     res.json({ success: true, data: metrics });
   };
@@ -24,7 +24,7 @@ export class MetricsController {
   };
 
   // Health check with basic metrics
-  getHealthMetrics = (req: Request, res: Response): void => {
+  getHealthMetrics = (_req: Request, res: Response): void => {
     const memUsage = process.memoryUsage();
     const uptime = process.uptime();
     
