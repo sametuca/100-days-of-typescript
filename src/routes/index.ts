@@ -17,6 +17,7 @@ import { AdminController } from '../controllers/admin.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { UserRole } from '../types';
 import workflowRuleRoutes from './workflow-rule.routes';
+import graphqlRoutes from './graphql.routes';
 const router = Router();
 
 router.get('/', HealthController.getRoot);
@@ -37,5 +38,6 @@ router.use('/testing', testingRoutes);
 router.use('/performance', performanceRoutes);
 router.use('/security', securityRoutes);
 router.use('/', metricsRoutes);
+router.use('/', graphqlRoutes);
 
 export default router;

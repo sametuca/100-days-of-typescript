@@ -37,3 +37,4 @@
 - Day 35: Multi-tenancy & Organization Management
 - Day 36: Workflow Automation & Rules Engine
 - Day 37: API Documentation with OpenAPI/Swagger
+- Day 38: GraphQL API Integration & Schema Design
