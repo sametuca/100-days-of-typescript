@@ -54,6 +54,7 @@
     "express-mongo-sanitize": "^2.2.0",
     "express-openapi-validator": "^5.6.0",
     "express-rate-limit": "^8.2.1",
+    "graphql": "^16.12.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
@@ -65,8 +66,6 @@
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.3",
     "winston": "^3.18.3",
-    "zod": "^4.1.13",
-    "graphql": "^16.8.1",
-    "express-graphql": "^0.12.0"
+    "zod": "^4.1.13"
   }
 }
