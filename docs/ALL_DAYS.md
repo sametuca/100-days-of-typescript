@@ -1,0 +1,39 @@
+# 100 Days of TypeScript — Day Titles
+
+- Day 1: Project Setup & TypeScript Configuration
+- Day 2: Express Server & Basic Routing
+- Day 3: Database Setup (SQLite) & Schema Design
+- Day 4: User Authentication (Register/Login)
+- Day 5: JWT Implementation & Middleware
+- Day 6: Task CRUD Operations
+- Day 7: Input Validation (Joi/Zod)
+- Day 8: Error Handling & Custom Exceptions
+- Day 9: Logging System (Winston)
+- Day 10: Project Management Features
+- Day 11: User Roles & Permissions
+- Day 12: Task Filtering & Sorting
+- Day 13: Pagination Implementation
+- Day 14: Swagger Documentation Setup
+- Day 15: Unit Testing Setup (Jest)
+- Day 16: Integration Testing
+- Day 17: Rate Limiting & Security Headers
+- Day 18: Admin Dashboard Features
+- Day 19: Performance Optimization
+- Day 20: Code Refactoring & Cleanup
+- Day 21: Advanced Search Features
+- Day 22: Dashboard Analytics
+- Day 23: Advanced Task Filtering & Dashboard Analytics
+- Day 24: File Attachments for Tasks
+- Day 25: Advanced Search & Filtering
+- Day 26: Performance Monitoring & Metrics
+- Day 27: Real-time WebSocket Notifications
+- Day 28: Redis Cache Integration & Performance Optimization
+- Day 29: API Rate Limiting & Security Enhancements
+- Day 30: Advanced Search & Filtering System
+- Day 31: AI-Powered Code Analysis & Suggestions
+- Day 32: Advanced Testing & Quality Assurance System
+- Day 33: Performance Monitoring & Optimization System
+- Day 34: Advanced Security & Compliance System
+- Day 35: Multi-tenancy & Organization Management
+- Day 36: Workflow Automation & Rules Engine
+- Day 37: API Documentation with OpenAPI/Swagger
