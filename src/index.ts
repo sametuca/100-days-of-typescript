@@ -19,6 +19,7 @@ import { createServer } from 'http';
 import { WebSocketService} from './services/websocket.service';
 import { EventSystem } from './events';
 import { MicroserviceManager } from './microservices';
+import { DeploymentTracker } from './utils/deployment-info';
 
 validateConfig();
 printConfig();
@@ -151,6 +152,9 @@ class App {
       logger.info(`API: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}`);
       logger.info(`Health: http://${SERVER_CONFIG.HOST}:${this.port}${SERVER_CONFIG.API_PREFIX}/health`);
       logger.info('🔌 WebSocket server initialized');
+      
+      // Day 42: Log deployment info
+      DeploymentTracker.logDeployment();
     });
   }
 }

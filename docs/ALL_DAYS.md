@@ -41,3 +41,4 @@
 - Day 39: Event-Driven Architecture & Message Queue
 - Day 40: Microservices Architecture & Service Discovery
 - Day 41: Container Orchestration & Docker Integration
+- Day 42: CI/CD Pipeline & Automated Deployment

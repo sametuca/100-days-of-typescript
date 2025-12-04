@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ContainerHealthCheck } from '../utils/container-health';
+import { DeploymentTracker } from '../utils/deployment-info';
 
 export class HealthController {
   
@@ -86,5 +87,10 @@ export class HealthController {
 
   public static async getReadiness(req: Request, res: Response): Promise<void> {
     await ContainerHealthCheck.checkReadiness(req, res);
+  }
+
+  public static getDeploymentInfo(_req: Request, res: Response): void {
+    const deploymentInfo = DeploymentTracker.getDeploymentInfo();
+    res.json(deploymentInfo);
   }
 }

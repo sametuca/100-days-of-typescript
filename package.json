@@ -17,7 +17,11 @@
     "docker:build": "docker build -t devtracker:latest .",
     "docker:run": "docker run -p 3000:3000 devtracker:latest",
     "docker:compose": "docker-compose up -d",
-    "k8s:deploy": "kubectl apply -f k8s/"
+    "k8s:deploy": "kubectl apply -f k8s/",
+    "deploy:staging": "bash scripts/deploy.sh staging",
+    "deploy:production": "bash scripts/deploy.sh production",
+    "health:check": "bash scripts/health-check.sh",
+    "lint": "echo 'Linting not configured yet'"
   },
   "keywords": [
     "typescript",
