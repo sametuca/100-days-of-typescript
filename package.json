@@ -30,7 +30,9 @@
     "migrate:up": "ts-node scripts/migrate.ts up",
     "migrate:down": "ts-node scripts/migrate.ts down",
     "migrate:status": "ts-node scripts/migrate.ts status",
-    "migration:create": "bash scripts/create-migration.sh"
+    "migration:create": "bash scripts/create-migration.sh",
+    "version:info": "curl http://localhost:3000/api/versions",
+    "version:deprecate": "echo 'Use API to deprecate versions'"
   },
   "keywords": [
     "typescript",

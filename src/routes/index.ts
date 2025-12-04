@@ -21,6 +21,10 @@ import graphqlRoutes from './graphql.routes';
 import { apiGateway, serviceDiscovery } from '../microservices';
 import benchmarkRoutes from './benchmark.routes';
 import migrationRoutes from './migration.routes';
+import versionRoutes from './version.routes';
+import v1Routes from './v1';
+import v2Routes from './v2';
+import { versionMiddleware } from '../versioning/version-manager';
 const router = Router();
 
 router.get('/', HealthController.getRoot);
@@ -49,5 +53,11 @@ router.use('/gateway', apiGateway);
 router.use('/discovery', serviceDiscovery);
 router.use('/', benchmarkRoutes);
 router.use('/', migrationRoutes);
+router.use('/', versionRoutes);
+
+// Versioned routes
+router.use(versionMiddleware);
+router.use('/v1', v1Routes);
+router.use('/v2', v2Routes);
 
 export default router;
