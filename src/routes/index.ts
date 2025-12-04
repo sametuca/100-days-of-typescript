@@ -20,6 +20,7 @@ import workflowRuleRoutes from './workflow-rule.routes';
 import graphqlRoutes from './graphql.routes';
 import { apiGateway, serviceDiscovery } from '../microservices';
 import benchmarkRoutes from './benchmark.routes';
+import migrationRoutes from './migration.routes';
 const router = Router();
 
 router.get('/', HealthController.getRoot);
@@ -47,5 +48,6 @@ router.use('/', graphqlRoutes);
 router.use('/gateway', apiGateway);
 router.use('/discovery', serviceDiscovery);
 router.use('/', benchmarkRoutes);
+router.use('/', migrationRoutes);
 
 export default router;

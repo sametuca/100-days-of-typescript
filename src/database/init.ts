@@ -1,10 +1,15 @@
 import { createTables } from './schema';
 import db from './connection';
+import { DatabaseMigrator } from './migrator';
 
-export const initializeDatabase = () => {
+export const initializeDatabase = async () => {
   console.log('🚀 Initializing database...\n');
   
   try {
+    // Run migrations first
+    const migrator = new DatabaseMigrator(db);
+    await migrator.runMigrations();
+    
     createTables();
     
     seedData();

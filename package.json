@@ -26,7 +26,11 @@
     "monitoring:down": "docker-compose down prometheus grafana",
     "load:test": "bash scripts/load-test.sh basic",
     "load:stress": "bash scripts/load-test.sh stress",
-    "benchmark": "curl -X POST http://localhost:3000/api/benchmark/test"
+    "benchmark": "curl -X POST http://localhost:3000/api/benchmark/test",
+    "migrate:up": "ts-node scripts/migrate.ts up",
+    "migrate:down": "ts-node scripts/migrate.ts down",
+    "migrate:status": "ts-node scripts/migrate.ts status",
+    "migration:create": "bash scripts/create-migration.sh"
   },
   "keywords": [
     "typescript",
