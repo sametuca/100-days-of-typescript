@@ -42,3 +42,4 @@
 - Day 40: Microservices Architecture & Service Discovery
 - Day 41: Container Orchestration & Docker Integration
 - Day 42: CI/CD Pipeline & Automated Deployment
+- Day 43: Monitoring & Observability with Prometheus

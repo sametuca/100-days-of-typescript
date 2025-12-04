@@ -20,6 +20,8 @@ import { WebSocketService} from './services/websocket.service';
 import { EventSystem } from './events';
 import { MicroserviceManager } from './microservices';
 import { DeploymentTracker } from './utils/deployment-info';
+import { httpMetricsMiddleware } from './monitoring/metrics';
+import { HealthMetrics } from './monitoring/health-metrics';
 
 validateConfig();
 printConfig();
@@ -44,6 +46,9 @@ class App {
     
     // Day 40: Initialize Microservices
     MicroserviceManager.init();
+    
+    // Day 43: Initialize Monitoring
+    HealthMetrics.startMetricsCollection();
   }
 
 
@@ -92,6 +97,9 @@ class App {
       next();
       return undefined;
     });
+    
+    // Day 43: HTTP Metrics Middleware
+    this.app.use(httpMetricsMiddleware);
   }
 
   private initializeRoutes(): void {

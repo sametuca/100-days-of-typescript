@@ -21,7 +21,9 @@
     "deploy:staging": "bash scripts/deploy.sh staging",
     "deploy:production": "bash scripts/deploy.sh production",
     "health:check": "bash scripts/health-check.sh",
-    "lint": "echo 'Linting not configured yet'"
+    "lint": "echo 'Linting not configured yet'",
+    "monitoring:up": "docker-compose up prometheus grafana -d",
+    "monitoring:down": "docker-compose down prometheus grafana"
   },
   "keywords": [
     "typescript",

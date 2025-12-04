@@ -1,0 +1,47 @@
+{
+  "dashboard": {
+    "title": "DevTracker Monitoring",
+    "panels": [
+      {
+        "title": "HTTP Requests",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{route}}"
+          }
+        ]
+      },
+      {
+        "title": "Response Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_ms_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          }
+        ]
+      },
+      {
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nodejs_memory_heap_used_bytes",
+            "legendFormat": "Heap Used"
+          }
+        ]
+      },
+      {
+        "title": "Service Health",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "services_healthy / services_total",
+            "legendFormat": "Health Ratio"
+          }
+        ]
+      }
+    ]
+  }
+}

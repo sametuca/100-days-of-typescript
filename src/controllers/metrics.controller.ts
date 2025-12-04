@@ -1,46 +1,36 @@
-// Day 26: Metrics Controller
-
 import { Request, Response } from 'express';
-import { metricsService } from '../services/metrics.service';
+import { metricsCollector } from '../monitoring/metrics';
 
 export class MetricsController {
-  // Get all metrics
-  getMetrics = (_req: Request, res: Response): void => {
-    const metrics = metricsService.getMetrics();
-    res.json({ success: true, data: metrics });
-  };
+  static getPrometheusMetrics(_req: Request, res: Response): void {
+    const metrics = metricsCollector.exportPrometheusMetrics();
+    res.set('Content-Type', 'text/plain');
+    res.send(metrics);
+  }
 
-  // Get specific metric summary
-  getMetricSummary = (req: Request, res: Response): void => {
-    const { name } = req.params;
-    const summary = metricsService.getMetricSummary(name);
-    
-    if (!summary) {
-      res.status(404).json({ success: false, message: 'Metric not found' });
-      return;
-    }
-
-    res.json({ success: true, data: summary });
-  };
-
-  // Health check with basic metrics
-  getHealthMetrics = (_req: Request, res: Response): void => {
-    const memUsage = process.memoryUsage();
-    const uptime = process.uptime();
-    
+  static getMetricsJson(_req: Request, res: Response): void {
+    const metrics = metricsCollector.getAllMetrics();
     res.json({
       success: true,
-      data: {
-        uptime: Math.floor(uptime),
-        memory: {
-          heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
-          heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
-          rss: Math.round(memUsage.rss / 1024 / 1024)
-        },
-        timestamp: Date.now()
-      }
+      data: metrics,
+      timestamp: new Date().toISOString()
     });
-  };
-}
+  }
 
-export const metricsController = new MetricsController();
+  static getSystemMetrics(_req: Request, res: Response): void {
+    const systemMetrics = {
+      memory: process.memoryUsage(),
+      uptime: process.uptime(),
+      cpu: process.cpuUsage(),
+      version: process.version,
+      platform: process.platform,
+      arch: process.arch
+    };
+
+    res.json({
+      success: true,
+      data: systemMetrics,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
