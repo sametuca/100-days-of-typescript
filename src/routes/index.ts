@@ -23,6 +23,8 @@ const router = Router();
 
 router.get('/', HealthController.getRoot);
 router.get('/health', HealthController.getHealth);
+router.get('/health/container', HealthController.getContainerHealth);
+router.get('/health/ready', HealthController.getReadiness);
 router.get('/admin/jobs', authenticate, authorize(UserRole.ADMIN), AdminController.getJobsStatus);
 router.use(apiLimiter);
 

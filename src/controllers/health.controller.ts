@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ContainerHealthCheck } from '../utils/container-health';
 
 export class HealthController {
   
@@ -77,5 +78,13 @@ export class HealthController {
       success: true,
       data: healthCheck
     });
+  }
+
+  public static async getContainerHealth(req: Request, res: Response): Promise<void> {
+    await ContainerHealthCheck.checkHealth(req, res);
+  }
+
+  public static async getReadiness(req: Request, res: Response): Promise<void> {
+    await ContainerHealthCheck.checkReadiness(req, res);
   }
 }

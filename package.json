@@ -13,7 +13,11 @@
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
     "demo:analysis": "ts-node scripts/demo-analysis.ts",
-    "demo:testing": "ts-node src/demo-testing.ts"
+    "demo:testing": "ts-node src/demo-testing.ts",
+    "docker:build": "docker build -t devtracker:latest .",
+    "docker:run": "docker run -p 3000:3000 devtracker:latest",
+    "docker:compose": "docker-compose up -d",
+    "k8s:deploy": "kubectl apply -f k8s/"
   },
   "keywords": [
     "typescript",
