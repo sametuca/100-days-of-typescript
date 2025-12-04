@@ -22,6 +22,7 @@ import { MicroserviceManager } from './microservices';
 import { DeploymentTracker } from './utils/deployment-info';
 import { httpMetricsMiddleware } from './monitoring/metrics';
 import { HealthMetrics } from './monitoring/health-metrics';
+import { benchmarkMiddleware } from './utils/benchmark';
 
 validateConfig();
 printConfig();
@@ -100,6 +101,9 @@ class App {
     
     // Day 43: HTTP Metrics Middleware
     this.app.use(httpMetricsMiddleware);
+    
+    // Day 44: Benchmark Middleware
+    this.app.use(benchmarkMiddleware('http_request'));
   }
 
   private initializeRoutes(): void {

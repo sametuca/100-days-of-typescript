@@ -43,3 +43,4 @@
 - Day 41: Container Orchestration & Docker Integration
 - Day 42: CI/CD Pipeline & Automated Deployment
 - Day 43: Monitoring & Observability with Prometheus
+- Day 44: Load Testing & Performance Benchmarking

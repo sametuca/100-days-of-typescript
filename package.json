@@ -23,7 +23,10 @@
     "health:check": "bash scripts/health-check.sh",
     "lint": "echo 'Linting not configured yet'",
     "monitoring:up": "docker-compose up prometheus grafana -d",
-    "monitoring:down": "docker-compose down prometheus grafana"
+    "monitoring:down": "docker-compose down prometheus grafana",
+    "load:test": "bash scripts/load-test.sh basic",
+    "load:stress": "bash scripts/load-test.sh stress",
+    "benchmark": "curl -X POST http://localhost:3000/api/benchmark/test"
   },
   "keywords": [
     "typescript",
