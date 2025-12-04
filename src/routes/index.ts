@@ -18,6 +18,7 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 import { UserRole } from '../types';
 import workflowRuleRoutes from './workflow-rule.routes';
 import graphqlRoutes from './graphql.routes';
+import { apiGateway, serviceDiscovery } from '../microservices';
 const router = Router();
 
 router.get('/', HealthController.getRoot);
@@ -39,5 +40,7 @@ router.use('/performance', performanceRoutes);
 router.use('/security', securityRoutes);
 router.use('/', metricsRoutes);
 router.use('/', graphqlRoutes);
+router.use('/gateway', apiGateway);
+router.use('/discovery', serviceDiscovery);
 
 export default router;

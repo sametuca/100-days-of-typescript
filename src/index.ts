@@ -18,6 +18,7 @@ import swaggerUi from 'swagger-ui-express';
 import { createServer } from 'http';
 import { WebSocketService} from './services/websocket.service';
 import { EventSystem } from './events';
+import { MicroserviceManager } from './microservices';
 
 validateConfig();
 printConfig();
@@ -39,6 +40,9 @@ class App {
     
     // Day 39: Initialize Event System
     EventSystem.init();
+    
+    // Day 40: Initialize Microservices
+    MicroserviceManager.init();
   }
 
 

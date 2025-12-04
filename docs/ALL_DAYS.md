@@ -39,3 +39,5 @@
 - Day 37: API Documentation with OpenAPI/Swagger
 - Day 38: GraphQL API Integration & Schema Design
 - Day 39: Event-Driven Architecture & Message Queue
+- Day 40: Microservices Architecture & Service Discovery
+- Day 41: Container Orchestration & Docker Integration
