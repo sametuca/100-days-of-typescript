@@ -17,6 +17,7 @@ import { swaggerSpec } from './config/swagger';
 import swaggerUi from 'swagger-ui-express';
 import { createServer } from 'http';
 import { WebSocketService} from './services/websocket.service';
+import { EventSystem } from './events';
 
 validateConfig();
 printConfig();
@@ -35,6 +36,9 @@ class App {
     this.initializeErrorHandling();
     this.initializeDatabase();
     initializeJobs();
+    
+    // Day 39: Initialize Event System
+    EventSystem.init();
   }
 
 

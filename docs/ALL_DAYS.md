@@ -38,3 +38,4 @@
 - Day 36: Workflow Automation & Rules Engine
 - Day 37: API Documentation with OpenAPI/Swagger
 - Day 38: GraphQL API Integration & Schema Design
+- Day 39: Event-Driven Architecture & Message Queue

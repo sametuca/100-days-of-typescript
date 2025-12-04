@@ -5,6 +5,7 @@ import { NotFoundError, AuthorizationError } from '../utils/errors';
 import logger from '../utils/logger';
 import { activityService } from './activity.service';
 import { webSocketService } from './websocket.service';
+import { EventPublisher } from '../events';
 
 export class TaskService {
 
@@ -59,6 +60,9 @@ export class TaskService {
   ): Promise<Task> {
     const task = await taskRepository.create(taskData, userId);
     
+    // Day 39: Event-driven architecture
+    EventPublisher.publishTaskCreated(task, userId);
+    
     // Day 27: Real-time notification
     if (webSocketService) {
       webSocketService.notifyUser(userId, 'task_created', {
@@ -80,6 +84,20 @@ export class TaskService {
     if (!oldTask) return null;
 
     const updatedTask = await taskRepository.update(id, taskData);
+
+    // Day 39: Event-driven architecture
+    if (updatedTask && userId) {
+      const changes = {
+        status: oldTask.status !== updatedTask.status ? { from: oldTask.status, to: updatedTask.status } : null,
+        priority: oldTask.priority !== updatedTask.priority ? { from: oldTask.priority, to: updatedTask.priority } : null
+      };
+      
+      EventPublisher.publishTaskUpdated(updatedTask, userId, changes);
+      
+      if (updatedTask.status === TaskStatus.DONE && oldTask.status !== TaskStatus.DONE) {
+        EventPublisher.publishTaskCompleted(updatedTask, userId);
+      }
+    }
 
     // Day 24: Activity Logging
     if (updatedTask && userId) {

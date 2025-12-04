@@ -94,6 +94,24 @@ class EmailService {
       text: template.text
     });
   }
+
+  public async sendTaskAssignedEmail(email: string, task: any): Promise<boolean> {
+    return this.sendEmail({
+      to: email,
+      subject: `Yeni Görev Atandı: ${task.title}`,
+      html: `<p>Size yeni bir görev atandı: <strong>${task.title}</strong></p><p>Açıklama: ${task.description || 'Açıklama yok'}</p>`,
+      text: `Size yeni bir görev atandı: ${task.title}. Açıklama: ${task.description || 'Açıklama yok'}`
+    });
+  }
+
+  public async sendTaskCompletedEmail(email: string, task: any): Promise<boolean> {
+    return this.sendEmail({
+      to: email,
+      subject: `Görev Tamamlandı: ${task.title}`,
+      html: `<p>Göreviniz tamamlandı: <strong>${task.title}</strong></p><p>Tebrikler!</p>`,
+      text: `Göreviniz tamamlandı: ${task.title}. Tebrikler!`
+    });
+  }
 }
 
 export const emailService = new EmailService();
