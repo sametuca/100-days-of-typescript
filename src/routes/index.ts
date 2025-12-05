@@ -22,6 +22,7 @@ import { apiGateway, serviceDiscovery } from '../microservices';
 import benchmarkRoutes from './benchmark.routes';
 import migrationRoutes from './migration.routes';
 import versionRoutes from './version.routes';
+import backupRoutes from './backup.routes';
 import v1Routes from './v1';
 import v2Routes from './v2';
 import { versionMiddleware } from '../versioning/version-manager';
@@ -54,6 +55,7 @@ router.use('/discovery', serviceDiscovery);
 router.use('/', benchmarkRoutes);
 router.use('/', migrationRoutes);
 router.use('/', versionRoutes);
+router.use('/backup', backupRoutes);
 
 // Versioned routes
 router.use(versionMiddleware);
