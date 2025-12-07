@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const auth_service_1 = require("../services/auth.service");
 const error_middleware_1 = require("../middleware/error.middleware");
+const security_service_1 = require("../services/security.service");
 const logger_1 = __importDefault(require("../utils/logger"));
 class AuthController {
 }
@@ -26,13 +27,24 @@ AuthController.register = (0, error_middleware_1.catchAsync)(async (req, res) =>
 });
 AuthController.login = (0, error_middleware_1.catchAsync)(async (req, res) => {
     const { email, password } = req.body;
-    const result = await auth_service_1.AuthService.login(email, password);
-    logger_1.default.info(`Login successful: ${result.user.email}`);
-    res.status(200).json({
-        success: true,
-        message: 'Giriş başarılı',
-        data: result
-    });
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    try {
+        const result = await auth_service_1.AuthService.login(email, password);
+        logger_1.default.info(`Login successful: ${result.user.email}`);
+        res.status(200).json({
+            success: true,
+            message: 'Giriş başarılı',
+            data: result
+        });
+    }
+    catch (error) {
+        security_service_1.securityService.logEvent({
+            type: 'FAILED_LOGIN',
+            ip,
+            details: { email, error: error.message }
+        });
+        throw error;
+    }
 });
 AuthController.refreshToken = (0, error_middleware_1.catchAsync)(async (req, res) => {
     const { refreshToken } = req.body;

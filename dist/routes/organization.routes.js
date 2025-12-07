@@ -1,0 +1,35 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const organization_controller_1 = __importDefault(require("../controllers/organization.controller"));
+const team_controller_1 = __importDefault(require("../controllers/team.controller"));
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const tenant_middleware_1 = __importDefault(require("../middleware/tenant.middleware"));
+const permission_middleware_1 = __importDefault(require("../middleware/permission.middleware"));
+const organization_types_1 = require("../types/organization.types");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_1.authMiddleware);
+router.post('/', organization_controller_1.default.createOrganization);
+router.get('/', organization_controller_1.default.getUserOrganizations);
+router.get('/:orgId', tenant_middleware_1.default.requireTenant(), organization_controller_1.default.getOrganization);
+router.patch('/:orgId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.ORG_SETTINGS), organization_controller_1.default.updateOrganization);
+router.delete('/:orgId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requireOwner(), organization_controller_1.default.deleteOrganization);
+router.get('/:orgId/members', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.ORG_SETTINGS), organization_controller_1.default.getMembers);
+router.post('/:orgId/members/invite', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.ORG_MEMBERS_INVITE), organization_controller_1.default.inviteMember);
+router.patch('/:orgId/members/:userId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requireAdmin(), organization_controller_1.default.updateMember);
+router.delete('/:orgId/members/:userId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.ORG_MEMBERS_REMOVE), organization_controller_1.default.removeMember);
+router.patch('/:orgId/subscription', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.ORG_BILLING), organization_controller_1.default.updateSubscription);
+router.post('/:orgId/teams', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.TEAM_CREATE), team_controller_1.default.createTeam);
+router.get('/:orgId/teams', tenant_middleware_1.default.requireTenant(), team_controller_1.default.getOrganizationTeams);
+router.get('/:orgId/teams/my-teams', tenant_middleware_1.default.requireTenant(), team_controller_1.default.getUserTeams);
+router.get('/:orgId/teams/:teamId', tenant_middleware_1.default.requireTenant(), team_controller_1.default.getTeam);
+router.patch('/:orgId/teams/:teamId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.TEAM_MANAGE), team_controller_1.default.updateTeam);
+router.delete('/:orgId/teams/:teamId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.TEAM_DELETE), team_controller_1.default.deleteTeam);
+router.get('/:orgId/teams/:teamId/members', tenant_middleware_1.default.requireTenant(), team_controller_1.default.getTeamMembers);
+router.post('/:orgId/teams/:teamId/members', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.TEAM_MANAGE), team_controller_1.default.addTeamMember);
+router.delete('/:orgId/teams/:teamId/members/:userId', tenant_middleware_1.default.requireTenant(), permission_middleware_1.default.requirePermission(organization_types_1.Permission.TEAM_MANAGE), team_controller_1.default.removeTeamMember);
+exports.default = router;
+//# sourceMappingURL=organization.routes.js.map

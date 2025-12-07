@@ -51,6 +51,14 @@ const path_1 = __importDefault(require("path"));
 const jobs_1 = require("./jobs");
 const swagger_1 = require("./config/swagger");
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const http_1 = require("http");
+const websocket_service_1 = require("./services/websocket.service");
+const events_1 = require("./events");
+const microservices_1 = require("./microservices");
+const deployment_info_1 = require("./utils/deployment-info");
+const metrics_1 = require("./monitoring/metrics");
+const health_metrics_1 = require("./monitoring/health-metrics");
+const benchmark_1 = require("./utils/benchmark");
 (0, env_1.validateConfig)();
 (0, env_1.printConfig)();
 class App {
@@ -62,6 +70,9 @@ class App {
         this.initializeErrorHandling();
         this.initializeDatabase();
         (0, jobs_1.initializeJobs)();
+        events_1.EventSystem.init();
+        microservices_1.MicroserviceManager.init();
+        health_metrics_1.HealthMetrics.startMetricsCollection();
     }
     initializeMiddlewares() {
         this.app.use(request_id_middleware_1.requestId);
@@ -100,6 +111,8 @@ class App {
             next();
             return undefined;
         });
+        this.app.use(metrics_1.httpMetricsMiddleware);
+        this.app.use((0, benchmark_1.benchmarkMiddleware)('http_request'));
     }
     initializeRoutes() {
         this.app.use(server_1.SERVER_CONFIG.API_PREFIX, routes_1.default);
@@ -130,12 +143,17 @@ class App {
         (0, init_1.initializeDatabase)();
     }
     listen() {
-        this.app.listen(this.port, () => {
+        this.server = (0, http_1.createServer)(this.app);
+        const webSocketService = new websocket_service_1.WebSocketService(this.server);
+        global.webSocketService = webSocketService;
+        this.server.listen(this.port, () => {
             logger_1.default.info('DevTracker Server Started!');
             logger_1.default.info(`Environment: ${server_1.SERVER_CONFIG.NODE_ENV}`);
             logger_1.default.info(`Server: http://${server_1.SERVER_CONFIG.HOST}:${this.port}`);
             logger_1.default.info(`API: http://${server_1.SERVER_CONFIG.HOST}:${this.port}${server_1.SERVER_CONFIG.API_PREFIX}`);
             logger_1.default.info(`Health: http://${server_1.SERVER_CONFIG.HOST}:${this.port}${server_1.SERVER_CONFIG.API_PREFIX}/health`);
+            logger_1.default.info('🔌 WebSocket server initialized');
+            deployment_info_1.DeploymentTracker.logDeployment();
         });
     }
 }

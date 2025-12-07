@@ -144,6 +144,17 @@ const createTables = () => {
   `);
     console.log('Comments table created');
     connection_1.default.exec(`
+    CREATE TABLE IF NOT EXISTS saved_searches (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      query TEXT NOT NULL,
+      is_default INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (DATETIME('now'))
+    )
+  `);
+    console.log('Saved searches table created');
+    connection_1.default.exec(`
     CREATE TABLE IF NOT EXISTS activity_logs (
       id TEXT PRIMARY KEY,
       task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
@@ -161,6 +172,10 @@ const createTables = () => {
     connection_1.default.exec(`
     CREATE INDEX IF NOT EXISTS idx_activity_logs_task_id 
     ON activity_logs(task_id)
+  `);
+    connection_1.default.exec(`
+    CREATE INDEX IF NOT EXISTS idx_saved_searches_user_id 
+    ON saved_searches(user_id)
   `);
     connection_1.default.exec(`
     CREATE INDEX IF NOT EXISTS idx_users_email 
@@ -184,6 +199,7 @@ const createTables = () => {
 exports.createTables = createTables;
 const dropTables = () => {
     console.log('Dropping all tables...');
+    connection_1.default.exec('DROP TABLE IF EXISTS saved_searches');
     connection_1.default.exec('DROP TABLE IF EXISTS activity_logs');
     connection_1.default.exec('DROP TABLE IF EXISTS comments');
     connection_1.default.exec('DROP TABLE IF EXISTS tasks');

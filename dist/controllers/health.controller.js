@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthController = void 0;
+const container_health_1 = require("../utils/container-health");
+const deployment_info_1 = require("../utils/deployment-info");
 class HealthController {
     static getRoot(_req, res) {
         res.status(200).json({
@@ -24,6 +26,16 @@ class HealthController {
             success: true,
             data: healthCheck
         });
+    }
+    static async getContainerHealth(req, res) {
+        await container_health_1.ContainerHealthCheck.checkHealth(req, res);
+    }
+    static async getReadiness(req, res) {
+        await container_health_1.ContainerHealthCheck.checkReadiness(req, res);
+    }
+    static getDeploymentInfo(_req, res) {
+        const deploymentInfo = deployment_info_1.DeploymentTracker.getDeploymentInfo();
+        res.json(deploymentInfo);
     }
 }
 exports.HealthController = HealthController;

@@ -23,6 +23,7 @@ import benchmarkRoutes from './benchmark.routes';
 import migrationRoutes from './migration.routes';
 import versionRoutes from './version.routes';
 import backupRoutes from './backup.routes';
+import cacheRoutes from './cache.routes';
 import v1Routes from './v1';
 import v2Routes from './v2';
 import { versionMiddleware } from '../versioning/version-manager';
@@ -56,6 +57,7 @@ router.use('/', benchmarkRoutes);
 router.use('/', migrationRoutes);
 router.use('/', versionRoutes);
 router.use('/backup', backupRoutes);
+router.use('/cache', cacheRoutes);
 
 // Versioned routes
 router.use(versionMiddleware);

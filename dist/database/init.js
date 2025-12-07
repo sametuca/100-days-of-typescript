@@ -6,9 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeDatabase = void 0;
 const schema_1 = require("./schema");
 const connection_1 = __importDefault(require("./connection"));
-const initializeDatabase = () => {
+const migrator_1 = require("./migrator");
+const initializeDatabase = async () => {
     console.log('🚀 Initializing database...\n');
     try {
+        const migrator = new migrator_1.DatabaseMigrator(connection_1.default);
+        await migrator.runMigrations();
         (0, schema_1.createTables)();
         seedData();
         console.log('Database initialization complete!');

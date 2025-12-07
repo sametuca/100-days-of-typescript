@@ -10,6 +10,8 @@ const types_1 = require("../types");
 const errors_1 = require("../utils/errors");
 const logger_1 = __importDefault(require("../utils/logger"));
 const activity_service_1 = require("./activity.service");
+const websocket_service_1 = require("./websocket.service");
+const events_1 = require("../events");
 class TaskService {
     static async getAllTasks(queryParams) {
         const validatedParams = pagination_1.PaginationUtil.validateParams({
@@ -41,13 +43,32 @@ class TaskService {
         return await task_repository_1.taskRepository.findById(id);
     }
     static async createTask(taskData, userId) {
-        return await task_repository_1.taskRepository.create(taskData, userId);
+        const task = await task_repository_1.taskRepository.create(taskData, userId);
+        events_1.EventPublisher.publishTaskCreated(task, userId);
+        if (websocket_service_1.webSocketService) {
+            websocket_service_1.webSocketService.notifyUser(userId, 'task_created', {
+                taskId: task.id,
+                title: task.title,
+                message: 'Yeni görev oluşturuldu'
+            });
+        }
+        return task;
     }
     static async updateTask(id, taskData, userId) {
         const oldTask = await task_repository_1.taskRepository.findById(id);
         if (!oldTask)
             return null;
         const updatedTask = await task_repository_1.taskRepository.update(id, taskData);
+        if (updatedTask && userId) {
+            const changes = {
+                status: oldTask.status !== updatedTask.status ? { from: oldTask.status, to: updatedTask.status } : null,
+                priority: oldTask.priority !== updatedTask.priority ? { from: oldTask.priority, to: updatedTask.priority } : null
+            };
+            events_1.EventPublisher.publishTaskUpdated(updatedTask, userId, changes);
+            if (updatedTask.status === types_1.TaskStatus.DONE && oldTask.status !== types_1.TaskStatus.DONE) {
+                events_1.EventPublisher.publishTaskCompleted(updatedTask, userId);
+            }
+        }
         if (updatedTask && userId) {
             if (oldTask.status !== updatedTask.status) {
                 await activity_service_1.activityService.logActivity({
@@ -65,6 +86,14 @@ class TaskService {
                     details: { from: oldTask.priority, to: updatedTask.priority }
                 });
             }
+        }
+        if (updatedTask && userId && websocket_service_1.webSocketService) {
+            websocket_service_1.webSocketService.notifyUser(userId, 'task_updated', {
+                taskId: id,
+                title: updatedTask.title,
+                status: updatedTask.status,
+                message: 'Görev güncellendi'
+            });
         }
         return updatedTask;
     }

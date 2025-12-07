@@ -54,4 +54,8 @@ function isUser(obj) {
 __exportStar(require("./comment.types"), exports);
 __exportStar(require("./activity.types"), exports);
 __exportStar(require("./subtask.types"), exports);
+__exportStar(require("./analysis.types"), exports);
+__exportStar(require("./testing.types"), exports);
+__exportStar(require("./performance.types"), exports);
+__exportStar(require("./security.types"), exports);
 //# sourceMappingURL=index.js.map

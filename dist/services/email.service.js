@@ -110,6 +110,22 @@ class EmailService {
             text: template.text
         });
     }
+    async sendTaskAssignedEmail(email, task) {
+        return this.sendEmail({
+            to: email,
+            subject: `Yeni Görev Atandı: ${task.title}`,
+            html: `<p>Size yeni bir görev atandı: <strong>${task.title}</strong></p><p>Açıklama: ${task.description || 'Açıklama yok'}</p>`,
+            text: `Size yeni bir görev atandı: ${task.title}. Açıklama: ${task.description || 'Açıklama yok'}`
+        });
+    }
+    async sendTaskCompletedEmail(email, task) {
+        return this.sendEmail({
+            to: email,
+            subject: `Görev Tamamlandı: ${task.title}`,
+            html: `<p>Göreviniz tamamlandı: <strong>${task.title}</strong></p><p>Tebrikler!</p>`,
+            text: `Göreviniz tamamlandı: ${task.title}. Tebrikler!`
+        });
+    }
 }
 exports.emailService = new EmailService();
 //# sourceMappingURL=email.service.js.map
