@@ -3,7 +3,7 @@ import { MLService } from '../services/ml.service';
 import { TaskService } from '../services/task.service';
 import { catchAsync } from '../middleware/error.middleware';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types';
+import { AuthRequest, TaskStatus } from '../types';
 
 /**
  * Day 51: ML/AI Controller
@@ -80,7 +80,7 @@ export class MLController {
     // Get user's active tasks
     const result = await TaskService.getAllTasks({
       userId,
-      status: ['TODO', 'IN_PROGRESS'],
+      status: [TaskStatus.TODO, TaskStatus.IN_PROGRESS],
       limit: 100
     });
 

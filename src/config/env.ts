@@ -78,7 +78,14 @@ export const config = {
   database: {
     path: getEnv('DB_PATH', './data/devtracker.db'),
     
-    verbose: getBooleanEnv('DB_VERBOSE', false)
+    verbose: getBooleanEnv('DB_VERBOSE', false),
+    
+    // MySQL configuration
+    host: getEnv('DB_HOST', 'localhost'),
+    port: getNumberEnv('DB_PORT', 3306),
+    user: getEnv('DB_USER', 'root'),
+    password: getEnv('DB_PASSWORD', ''),
+    name: getEnv('DB_NAME', 'devtracker')
   },
   
 
