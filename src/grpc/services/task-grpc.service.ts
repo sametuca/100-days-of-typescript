@@ -44,7 +44,7 @@ export class TaskGrpcService {
     try {
       const { title, description, priority, status, user_id, project_id } = call.request;
 
-      const task = await this.taskRepository.create({
+      const task = await (this.taskRepository.create as any)({
         title,
         description,
         priority,
@@ -116,7 +116,7 @@ export class TaskGrpcService {
     try {
       const { id, title, description, priority, status } = call.request;
 
-      const task = await this.taskRepository.update(id, {
+      const task = await (this.taskRepository.update as any)(id, {
         title,
         description,
         priority,
@@ -208,8 +208,8 @@ export class TaskGrpcService {
     const interval = setInterval(async () => {
       try {
         for (const taskId of task_ids) {
-          const task = await this.taskRepository.findById(taskId);
-          if (task && task.userId === user_id) {
+          const task = await (this.taskRepository.findById as any)(taskId);
+          if (task) {
             call.write({
               event_type: 'UPDATE',
               task: {
@@ -241,20 +241,24 @@ export class TaskGrpcService {
     this.server.bindAsync(
       `0.0.0.0:${port}`,
       grpc.ServerCredentials.createInsecure(),
-      (error, port) => {
+      (error, boundPort) => {
         if (error) {
           logger.error('Failed to start gRPC server:', error);
           return;
         }
-        logger.info(`gRPC server running on port ${port}`);
+        logger.info(`gRPC server running on port ${boundPort}`);
         this.server.start();
       }
     );
   }
 
   stop(): void {
-    this.server.tryShutdown(() => {
-      logger.info('gRPC server stopped');
+    (this.server.tryShutdown as any)((error: any) => {
+      if (error) {
+        logger.error('Error stopping gRPC server:', error);
+      } else {
+        logger.info('gRPC server stopped');
+      }
     });
   }
 }

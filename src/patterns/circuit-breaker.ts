@@ -137,7 +137,7 @@ export class ResilientServiceClient {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      return response.json();
+      return response.json() as T;
     });
   }
 

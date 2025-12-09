@@ -97,15 +97,15 @@ export class APIGateway {
           pathRewrite: {
             [`^${pathPrefix}`]: '',
           },
-          onProxyReq: (proxyReq, req) => {
+          onProxyReq: (proxyReq: any, req: any) => {
             // Add correlation ID
             proxyReq.setHeader('X-Correlation-ID', req.headers['x-correlation-id'] as string || `${Date.now()}`);
           },
-          onError: (err, req, res) => {
+          onError: (err: any, req: any, res: any) => {
             logger.error(`Proxy error for ${serviceName}:`, err);
             (res as Response).status(502).json({ error: 'Bad gateway' });
           },
-        };
+        } as any;
 
         const proxy = createProxyMiddleware(proxyOptions);
         proxy(req, res, next);

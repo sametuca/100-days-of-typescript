@@ -11,15 +11,14 @@ export interface ServiceConfig {
 }
 
 export class ServiceDiscoveryService {
-  private consul: Consul.Consul;
+  private consul: any;
   private serviceId: string;
   private checkInterval: NodeJS.Timeout | null = null;
 
   constructor(consulHost: string = 'localhost', consulPort: number = 8500) {
     this.consul = new Consul({
       host: consulHost,
-      port: consulPort,
-      promisify: true
+      port: consulPort
     });
     this.serviceId = uuidv4();
   }
@@ -117,8 +116,8 @@ export class ServiceDiscoveryService {
   async watchService(
     serviceName: string,
     callback: (services: ServiceConfig[]) => void
-  ): Promise<Consul.Watch> {
-    const watch = this.consul.watch({
+  ): Promise<any> {
+    const watch = (this.consul.watch as any)({
       method: this.consul.health.service,
       options: {
         service: serviceName,
