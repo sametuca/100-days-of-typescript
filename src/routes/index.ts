@@ -27,6 +27,7 @@ import cacheRoutes from './cache.routes';
 import gatewayRoutes from './gateway.routes';
 import mlRoutes from './ml.routes';
 import realtimeRoutes from './realtime.routes';
+import analyticsRoutes from './analytics.routes';
 import v1Routes from './v1';
 import v2Routes from './v2';
 import { versionMiddleware } from '../versioning/version-manager';
@@ -64,6 +65,7 @@ router.use('/cache', cacheRoutes);
 router.use('/gateway-admin', gatewayRoutes);
 router.use('/ml', mlRoutes); // Day 51: Machine Learning routes
 router.use('/realtime', realtimeRoutes); // Day 52: Real-time collaboration routes
+router.use('/analytics', analyticsRoutes); // Day 54: Advanced Analytics & BI
 
 // Versioned routes
 router.use(versionMiddleware);
