@@ -1,0 +1,43 @@
+# Cloudflare Workers Configuration
+name = "typescript-edge-worker"
+main = "src/edge/worker.ts"
+compatibility_date = "2024-01-01"
+
+# Production environment
+[env.production]
+name = "typescript-edge-worker-prod"
+vars = { 
+  ENVIRONMENT = "production",
+  LOG_LEVEL = "error"
+}
+
+# Staging environment
+[env.staging]
+name = "typescript-edge-worker-staging"
+vars = { 
+  ENVIRONMENT = "staging",
+  LOG_LEVEL = "info"
+}
+
+# Development environment
+[env.development]
+name = "typescript-edge-worker-dev"
+vars = { 
+  ENVIRONMENT = "development",
+  LOG_LEVEL = "debug"
+}
+
+# KV Namespaces (for persistent storage)
+# [[kv_namespaces]]
+# binding = "CACHE_KV"
+# id = "your-kv-namespace-id"
+
+# Durable Objects (for stateful operations)
+# [[durable_objects.bindings]]
+# name = "EDGE_STATE"
+# class_name = "EdgeState"
+
+# Routes (for production deployment)
+# [env.production.routes]
+# pattern = "example.com/*"
+# zone_id = "your-zone-id"
