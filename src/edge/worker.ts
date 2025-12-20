@@ -136,7 +136,7 @@ export class EdgeWorker {
       const response = await this.router.handle(edgeRequest, context);
       
       // Convert to standard Response
-      return new Response(response.body, {
+      return new Response(response.body as any, {
         status: response.status,
         statusText: response.statusText,
         headers: response.headers
