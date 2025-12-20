@@ -1,4 +1,6 @@
 // Edge Computing Types
+type BodyInit = string | ArrayBuffer | ArrayBufferView | Blob | FormData | URLSearchParams | ReadableStream | null;
+
 export interface EdgeRequest {
   method: string;
   url: string;
