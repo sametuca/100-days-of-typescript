@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { DatabaseMigrator } from '../database/migrator';
-import { db } from '../database/connection';
+import db from '../database/connection';
 
 export class MigrationController {
   private static migrator = new DatabaseMigrator(db);

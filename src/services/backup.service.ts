@@ -4,7 +4,7 @@ import { createReadStream, createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
 import { createGzip, createGunzip } from 'zlib';
 import * as cron from 'node-cron';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export interface BackupConfig {
   dbPath: string;
