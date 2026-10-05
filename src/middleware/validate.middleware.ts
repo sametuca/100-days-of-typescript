@@ -2,6 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 import { ValidationError } from '../utils/errors';
 
+function assignInPlace(target: object, source: object): void {
+  const current = target as Record<string, unknown>;
+  const next = source as Record<string, unknown>;
+  for (const key of Object.keys(current)) {
+    if (!Object.prototype.hasOwnProperty.call(next, key)) {
+      delete current[key];
+    }
+  }
+  Object.assign(current, next);
+}
+
 export const validateBody = (schema: ZodSchema) => {
   return (req: Request, _res: Response, next: NextFunction): void => {
     try {
@@ -30,7 +41,7 @@ export const validateParams = (schema: ZodSchema) => {
   return (req: Request, _res: Response, next: NextFunction): void => {
     try {
       const validatedParams = schema.parse(req.params);
-      req.params = validatedParams as any;
+      assignInPlace(req.params, validatedParams as object);
       next();
     } catch (error) {
       if (error instanceof ZodError) {
@@ -54,7 +65,7 @@ export const validateQuery = (schema: ZodSchema) => {
   return (req: Request, _res: Response, next: NextFunction): void => {
     try {
       const validatedQuery = schema.parse(req.query);
-      req.query = validatedQuery as any;
+      assignInPlace(req.query, validatedQuery as object);
       next();
     } catch (error) {
       if (error instanceof ZodError) {

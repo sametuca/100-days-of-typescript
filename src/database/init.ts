@@ -6,13 +6,17 @@ export const initializeDatabase = async () => {
   console.log('🚀 Initializing database...\n');
   
   try {
-    // Run migrations first
-    const migrator = new DatabaseMigrator(db);
-    await migrator.runMigrations();
-    
+    // SQLite schema used by the API. Apply it before the SQL migration
+    // files, some of which target MySQL and must not replace these tables.
     createTables();
-    
     seedData();
+
+    try {
+      const migrator = new DatabaseMigrator(db);
+      await migrator.runMigrations();
+    } catch (error) {
+      console.error('SQL migrations did not finish; SQLite schema is already applied:', error);
+    }
     
     console.log('Database initialization complete!');
     

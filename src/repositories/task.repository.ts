@@ -358,10 +358,22 @@ export class TaskRepository extends BaseRepository<Task> {
       countSql += whereClause;
     }
 
-    // Dynamic sorting
-    const sortBy = sortOptions?.sortBy || 'created_at';
-    const sortOrder = sortOptions?.sortOrder || 'desc';
-    sql += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()} LIMIT ? OFFSET ?`;
+    // Dynamic sorting. Callers pass camelCase field names; columns are snake_case.
+    const sortColumns: Record<string, string> = {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      dueDate: 'due_date',
+      title: 'title',
+      priority: 'priority',
+      status: 'status',
+      created_at: 'created_at',
+      updated_at: 'updated_at',
+      due_date: 'due_date'
+    };
+    const requestedSort = sortOptions?.sortBy || 'created_at';
+    const sortBy = sortColumns[requestedSort] ?? 'created_at';
+    const sortOrder = sortOptions?.sortOrder === 'asc' ? 'ASC' : 'DESC';
+    sql += ` ORDER BY ${sortBy} ${sortOrder} LIMIT ? OFFSET ?`;
 
     const offset = (page - 1) * limit;
     const queryParams = [...params, limit, offset];

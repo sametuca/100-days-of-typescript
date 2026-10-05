@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { BackupService } from '../services/backup.service';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 import path from 'path';
 
 const backupService = new BackupService({

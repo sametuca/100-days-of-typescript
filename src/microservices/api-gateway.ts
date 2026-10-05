@@ -6,7 +6,7 @@ import logger from '../utils/logger';
 const router = Router();
 
 // API Gateway routes
-router.use('/users/*', authenticate, async (req: Request, res: Response) => {
+router.use('/users/*path', authenticate, async (req: Request, res: Response) => {
   try {
     const endpoint = req.path.replace('/users', '');
     const result = await serviceClient.getUserService(endpoint, req.body, req.method as any);
@@ -17,7 +17,7 @@ router.use('/users/*', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-router.use('/tasks/*', authenticate, async (req: Request, res: Response) => {
+router.use('/tasks/*path', authenticate, async (req: Request, res: Response) => {
   try {
     const endpoint = req.path.replace('/tasks', '');
     const result = await serviceClient.getTaskService(endpoint, req.body, req.method as any);
@@ -28,7 +28,7 @@ router.use('/tasks/*', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-router.use('/notifications/*', authenticate, async (req: Request, res: Response) => {
+router.use('/notifications/*path', authenticate, async (req: Request, res: Response) => {
   try {
     const endpoint = req.path.replace('/notifications', '');
     const result = await serviceClient.getNotificationService(endpoint, req.body, req.method as any);

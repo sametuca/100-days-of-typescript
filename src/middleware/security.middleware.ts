@@ -1,12 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 
-export const sanitizeInput = mongoSanitize({
+const sanitizeOptions = {
   replaceWith: '_',
-  onSanitize: ({ key }) => {
+  onSanitize: ({ key }: { key: string }) => {
     console.warn(`Sanitized input detected: ${key}`);
   }
-});
+};
+
+// Express 5 exposes req.query as a getter, so the stock middleware cannot
+// replace it. Sanitize each container in place instead.
+export const sanitizeInput = (req: Request, _res: Response, next: NextFunction): void => {
+  const containers = [req.body, req.params, req.headers, req.query];
+  for (const container of containers) {
+    if (container) {
+      mongoSanitize.sanitize(container, sanitizeOptions);
+    }
+  }
+  next();
+};
 
 export const preventXSS = (req: Request, _res: Response, next: NextFunction): void => {
   if (req.body) {
